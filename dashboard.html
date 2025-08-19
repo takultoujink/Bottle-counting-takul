@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - Bottle Counter</title>
+  <meta name="description" content="Dashboard สำหรับติดตามจำนวนขวดแบบ Real-time" />
+  
+  <!-- AOS Animation Library -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+  <style>
+    :root{
+      --bg: #0b1020;          /* พื้นหลังเข้ม */
+      --card: #121833;        /* การ์ดเข้ม */
+      --text: #e7eaf6;        /* ข้อความหลัก */
+      --muted: #aab1d6;       /* ข้อความรอง */
+      --brand: #7c5cff;       /* สีหลัก */
+      --brand-2: #22d3ee;     /* สีรอง */
+      --ok: #34d399;          /* สำเร็จ */
+      --warn: #fbbf24;        /* เตือน */
+      --error: #ef4444;       /* ผิดพลาด */
+      --radius-xl: 20px;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --shadow-soft: 0 6px 18px rgba(0,0,0,.22);
+    }
+
+    /* รีเซ็ตเล็กน้อย */
+    *,*::before,*::after{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans Thai", "Noto Sans", "Liberation Sans", sans-serif;
+      color:var(--text); 
+      background: 
+        radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.35), transparent 55%), 
+        radial-gradient(1200px 800px at 110% 0%, rgba(34,211,238,.25), transparent 55%), 
+        var(--bg);
+      line-height:1.6; letter-spacing:.2px;
+    }
+    
+    /* Dashboard Watermark overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 350px;
+      height: 350px;
+      background: url('logo web ขวด.jpg') no-repeat center center;
+      background-size: contain;
+      opacity: 0.02;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container{ width:min(1200px, 95%); margin-inline:auto; }
+
+    /* Navbar */
+    .nav{ position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(8px); background:rgba(11,16,32,.8); border-bottom:1px solid rgba(255,255,255,.05); }
+    .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:14px 0; }
+    .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); font-weight:700; }
+    .logo{ width:36px; height:36px; border-radius:10px; background: conic-gradient(from 210deg at 50% 50%, var(--brand), var(--brand-2), var(--brand)); box-shadow: var(--shadow-soft); }
+    .logo-img{ width:40px; height:40px; border-radius:10px; object-fit:cover; box-shadow: var(--shadow-soft); }
+    .nav-actions{ display:flex; align-items:center; gap:12px; }
+    .user-info{ display:flex; align-items:center; gap:8px; color:var(--muted); }
+    .avatar{ width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--brand), var(--brand-2)); }
+    .btn-logout{ appearance:none; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.05); color:var(--text); padding:8px 12px; border-radius:8px; cursor:pointer; font-size:14px; transition:.2s ease; }
+    .btn-logout:hover{ background:var(--error); border-color:var(--error); }
+
+    /* Header */
+    .header{ padding:32px 0 24px; }
+    .header h1{ margin:0; font-size: clamp(28px, 4vw, 36px); }
+    .header p{ color:var(--muted); margin:8px 0 0; }
+
+    /* Status indicator */
+    .status{ display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; font-size:14px; margin-top:12px; }
+    .status.online{ background:rgba(52,211,153,.1); border:1px solid rgba(52,211,153,.3); color:var(--ok); }
+    .status.offline{ background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); color:var(--error); }
+    .pulse-dot{ width:8px; height:8px; border-radius:50%; }
+    .pulse-dot.online{ background:var(--ok); animation: pulse 2s infinite; }
+    .pulse-dot.offline{ background:var(--error); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Main grid */
+    .dashboard-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-bottom:32px; }
+    
+    /* Cards */
+    .card{ background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.12); border-radius: var(--radius-xl); padding:24px; box-shadow: var(--shadow-soft); }
+    .card h3{ margin:0 0 16px; font-size:18px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+
+    /* Counter card */
+    .counter-main{ text-align:center; }
+    .bottle-count{ font-size: clamp(48px, 8vw, 72px); font-weight:800; margin:16px 0; background: linear-gradient(135deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .bottle-icon{ font-size:48px; margin-bottom:12px; }
+    .last-updated{ color:var(--muted); font-size:14px; margin-top:8px; }
+
+    /* Stats grid */
+    .stats-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+    .stat-item{ background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:16px; text-align:center; }
+    .stat-number{ font-size:24px; font-weight:700; margin-bottom:4px; }
+    .stat-label{ font-size:12px; color:var(--muted); }
+
+    /* History table */
+    .history-table{ width:100%; border-collapse:collapse; }
+    .history-table th{ text-align:left; padding:12px 8px; border-bottom:1px solid rgba(255,255,255,.1); color:var(--muted); font-size:14px; }
+    .history-table td{ padding:12px 8px; border-bottom:1px solid rgba(255,255,255,.05); }
+    .time-badge{ background:rgba(255,255,255,.06); padding:4px 8px; border-radius:6px; font-size:12px; }
+
+    /* Progress bar */
+    .progress-container{ margin:16px 0; }
+    .progress-label{ display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px; }
+    .progress-bar{ height:8px; background:rgba(255,255,255,.1); border-radius:4px; overflow:hidden; }
+    .progress-fill{ height:100%; background:linear-gradient(90deg, var(--brand), var(--brand-2)); transition: width 0.3s ease; border-radius:4px; }
+
+    /* Alert */
+    .alert{ padding:16px; border-radius:12px; margin-bottom:24px; display:flex; align-items:center; gap:12px; }
+    .alert.success{ background:rgba(52,211,153,.1); border:1px solid rgba(52,211,153,.3); color:var(--ok); }
+    .alert.warning{ background:rgba(251,191,36,.1); border:1px solid rgba(251,191,36,.3); color:var(--warn); }
+
+    /* Responsive */
+    @media (max-width: 800px){
+      .dashboard-grid{ grid-template-columns: 1fr; }
+      .stats-grid{ grid-template-columns: 1fr; }
+    }
+
+    /* Loading animation */
+    .loading{ display:inline-block; width:20px; height:20px; border:2px solid rgba(255,255,255,.1); border-radius:50%; border-top-color:var(--brand); animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="nav" data-aos="fade-down" data-aos-duration="800">
+    <div class="container nav-inner">
+      <a class="brand" href="ลอง.html">
+        <img src="logo web ขวด.jpg" alt="WebBottle AI Logo" class="logo-img">
+        <span>WebBottle AI</span>
+      </a>
+      <div class="nav-actions">
+        <div class="user-info">
+          <div class="avatar" aria-hidden="true"></div>
+          <span id="userName">Loading...</span>
+        </div>
+        <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+      <h1>Dashboard - ระบบนับขวด</h1>
+      <p>ติดตามจำนวนขวดที่นับได้แบบ Real-time</p>
+      <div class="status" id="connectionStatus">
+        <div class="pulse-dot offline"></div>
+        <span>กำลังเชื่อมต่อ...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD -->
+  <main class="container">
+    
+    <!-- Alert for first time users -->
+    <div class="alert success" id="welcomeAlert" style="display:none;">
+      <span>🎉</span>
+      <div>
+        <strong>ยินดีต้อนรับ!</strong>
+        <div>ระบบพร้อมทำงาน เครื่องนับขวดจะอัพเดทข้อมูลแบบ Real-time</div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      
+      <!-- MAIN COUNTER -->
+      <div class="card counter-main" data-aos="zoom-in" data-aos-duration="1200" data-aos-delay="400">
+        <img src="ขวด.jpg" alt="ขวด" class="bottle-img">
+        <h3>จำนวนขวดทั้งหมด</h3>
+        <div class="bottle-count" id="totalBottles">
+          <span class="loading"></span>
+        </div>
+        <div class="last-updated" id="lastUpdated">กำลังโหลด...</div>
+        
+        <div class="progress-container">
+          <div class="progress-label">
+            <span>เป้าหมายวันนี้</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATISTICS -->
+      <div class="card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="600">
+        <h3>📊 statistics วันนี้</h3>
+        <div class="stats-grid">
+          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="800">
+            <div class="stat-number" id="todayCount">0</div>
+            <div class="stat-label">ขวดวันนี้</div>
+          </div>
+          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="900">
+            <div class="stat-number" id="avgPerHour">0</div>
+            <div class="stat-label">เฉลี่ย/ชม.</div>
+          </div>
+          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="1000">
+            <div class="stat-number" id="totalPoints">0</div>
+            <div class="stat-label">คะแนนสะสม</div>
+          </div>
+          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="1100">
+            <div class="stat-number" id="weeklyCount">0</div>
+            <div class="stat-label">ขวดสัปดาห์นี้</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="card" data-aos="fade-up" data-aos-duration="1200" data-aos-delay="800">
+      <h3>📝 กิจกรรมล่าสุด</h3>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>เวลา</th>
+            <th>จำนวน</th>
+            <th>คะแนน</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody id="historyTable">
+          <tr>
+            <td colspan="4" style="text-align:center; color:var(--muted);">
+              <div class="loading" style="margin:20px auto;"></div>
+              กำลังโหลดข้อมูล...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getDatabase, ref, onValue, set, push, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAmw1lDRZIxYKDblO8nhS3SR5aTVCVPJbg",
+      authDomain: "takultoujink.firebaseapp.com",
+      projectId: "takultoujink",
+      storageBucket: "takultoujink.firebasestorage.app",
+      messagingSenderId: "865462073491",
+      appId: "1:865462073491:web:5985dfd8a0e91b71fa3566",
+      measurementId: "G-ZVXD02VSWF",
+      databaseURL: "https://takultoujink-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    let currentUser = null;
+    let bottleData = {
+      total: 0,
+      today: 0,
+      weekly: 0,
+      points: 0,
+      history: []
+    };
+
+    // Check authentication
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById('userName').textContent = user.displayName || user.email;
+        initDashboard();
+        showWelcomeAlert();
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    // Initialize dashboard
+    function initDashboard() {
+      const userId = currentUser.uid;
+      
+      // Listen for real-time updates
+      const bottleRef = ref(database, `bottles/${userId}`);
+      onValue(bottleRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          updateDashboard(data);
+          updateConnectionStatus(true);
+        } else {
+          // Initialize user data if doesn't exist
+          initializeUserData();
+        }
+      });
+
+      // Listen for live counter updates
+      const liveCountRef = ref(database, `live_count/${userId}`);
+      onValue(liveCountRef, (snapshot) => {
+        const count = snapshot.val();
+        if (count !== null && count !== bottleData.total) {
+          // New bottle detected!
+          const newBottle = count - bottleData.total;
+          if (newBottle > 0) {
+            animateCounterUpdate(count);
+            addToHistory(newBottle);
+          }
+        }
+      });
+    }
+
+    // Initialize user data
+    function initializeUserData() {
+      const userId = currentUser.uid;
+      const initialData = {
+        total: 0,
+        today: 0,
+        weekly: 0,
+        points: 0,
+        lastUpdated: serverTimestamp(),
+        history: {}
+      };
+      
+      set(ref(database, `bottles/${userId}`), initialData);
+    }
+
+    // Update dashboard with new data
+    function updateDashboard(data) {
+      bottleData = data;
+      
+      // Update main counter
+      document.getElementById('totalBottles').textContent = data.total || 0;
+      
+      // Update stats
+      document.getElementById('todayCount').textContent = data.today || 0;
+      document.getElementById('totalPoints').textContent = data.points || 0;
+      document.getElementById('weeklyCount').textContent = data.weekly || 0;
+      
+      // Calculate average per hour (assuming 8 working hours)
+      const avgPerHour = Math.round((data.today || 0) / 8 * 10) / 10;
+      document.getElementById('avgPerHour').textContent = avgPerHour;
+      
+      // Update progress bar (goal: 100 bottles per day)
+      const dailyGoal = 100;
+      const progressPercent = Math.min((data.today || 0) / dailyGoal * 100, 100);
+      document.getElementById('progressPercent').textContent = Math.round(progressPercent) + '%';
+      document.getElementById('progressFill').style.width = progressPercent + '%';
+      
+      // Update last updated time
+      if (data.lastUpdated) {
+        const lastUpdate = new Date(data.lastUpdated);
+        document.getElementById('lastUpdated').textContent = 
+          `อัพเดทล่าสุด: ${lastUpdate.toLocaleString('th-TH')}`;
+      }
+      
+      // Update history table
+      updateHistoryTable(data.history);
+    }
+
+    // Animate counter update
+    function animateCounterUpdate(newCount) {
+      const counter = document.getElementById('totalBottles');
+      counter.style.transform = 'scale(1.1)';
+      counter.style.color = 'var(--ok)';
+      
+      setTimeout(() => {
+        counter.style.transform = 'scale(1)';
+        counter.style.color = '';
+      }, 300);
+    }
+
+    // Add new bottle to history
+    function addToHistory(count) {
+      const userId = currentUser.uid;
+      const historyRef = ref(database, `bottles/${userId}/history`);
+      
+      const newEntry = {
+        timestamp: serverTimestamp(),
+        count: count,
+        points: count * 1, // 1 point per bottle
+      };
+      
+      push(historyRef, newEntry);
+    }
+
+    // Update history table
+    function updateHistoryTable(history) {
+      const tbody = document.getElementById('historyTable');
+      
+      if (!history || Object.keys(history).length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align:center; color:var(--muted);">
+              ยังไม่มีข้อมูล
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      // Convert to array and sort by timestamp (newest first)
+      const historyArray = Object.entries(history)
+        .map(([key, value]) => ({...value, id: key}))
+        .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+        .slice(0, 10); // Show only last 10 entries
+      
+      tbody.innerHTML = historyArray.map(entry => {
+        const time = entry.timestamp ? 
+          new Date(entry.timestamp).toLocaleString('th-TH', {
+            hour: '2-digit',
+            minute: '2-digit',
+            day: '2-digit',
+            month: '2-digit'
+          }) : 'ไม่ทราบ';
+        
+        return `
+          <tr>
+            <td><span class="time-badge">${time}</span></td>
+            <td>+${entry.count || 1} ขวด</td>
+            <td>+${entry.points || 1} คะแนน</td>
+            <td style="color:var(--ok);">✓ บันทึกแล้ว</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Update connection status
+    function updateConnectionStatus(isOnline) {
+      const status = document.getElementById('connectionStatus');
+      const dot = status.querySelector('.pulse-dot');
+      const text = status.querySelector('span');
+      
+      if (isOnline) {
+        status.className = 'status online';
+        dot.className = 'pulse-dot online';
+        text.textContent = 'เชื่อมต่อแล้ว';
+      } else {
+        status.className = 'status offline';
+        dot.className = 'pulse-dot offline';
+        text.textContent = 'ออฟไลน์';
+      }
+    }
+
+    // Show welcome alert
+    function showWelcomeAlert() {
+      const alert = document.getElementById('welcomeAlert');
+      alert.style.display = 'flex';
+      
+      setTimeout(() => {
+        alert.style.display = 'none';
+      }, 5000);
+    }
+
+    // Logout function
+    window.logout = async function() {
+      try {
+        await signOut(auth);
+        window.location.href = 'login.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    };
+
+    // Simulate real-time bottle counting (for testing)
+    // Remove this in production when connecting to actual hardware
+    function simulateBottleCount() {
+      if (!currentUser) return;
+      
+      setInterval(() => {
+        const userId = currentUser.uid;
+        const currentCount = bottleData.total + Math.floor(Math.random() * 3); // Add 0-2 bottles randomly
+        
+        // Update live count
+        set(ref(database, `live_count/${userId}`), currentCount);
+        
+        // Update main bottle data
+        const updates = {
+          total: currentCount,
+          today: (bottleData.today || 0) + 1,
+          weekly: (bottleData.weekly || 0) + 1,
+          points: (bottleData.points || 0) + 1,
+          lastUpdated: serverTimestamp()
+        };
+        
+        set(ref(database, `bottles/${userId}`), {
+          ...bottleData,
+          ...updates
+        });
+      }, 10000); // Update every 10 seconds for demo
+    }
+
+    // Start simulation for demo (remove in production)
+    setTimeout(simulateBottleCount, 5000);
+  </script>
+  
+  <!-- AOS Animation Library Script -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 1000,
+      easing: 'ease-in-out',
+      once: true,
+      mirror: false
+    });
+  </script>
+</body>
+</html>

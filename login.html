@@ -108,6 +108,7 @@
             margin: 0 auto 1.5rem;
             display: block;
             transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
         }
         
         .logo-img-main:hover {
@@ -258,9 +259,9 @@
 
         .social-btn {
             flex: 1;
-            padding: 10px;
+            padding: 12px 16px;
             border: 2px solid #e1e5e9;
-            border-radius: 8px;
+            border-radius: var(--radius);
             background: white;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -268,11 +269,30 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            font-weight: 600;
+            color: var(--text);
+            position: relative;
+            overflow: hidden;
         }
 
         .social-btn:hover {
-            border-color: #667eea;
-            transform: translateY(-1px);
+            border-color: #4285f4;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .social-btn:active {
+            transform: translateY(0);
+        }
+
+        .google-btn {
+            border-color: #4285f4;
+            color: #4285f4;
+        }
+
+        .google-btn:hover {
+            background: #4285f4;
+            color: white;
         }
 
         .register-link {
@@ -290,6 +310,44 @@
             text-decoration: underline;
         }
 
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            margin: 15px 0;
+            border: 1px solid #fcc;
+            font-size: 14px;
+            animation: slideDown 0.3s ease;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #363;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            margin: 15px 0;
+            border: 1px solid #cfc;
+            font-size: 14px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
         @media (max-width: 480px) {
             .login-container {
                 padding: 2rem;
@@ -299,48 +357,58 @@
             .login-header h1 {
                 font-size: 1.5rem;
             }
+
+            .social-login {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="login-container" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="200">
         <div class="login-header" data-aos="fade-down" data-aos-duration="600" data-aos-delay="400">
-            <img src="back ground.jpg" alt="EcoBottle Logo" class="logo-img-main" data-aos="bounce-in" data-aos-duration="800" data-aos-delay="600">
+            <div class="logo-img-main" data-aos="bounce-in" data-aos-duration="800" data-aos-delay="600"></div>
             <h1>เข้าสู่ระบบ</h1>
             <p>ยินดีต้อนรับกลับสู่ EcoBottle!</p>
         </div>
 
-        <form id="loginForm" data-aos="fade-up" data-aos-duration="800" data-aos-delay="800">
-            <div class="form-group" data-aos="fade-right" data-aos-duration="600" data-aos-delay="1000">
+        <!-- Google Sign-In First -->
+        <div class="social-login" data-aos="fade-up" data-aos-duration="800" data-aos-delay="800">
+            <button type="button" class="social-btn google-btn" id="googleSignIn">
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                เข้าสู่ระบบด้วย Google
+            </button>
+        </div>
+
+        <div class="divider" data-aos="fade-in" data-aos-duration="600" data-aos-delay="1000">
+            <span>หรือ</span>
+        </div>
+
+        <form id="loginForm" data-aos="fade-up" data-aos-duration="800" data-aos-delay="1100">
+            <div class="form-group" data-aos="fade-right" data-aos-duration="600" data-aos-delay="1200">
                 <label for="email">อีเมล</label>
-                <input type="text" id="email" name="email" placeholder="กรอกอีเมล" required>
+                <input type="email" id="email" name="email" placeholder="กรอกอีเมล" required>
             </div>
-            <div class="form-group" data-aos="fade-right" data-aos-duration="600" data-aos-delay="1000">
+            <div class="form-group" data-aos="fade-right" data-aos-duration="600" data-aos-delay="1200">
                 <label for="studentIdCard">เลขประจำตัวนักเรียน</label>
                 <input type="text" id="studentIdCard" name="studentIdCard" placeholder="กรอกเลขประจำตัวนักเรียน" required>
             </div>
-            <div class="form-group" data-aos="fade-left" data-aos-duration="600" data-aos-delay="1100">
+            <div class="form-group" data-aos="fade-left" data-aos-duration="600" data-aos-delay="1300">
                 <label for="password">รหัสผ่าน</label>
                 <input type="password" id="password" name="password" placeholder="กรอกรหัสผ่าน" required>
             </div>
 
-            <div class="forgot-password" data-aos="fade-up" data-aos-duration="600" data-aos-delay="1200">
+            <div class="forgot-password" data-aos="fade-up" data-aos-duration="600" data-aos-delay="1400">
                 <a href="reset-password.html">ลืมรหัสผ่าน?</a>
             </div>
 
-            <button type="submit" class="login-btn" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="1300">เข้าสู่ระบบ</button>
+            <button type="submit" class="login-btn" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="1500">เข้าสู่ระบบ</button>
         </form>
-
-        <div class="divider" data-aos="fade-in" data-aos-duration="600" data-aos-delay="1400">
-            <span>หรือ</span>
-        </div>
-
-        <div class="social-login" data-aos="fade-up" data-aos-duration="800" data-aos-delay="1500">
-            <button class="social-btn">
-                <span>📧</span>
-                Google
-            </button>
-        </div>
 
         <div class="register-link" data-aos="fade-up" data-aos-duration="600" data-aos-delay="1600">
             ยังไม่มีบัญชี? <a href="register.html">สมัครสมาชิก</a>
@@ -351,8 +419,8 @@
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -370,64 +438,144 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Providers for social login
+        // Configure Google Auth Provider
         const googleProvider = new GoogleAuthProvider();
-        const facebookProvider = new FacebookAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
+        
+        // Set custom parameters
+        googleProvider.setCustomParameters({
+            prompt: 'select_account'
+        });
 
         // Show loading state
-        function showLoading(show) {
-            const btn = document.querySelector('.login-btn');
+        function showLoading(element, show, originalText) {
             if (show) {
-                btn.innerHTML = '<span>กำลังเข้าสู่ระบบ...</span>';
-                btn.disabled = true;
+                element.innerHTML = '<span>กำลังดำเนินการ...</span>';
+                element.disabled = true;
+                element.classList.add('loading');
             } else {
-                btn.innerHTML = 'เข้าสู่ระบบ';
-                btn.disabled = false;
+                element.innerHTML = originalText;
+                element.disabled = false;
+                element.classList.remove('loading');
             }
         }
 
-        // Show error message
-        function showError(message) {
-            // Remove existing error
-            const existingError = document.querySelector('.error-message');
-            if (existingError) existingError.remove();
+        // Show message (error or success)
+        function showMessage(message, type = 'error') {
+            // Remove existing messages
+            const existingMessages = document.querySelectorAll('.error-message, .success-message');
+            existingMessages.forEach(msg => msg.remove());
 
-            // Create new error
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.style.cssText = `
-                background: #fee;
-                color: #c33;
-                padding: 10px;
-                border-radius: 5px;
-                margin: 10px 0;
-                border: 1px solid #fcc;
-                font-size: 14px;
-            `;
-            errorDiv.textContent = message;
+            // Create new message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.textContent = message;
             
-            document.querySelector('.login-header').after(errorDiv);
+            document.querySelector('.login-header').after(messageDiv);
             
             // Auto remove after 5 seconds
-            setTimeout(() => errorDiv.remove(), 5000);
+            setTimeout(() => messageDiv.remove(), 5000);
+        }
+
+        // Save user profile to Firestore
+        async function saveUserProfile(user, additionalData = {}) {
+            try {
+                const userRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userRef);
+                
+                if (!userDoc.exists()) {
+                    await setDoc(userRef, {
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL,
+                        provider: user.providerData[0]?.providerId || 'email',
+                        createdAt: new Date(),
+                        lastLogin: new Date(),
+                        ...additionalData
+                    });
+                } else {
+                    // Update last login
+                    await setDoc(userRef, {
+                        lastLogin: new Date()
+                    }, { merge: true });
+                }
+            } catch (error) {
+                console.error('Error saving user profile:', error);
+            }
         }
 
         // Handle successful login
-        function handleLoginSuccess(user) {
+        async function handleLoginSuccess(user) {
             console.log('เข้าสู่ระบบสำเร็จ:', user.email);
             
-            // Save user info to localStorage
-            localStorage.setItem('user', JSON.stringify({
+            // Save/update user profile
+            await saveUserProfile(user);
+            
+            showMessage(`เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับ ${user.displayName || user.email}`, 'success');
+            
+            // Store user session (ใช้ sessionStorage แทน localStorage สำหรับความปลอดภัย)
+            sessionStorage.setItem('user', JSON.stringify({
                 uid: user.uid,
                 email: user.email,
-                displayName: user.displayName
+                displayName: user.displayName,
+                photoURL: user.photoURL
             }));
 
-            alert(`เข้าสู่ระบบสำเร็จ!\nยินดีต้อนรับ ${user.displayName || user.email}`);
-            
-            // Redirect to dashboard
-            window.location.href = 'dashboard.html';
+            // Redirect after short delay
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
         }
+
+        // Google Sign-In
+        document.getElementById('googleSignIn').addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const originalText = this.innerHTML;
+            showLoading(this, true, originalText);
+            
+            try {
+                console.log('Starting Google Sign-In...');
+                
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                
+                console.log('Google Sign-In successful:', user.email);
+                console.log('Access token:', credential?.accessToken);
+                
+                await handleLoginSuccess(user);
+                
+            } catch (error) {
+                console.error('Google Sign-In Error:', error);
+                
+                let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบด้วย Google';
+                
+                switch (error.code) {
+                    case 'auth/popup-closed-by-user':
+                        errorMessage = 'การเข้าสู่ระบบถูกยกเลิกโดยผู้ใช้';
+                        break;
+                    case 'auth/popup-blocked':
+                        errorMessage = 'กรุณาอนุญาตให้เปิด popup ในเบราว์เซอร์';
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        errorMessage = 'การเข้าสู่ระบบถูกยกเลิก';
+                        break;
+                    case 'auth/unauthorized-domain':
+                        errorMessage = 'โดเมนนี้ไม่ได้รับอนุญาตสำหรับ Google Sign-In';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMessage = 'Google Sign-In ยังไม่เปิดใช้งาน กรุณาติดต่อผู้ดูแลระบบ';
+                        break;
+                }
+                
+                showMessage(errorMessage);
+            } finally {
+                showLoading(this, false, originalText);
+            }
+        });
 
         // Email/Password login
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -435,17 +583,20 @@
             
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+            const studentId = document.getElementById('studentIdCard').value.trim();
             
-            if (!email || !password) {
-                showError('กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน');
+            if (!email || !password || !studentId) {
+                showMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
                 return;
             }
 
-            showLoading(true);
+            const submitBtn = this.querySelector('.login-btn');
+            const originalText = submitBtn.innerHTML;
+            showLoading(submitBtn, true, originalText);
             
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                handleLoginSuccess(userCredential.user);
+                await handleLoginSuccess(userCredential.user);
             } catch (error) {
                 console.error('Login error:', error);
                 
@@ -464,33 +615,14 @@
                     case 'auth/too-many-requests':
                         errorMessage = 'มีการพยายามเข้าสู่ระบบมากเกินไป กรุณาลองใหม่อีกครั้ง';
                         break;
+                    case 'auth/user-disabled':
+                        errorMessage = 'บัญชีนี้ถูกระงับการใช้งาน';
+                        break;
                 }
                 
-                showError(errorMessage);
+                showMessage(errorMessage);
             } finally {
-                showLoading(false);
-            }
-        });
-
-        // Google login
-        document.querySelector('.social-btn:first-child').addEventListener('click', async function() {
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                handleLoginSuccess(result.user);
-            } catch (error) {
-                console.error('Google login error:', error);
-                showError('เกิดข้อผิดพลาดในการเข้าสู่ระบบด้วย Google');
-            }
-        });
-
-        // Facebook login
-        document.querySelector('.social-btn:last-child').addEventListener('click', async function() {
-            try {
-                const result = await signInWithPopup(auth, facebookProvider);
-                handleLoginSuccess(result.user);
-            } catch (error) {
-                console.error('Facebook login error:', error);
-                showError('เกิดข้อผิดพลาดในการเข้าสู่ระบบด้วย Facebook');
+                showLoading(submitBtn, false, originalText);
             }
         });
 
@@ -498,20 +630,19 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 console.log('ผู้ใช้เข้าสู่ระบบอยู่แล้ว:', user.email);
-                // อาจจะ redirect ไปหน้าหลัก หรือแสดงข้อความ
+                // Uncomment if you want auto-redirect
+                // window.location.href = 'dashboard.html';
+            } else {
+                console.log('ไม่มีผู้ใช้เข้าสู่ระบบ');
             }
         });
 
-        // Page load animation
+        // Initialize page
         window.addEventListener('load', function() {
-            document.querySelector('.login-container').style.transform = 'scale(1)';
-            document.querySelector('.login-container').style.opacity = '1';
+            console.log('EcoBottle Login System Initialized');
+            console.log('Firebase Auth:', auth);
+            console.log('Google Provider configured');
         });
-
-        // Initial animation setup - ไม่จำเป็นแล้วเพราะใช้ AOS
-        // document.querySelector('.login-container').style.transform = 'scale(0.9)';
-        // document.querySelector('.login-container').style.opacity = '0';
-        // document.querySelector('.login-container').style.transition = 'all 0.3s ease';
     </script>
     
     <!-- AOS Animation Library Script -->

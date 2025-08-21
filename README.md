@@ -86,7 +86,7 @@
    ```python
    ARDUINO_PORT = 'COM3'  # เปลี่ยนตาม port ของ Arduino
    CAMERA_INDEX = 0       # เปลี่ยนตาม camera
-   USER_ID = "YOUR_USER_ID_FROM_WEB"  # จาก Firebase Authentication
+   USER_ID = "takultoujink"  # จาก Firebase Authentication
    ```
 
 ### **ขั้นตอนที่ 4: ตั้งค่า Arduino R4**

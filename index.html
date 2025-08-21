@@ -132,6 +132,120 @@
     /* CTA strip */
     .cta-strip{ margin:28px 0; padding:20px; border-radius:var(--radius-xl); background: linear-gradient(120deg, rgba(124,92,255,.2), rgba(34,211,238,.18)); border:1px solid rgba(255,255,255,.12); display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
 
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: var(--card);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      width: min(500px, 90vw);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .modal-overlay.active .modal {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    
+    .modal-title {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+    
+    .close-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: rgba(167, 139, 250, 0.1);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      transition: all 0.3s ease;
+    }
+    
+    .close-btn:hover {
+      background: rgba(167, 139, 250, 0.2);
+      transform: scale(1.1);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(167, 139, 250, 0.2);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--brand);
+      background: var(--card);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-soft);
+    }
+    
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .btn-submit {
+      width: 100%;
+      margin-top: 8px;
+    }
+
     /* Footer */
     footer{ padding:28px 0 44px; color:var(--muted); border-top: 1px solid rgba(255,255,255,.08); margin-top:28px; }
     .foot{ display:grid; grid-template-columns: 1fr auto; align-items:center; }
@@ -145,6 +259,7 @@
     }
     @media (max-width: 560px){
       .features{ grid-template-columns: 1fr; }
+      .modal { padding: 24px; }
     }
   </style>
 </head>
@@ -253,9 +368,44 @@
     <strong>พร้อมเริ่มหรือยัง?</strong>
     <div class="cta">
       <a class="btn btn-primary" href="login.html">login</a><br>
-      <a class="btn btn-ghost" href="#contact">พูดคุยกับเรา</a>
+      <button class="btn btn-ghost" id="contact-btn">พูดคุยกับเรา</button>
     </div>
   </section>
+
+  <!-- Contact Modal -->
+  <div class="modal-overlay" id="contact-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">ติดต่อเรา</h3>
+        <button class="close-btn" id="close-modal">×</button>
+      </div>
+      <form id="contact-form" action="https://formspree.io/f/mwpqdzdk" method="POST">
+        <div class="form-group">
+          <label class="form-label" for="name">ชื่อ</label>
+          <input type="text" name="name" id="name" class="form-input" placeholder="กรอกชื่อของคุณ" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">อีเมล</label>
+          <input type="email" name="email" id="email" class="form-input" placeholder="example@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone">เบอร์โทร</label>
+          <input type="tel" name="phone" id="phone" class="form-input" placeholder="08X-XXX-XXXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="message">ข้อความ</label>
+          <textarea name="message" id="message" class="form-input form-textarea" placeholder="เขียนข้อความที่คุณต้องการสื่อสาร..." required></textarea>
+        </div>
+        <!-- Honeypot field สำหรับป้องกัน spam -->
+        <input type="text" name="_gotcha" style="display:none !important">
+        
+        <button type="submit" class="btn btn-primary btn-submit" id="submit-btn">
+          <span class="btn-text">ส่งข้อความ</span>
+          <span class="btn-loading" style="display:none;">กำลังส่ง...</span>
+        </button>
+      </form>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer data-aos="fade-up" data-aos-duration="600">
@@ -270,16 +420,16 @@
   <script>
     // Initialize AOS
     AOS.init({
-      duration: 800,     // ระยะเวลา animation เริ่มต้น
-      offset: 100,       // ระยะห่างจาก trigger point
-      delay: 0,          // ความล่าช้าเริ่มต้น
-      once: true,        // animation เล่นครั้งเดียว
-      mirror: false,     // ไม่เล่นย้อนกลับเมื่อ scroll ขึ้น
+      duration: 800,
+      offset: 100,
+      delay: 0,
+      once: true,
+      mirror: false,
       anchorPlacement: 'top-bottom',
       easing: 'ease-out-cubic'
     });
 
-    // เพิ่มการปรับแต่งเล็กน้อยสำหรับ smooth scrolling
+    // Smooth scrolling
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -291,6 +441,90 @@
           });
         }
       });
+    });
+
+    // Modal functionality
+    const contactBtn = document.getElementById('contact-btn');
+    const contactModal = document.getElementById('contact-modal');
+    const closeModal = document.getElementById('close-modal');
+    const contactForm = document.getElementById('contact-form');
+
+    // เปิด modal
+    contactBtn.addEventListener('click', () => {
+      contactModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    // ปิด modal เมื่อกดปุ่มปิด
+    closeModal.addEventListener('click', () => {
+      contactModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // ปิด modal เมื่อกดพื้นหลัง
+    contactModal.addEventListener('click', (e) => {
+      if (e.target === contactModal) {
+        contactModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // ปิด modal เมื่อกด ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && contactModal.classList.contains('active')) {
+        contactModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // Handle form submission with Formspree
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submit-btn');
+      const btnText = submitBtn.querySelector('.btn-text');
+      const btnLoading = submitBtn.querySelector('.btn-loading');
+      
+      // แสดงสถานะกำลังส่ง
+      submitBtn.disabled = true;
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline';
+      
+      try {
+        const formData = new FormData(contactForm);
+        
+        const response = await fetch(contactForm.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          // ส่งสำเร็จ
+          alert('ขอบคุณสำหรับการติดต่อ! เราจะติดต่อกลับในเร็วๆ นี้');
+          contactForm.reset();
+          contactModal.classList.remove('active');
+          document.body.style.overflow = 'auto';
+        } else {
+          // เกิดข้อผิดพลาด
+          const data = await response.json();
+          if (data.errors) {
+            alert('เกิดข้อผิดพลาด: ' + data.errors.map(error => error.message).join(', '));
+          } else {
+            alert('เกิดข้อผิดพลาดในการส่งข้อความ กรุณาลองใหม่');
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการส่งข้อความ กรุณาลองใหม่');
+      } finally {
+        // คืนสถานะปุ่ม
+        submitBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+      }
     });
   </script>
 </body>

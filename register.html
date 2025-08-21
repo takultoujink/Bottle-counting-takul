@@ -504,77 +504,82 @@
             const validationDiv = document.getElementById('idCardValidation');
             
             if (!studentIdInput || !validationDiv) {
-                console.error('Required elements not found!');
-                return;
+            console.error('Required elements not found!');
+            return;
             }
 
             studentIdInput.addEventListener('input', function() {
-                console.log('Student ID input event triggered:', this.value);
-                
-                let value = this.value.replace(/\D/g, ''); // Remove non-numeric
-                if (value.length > 5) value = value.substring(0, 5); // Limit to 5 digits
-                this.value = value;
-                
-                if (value.length === 0) {
-                    validationDiv.textContent = '';
-                    validationDiv.className = 'validation-message';
-                    return;
-                }
-                
-                if (value.length < 5) {
-                    validationDiv.innerHTML = '⌛ กรุณากรอกเลขประจำตัวให้ครบ 5 หลัก';
-                    validationDiv.className = 'validation-message validation-invalid';
-                } else if (validateStudentID(value)) {
-                    validationDiv.innerHTML = '✅ เลขประจำตัวนักเรียนถูกต้อง';
-                    validationDiv.className = 'validation-message validation-valid';
-                } else {
-                    validationDiv.innerHTML = '❌ เลขประจำตัวนักเรียนไม่ถูกต้อง';
-                    validationDiv.className = 'validation-message validation-invalid';
-                }
+            console.log('Student ID input event triggered:', this.value);
+            
+            let value = this.value.replace(/\D/g, ''); // Remove non-numeric
+            if (value.length > 5) value = value.substring(0, 5); // Limit to 5 digits
+            this.value = value;
+            
+            if (value.length === 0) {
+                validationDiv.textContent = '';
+                validationDiv.className = 'validation-message';
+                return;
+            }
+            
+            if (value.length < 5) {
+                validationDiv.innerHTML = '⌛ กรุณากรอกเลขประจำตัวให้ครบ 5 หลัก';
+                validationDiv.className = 'validation-message validation-invalid';
+            } else if (validateStudentID(value)) {
+                validationDiv.innerHTML = '✅ เลขประจำตัวนักเรียนถูกต้อง';
+                validationDiv.className = 'validation-message validation-valid';
+            } else {
+                validationDiv.innerHTML = '❌ เลขประจำตัวนักเรียนไม่ถูกต้อง';
+                validationDiv.className = 'validation-message validation-invalid';
+            }
             });
 
             // Password strength check on input
             document.getElementById('password').addEventListener('input', function() {
-                checkPasswordStrength(this.value);
+            checkPasswordStrength(this.value);
             });
 
-            // Form submission (simplified for testing)
+            // Form submission (redirect to login.html on success)
             document.getElementById('registerForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const displayName = document.getElementById('displayName').value.trim();
-                const studentIdCard = document.getElementById('studentIdCard').value.replace(/\D/g, '');
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
-                
-                // Basic validation
-                if (!displayName || !studentIdCard || !email || !password || !confirmPassword) {
-                    showError('กรุณากรอกข้อมูลให้ครบถ้วน');
-                    return;
-                }
+            e.preventDefault();
+            
+            const displayName = document.getElementById('displayName').value.trim();
+            const studentIdCard = document.getElementById('studentIdCard').value.replace(/\D/g, '');
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Basic validation
+            if (!displayName || !studentIdCard || !email || !password || !confirmPassword) {
+                showError('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
 
-                if (studentIdCard.length !== 5 || !validateStudentID(studentIdCard)) {
-                    showError('กรุณากรอกเลขประจำตัวนักเรียนให้ถูกต้อง');
-                    return;
-                }
+            if (studentIdCard.length !== 5 || !validateStudentID(studentIdCard)) {
+                showError('กรุณากรอกเลขประจำตัวนักเรียนให้ถูกต้อง');
+                return;
+            }
 
-                if (password !== confirmPassword) {
-                    showError('รหัสผ่านไม่ตรงกัน');
-                    return;
-                }
+            if (password !== confirmPassword) {
+                showError('รหัสผ่านไม่ตรงกัน');
+                return;
+            }
 
-                if (password.length < 6) {
-                    showError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
-                    return;
-                }
+            if (password.length < 6) {
+                showError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+                return;
+            }
 
-                showSuccess(`ข้อมูลถูกต้อง! ยินดีต้อนรับ ${displayName}`);
-                console.log('Form validation passed:', {
-                    displayName,
-                    studentIdCard,
-                    email
-                });
+            showSuccess(`ข้อมูลถูกต้อง! ยินดีต้อนรับ ${displayName}`);
+            console.log('Form validation passed:', {
+                displayName,
+                studentIdCard,
+                email
+            });
+
+            // Redirect to login.html after short delay
+            setTimeout(function() {
+                window.location.href = 'login.html';
+            }, 1200);
             });
             
             console.log('Event listeners set up successfully');

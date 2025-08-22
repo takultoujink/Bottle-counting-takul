@@ -146,6 +146,7 @@
         <div class="user-info">
           <div class="avatar" aria-hidden="true"></div>
           <span id="userName">Loading...</span>
+          <button class="btn-logout" style="background:var(--brand-2); color:#222; border:none;" onclick="toggleTheme()">Bright</button>
         </div>
         <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
       </div>
@@ -173,6 +174,118 @@
       <div>
         <strong>ยินดีต้อนรับ!</strong>
         <div>ระบบพร้อมทำงาน เครื่องนับขวดจะอัพเดทข้อมูลแบบ Real-time</div>
+        <button class="btn-logout" style="background:var(--brand-2); color:#222; border:none; margin-top:10px;" onclick="toggleTheme()">เปลี่ยนธีม Bright</button>
+        <script>
+            // Improved Bright/Dark Theme Toggle with Animation & More Colors
+            function toggleTheme() {
+            const root = document.documentElement;
+            const isDark = root.style.getPropertyValue('--bg') === '#0b1020' || !root.style.getPropertyValue('--bg');
+            if (isDark) {
+              // Bright mode: more playful gradients, soft shadows, animated transition
+              root.style.setProperty('--bg', '#f8fafc');
+              root.style.setProperty('--card', '#fff');
+              root.style.setProperty('--text', '#232946');
+              root.style.setProperty('--muted', '#6b7280');
+              root.style.setProperty('--brand', '#7c5cff');
+              root.style.setProperty('--brand-2', '#22d3ee');
+              root.style.setProperty('--ok', '#10b981');
+              root.style.setProperty('--warn', '#f59e42');
+              root.style.setProperty('--error', '#ef4444');
+              root.style.setProperty('--shadow', '0 8px 32px rgba(124,92,255,.10)');
+              root.style.setProperty('--shadow-soft', '0 4px 16px rgba(34,211,238,.10)');
+              root.style.setProperty('--radius-xl', '24px');
+              root.style.setProperty('--radius', '16px');
+              document.body.style.transition = "background 0.7s cubic-bezier(.4,2,.6,1)";
+              document.body.style.background = 
+              "radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.12), transparent 55%)," +
+              "radial-gradient(1200px 800px at 110% 0%, rgba(34,211,238,.10), transparent 55%)," +
+              "linear-gradient(120deg, #f8fafc 60%, #e0e7ff 100%)";
+              // Add a subtle confetti animation for fun
+              if (!document.getElementById('confetti-canvas')) {
+              const canvas = document.createElement('canvas');
+              canvas.id = 'confetti-canvas';
+              canvas.style.position = 'fixed';
+              canvas.style.top = 0;
+              canvas.style.left = 0;
+              canvas.style.width = '100vw';
+              canvas.style.height = '100vh';
+              canvas.style.pointerEvents = 'none';
+              canvas.style.zIndex = 9999;
+              document.body.appendChild(canvas);
+              launchConfetti(canvas);
+              setTimeout(() => {
+                if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+              }, 1200);
+              }
+            } else {
+              // Back to dark mode
+              root.style.setProperty('--bg', '#0b1020');
+              root.style.setProperty('--card', '#121833');
+              root.style.setProperty('--text', '#e7eaf6');
+              root.style.setProperty('--muted', '#aab1d6');
+              root.style.setProperty('--brand', '#7c5cff');
+              root.style.setProperty('--brand-2', '#22d3ee');
+              root.style.setProperty('--ok', '#34d399');
+              root.style.setProperty('--warn', '#fbbf24');
+              root.style.setProperty('--error', '#ef4444');
+              root.style.setProperty('--shadow', '0 10px 30px rgba(0,0,0,.35)');
+              root.style.setProperty('--shadow-soft', '0 6px 18px rgba(0,0,0,.22)');
+              root.style.setProperty('--radius-xl', '20px');
+              root.style.setProperty('--radius', '14px');
+              document.body.style.transition = "background 0.7s cubic-bezier(.4,2,.6,1)";
+              document.body.style.background = "";
+            }
+            }
+
+            // Simple confetti animation for bright mode
+            function launchConfetti(canvas) {
+            const ctx = canvas.getContext('2d');
+            const W = window.innerWidth, H = window.innerHeight;
+            canvas.width = W;
+            canvas.height = H;
+            const colors = ['#7c5cff', '#22d3ee', '#f59e42', '#10b981', '#ef4444', '#fff'];
+            const confetti = Array.from({length: 32}, () => ({
+              x: Math.random() * W,
+              y: Math.random() * -H,
+              r: 6 + Math.random() * 8,
+              d: 8 + Math.random() * 12,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              tilt: Math.random() * 10 - 5,
+              tiltAngle: 0,
+              tiltAngleIncremental: (Math.random() * 0.07) + 0.05
+            }));
+            let frame = 0;
+            function draw() {
+              ctx.clearRect(0, 0, W, H);
+              confetti.forEach(c => {
+              ctx.beginPath();
+              ctx.ellipse(c.x, c.y, c.r, c.r/2, c.tilt, 0, 2 * Math.PI);
+              ctx.fillStyle = c.color;
+              ctx.globalAlpha = 0.85;
+              ctx.fill();
+              });
+            }
+            function update() {
+              confetti.forEach(c => {
+              c.y += Math.cos(frame/10 + c.d) + 2 + c.r/6;
+              c.x += Math.sin(frame/15) * 2;
+              c.tiltAngle += c.tiltAngleIncremental;
+              c.tilt = Math.sin(c.tiltAngle) * 8;
+              if (c.y > H + 20) {
+                c.y = -10;
+                c.x = Math.random() * W;
+              }
+              });
+            }
+            function animate() {
+              frame++;
+              update();
+              draw();
+              if (frame < 60) requestAnimationFrame(animate);
+            }
+            animate();
+            }
+        </script>
       </div>
     </div>
 

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>แบบประเมินความพึงพอใจ</title>
+  <style>
+    body{font-family:sans-serif;background:#f7f7f7;padding:20px}
+    .card{background:#fff;max-width:700px;margin:auto;padding:20px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+    h1{margin-top:0;text-align:center;color:#2563eb}
+    label{display:block;margin-top:15px;font-weight:600;color:#374151}
+    input,select,textarea{width:100%;padding:10px;margin-top:6px;border:1px solid #ccc;border-radius:8px;font-size:14px}
+    textarea{resize:vertical;min-height:80px}
+    button{margin-top:20px;padding:12px 18px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;margin-right:10px}
+    .submit{background:#2563eb;color:#fff}
+    .submit:hover{background:#1d4ed8}
+    .submit:disabled{background:#9ca3af;cursor:not-allowed}
+    .reset{background:#f3f4f6;color:#374151}
+    .reset:hover{background:#e5e7eb}
+    .loading{display:none;color:#2563eb;margin-top:10px}
+    .success{display:none;color:#059669;background:#d1fae5;padding:10px;border-radius:8px;margin-top:10px}
+    .error{display:none;color:#dc2626;background:#fee2e2;padding:10px;border-radius:8px;margin-top:10px}
+    .required{color:#dc2626}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📝 แบบประเมินความพึงพอใจ</h1>
+    <p style="text-align:center;color:#6b7280;margin-bottom:20px">
+      ความคิดเห็นของคุณมีค่าสำหรับเรา
+    </p>
+    
+    <form id="surveyForm">
+      <label>ชื่อผู้ประเมิน
+        <input type="text" name="name" placeholder="ชื่อ (ไม่บังคับ)" />
+      </label>
+
+      <label>วันที่
+        <input type="date" name="date" />
+      </label>
+
+      <label>หัวข้อ/บริการที่ประเมิน <span class="required">*</span>
+        <select name="service" required>
+          <option value="" disabled selected>— โปรดเลือก —</option>
+          <option>เว็บไซต์/แอป</option>
+          <option>การให้บริการลูกค้า</option>
+          <option>กิจกรรม/งานอีเวนต์</option>
+          <option>การสอน/อบรม</option>
+          <option>อื่น ๆ</option>
+        </select>
+      </label>
+
+      <label>ช่องทางที่รู้จัก/ใช้งาน
+        <select name="channel">
+          <option value="">— เลือกได้ —</option>
+          <option>หน้าเว็บ</option>
+          <option>โซเชียลมีเดีย</option>
+          <option>แนะนำจากเพื่อน</option>
+          <option>อื่น ๆ</option>
+        </select>
+      </label>
+
+      <label>คะแนนความพึงพอใจ <span class="required">*</span>
+        <small style="color:#6b7280">(1 = น้อยสุด, 5 = มากสุด)</small>
+      </label>
+      <select name="total_score" required>
+        <option value="">— โปรดเลือก —</option>
+        <option value="1">1 - ไม่พอใจมาก</option>
+        <option value="2">2 - ไม่พอใจ</option>
+        <option value="3">3 - ปานกลาง</option>
+        <option value="4">4 - พอใจ</option>
+        <option value="5">5 - พอใจมาก</option>
+      </select>
+
+      <label>💬 ข้อเสนอแนะ - สิ่งที่ชอบ
+        <textarea name="like" placeholder="สิ่งที่ทำให้คุณประทับใจหรือชอบใจ..."></textarea>
+      </label>
+
+      <label>🔧 ข้อเสนอแนะ - สิ่งที่ควรปรับปรุง
+        <textarea name="improve" placeholder="สิ่งที่คิดว่าควรปรับปรุงหรือพัฒนา..."></textarea>
+      </label>
+
+      <label>💡 ข้อเสนอแนะอื่น ๆ
+        <textarea name="other" placeholder="ข้อเสนอแนะเพิ่มเติมหรือความคิดเห็นอื่น ๆ..."></textarea>
+      </label>
+
+      <div>
+        <button type="submit" class="submit" id="submitBtn">
+          📤 ส่งแบบประเมิน
+        </button>
+        <button type="reset" class="reset">
+          🔄 ล้างข้อมูล
+        </button>
+        <a class="btn btn-ghost" href="index.html">HOME</a>
+      </div>
+      
+      <div class="loading" id="loading">
+        ⏳ กำลังส่งข้อมูล...
+      </div>
+      
+      <div class="success" id="success">
+        ✅ บันทึกข้อมูลเรียบร้อยแล้ว! ขอบคุณสำหรับความคิดเห็น
+      </div>
+      
+      <div class="error" id="error">
+        ❌ <span id="errorMessage">เกิดข้อผิดพลาด กรุณาลองใหม่</span>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // ตั้งวันที่เป็นวันปัจจุบัน
+    document.querySelector('input[name="date"]').value = new Date().toISOString().split('T')[0];
+    
+    document.getElementById("surveyForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      
+      // ซ่อนข้อความเก่า
+      document.getElementById('success').style.display = 'none';
+      document.getElementById('error').style.display = 'none';
+      
+      // แสดงสถานะกำลังโหลด
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('submitBtn').textContent = '⏳ กำลังส่ง...';
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+
+      // แทนที่ URL นี้ด้วย Web App URL ที่ได้จาก Apps Script
+      const webAppUrl = "https://script.google.com/macros/s/AKfycbx-suaFpESwlKrJf_AWc3d0bIO5bjE08grQv5oexMptkNLvT95bQRUmM8vRCTq97Kc/exec";
+      
+      fetch(webAppUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(result => {
+        // ซ่อนสถานะโหลด
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('submitBtn').textContent = '📤 ส่งแบบประเมิน';
+        
+        if(result.result === "success"){
+          // แสดงข้อความสำเร็จ
+          document.getElementById('success').style.display = 'block';
+          
+          // ล้างฟอร์ม
+          this.reset();
+          
+          // ตั้งวันที่ใหม่
+          document.querySelector('input[name="date"]').value = new Date().toISOString().split('T')[0];
+          
+          // เลื่อนไปที่ข้อความสำเร็จ
+          document.getElementById('success').scrollIntoView({ behavior: 'smooth' });
+          
+        } else {
+          throw new Error(result.message || 'Unknown error');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        
+        // ซ่อนสถานะโหลด
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('submitBtn').textContent = '📤 ส่งแบบประเมิน';
+        
+        // แสดงข้อความข้อผิดพลาด
+        document.getElementById('errorMessage').textContent = 
+          'เกิดข้อผิดพลาด: ' + error.message + ' กรุณาตรวจสอบการเชื่อมต่อและลองใหม่';
+        document.getElementById('error').style.display = 'block';
+        
+        // เลื่อนไปที่ข้อความข้อผิดพลาด
+        document.getElementById('error').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+    
+    // Reset form
+    document.querySelector('button[type="reset"]').addEventListener('click', function() {
+      // ซ่อนข้อความทั้งหมด
+      document.getElementById('success').style.display = 'none';
+      document.getElementById('error').style.display = 'none';
+      document.getElementById('loading').style.display = 'none';
+      
+      // ตั้งวันที่ใหม่
+      setTimeout(() => {
+        document.querySelector('input[name="date"]').value = new Date().toISOString().split('T')[0];
+      }, 100);
+    });
+  </script>
+</body>
+</html>

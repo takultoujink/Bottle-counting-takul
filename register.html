@@ -347,6 +347,57 @@
             <img src="back ground.jpg" alt="EcoBottle Logo" class="logo-img-main" data-aos="bounce-in" data-aos-duration="900" data-aos-delay="500">
             <h1>สมัครสมาชิก</h1>
             <p>ร่วมเป็นส่วนหนึ่งของ EcoBottle!</p>
+            <!-- Theme Toggle Button -->
+            <button id="themeToggle" type="button" style="position:absolute;top:18px;right:18px;background:var(--bg-secondary);border:none;border-radius:50%;width:44px;height:44px;box-shadow:0 2px 8px rgba(0,0,0,0.07);cursor:pointer;transition:background 0.2s;">
+                <span id="themeIcon" style="font-size:1.4rem;">🌙</span>
+            </button>
+            <script>
+                // Dark mode CSS variables
+                const darkTheme = {
+                    '--bg': '#181825',
+                    '--bg-secondary': '#232336',
+                    '--card': '#232336',
+                    '--text': '#f3f3fa',
+                    '--muted': '#bdbdd6',
+                    '--brand': '#a78bfa',
+                    '--brand-2': '#67e8f9',
+                    '--accent': '#fb7185',
+                    '--accent-2': '#4ade80',
+                    '--accent-3': '#fbbf24'
+                };
+                const lightTheme = {
+                    '--bg': '#fdfbff',
+                    '--bg-secondary': '#f8f4ff',
+                    '--card': '#ffffff',
+                    '--text': '#2d1b4e',
+                    '--muted': '#6b5b73',
+                    '--brand': '#a78bfa',
+                    '--brand-2': '#67e8f9',
+                    '--accent': '#fb7185',
+                    '--accent-2': '#4ade80',
+                    '--accent-3': '#fbbf24'
+                };
+
+                function setTheme(theme) {
+                    const root = document.documentElement;
+                    const vars = theme === 'dark' ? darkTheme : lightTheme;
+                    Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
+                    document.getElementById('themeIcon').textContent = theme === 'dark' ? '☀️' : '🌙';
+                    localStorage.setItem('theme', theme);
+                }
+
+                // Initial theme
+                (function() {
+                    const saved = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    setTheme(saved ? saved : (prefersDark ? 'dark' : 'light'));
+                })();
+
+                document.getElementById('themeToggle').onclick = function() {
+                    const current = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+                    setTheme(current === 'dark' ? 'light' : 'dark');
+                };
+            </script>
         </div>
 
         <form id="registerForm" data-aos="fade-up" data-aos-duration="800" data-aos-delay="700">

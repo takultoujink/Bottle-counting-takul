@@ -370,6 +370,55 @@
             <div class="logo-img-main" data-aos="bounce-in" data-aos-duration="800" data-aos-delay="600"></div>
             <h1>เข้าสู่ระบบ</h1>
             <p>ยินดีต้อนรับกลับสู่ EcoBottle!</p>
+            <!-- Theme Toggle Button -->
+            <button id="themeToggle" type="button" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;" aria-label="เปลี่ยนธีม">
+                <span id="themeIcon" style="font-size:1.5rem;">🌙</span>
+            </button>
+            <script>
+                // Simple dark mode toggle
+                const themeToggle = document.getElementById('themeToggle');
+                const themeIcon = document.getElementById('themeIcon');
+                const darkVars = {
+                    '--bg': '#181825',
+                    '--bg-secondary': '#232336',
+                    '--card': '#232336',
+                    '--text': '#f3f3fa',
+                    '--muted': '#b3b3c6',
+                    '--brand': '#a78bfa',
+                    '--brand-2': '#67e8f9',
+                    '--accent': '#fb7185',
+                    '--accent-2': '#4ade80',
+                    '--accent-3': '#fbbf24'
+                };
+                function setTheme(dark) {
+                    for (const [k, v] of Object.entries(dark ? darkVars : {
+                        '--bg': '#fdfbff',
+                        '--bg-secondary': '#f8f4ff',
+                        '--card': '#ffffff',
+                        '--text': '#2d1b4e',
+                        '--muted': '#6b5b73',
+                        '--brand': '#a78bfa',
+                        '--brand-2': '#67e8f9',
+                        '--accent': '#fb7185',
+                        '--accent-2': '#4ade80',
+                        '--accent-3': '#fbbf24'
+                    })) {
+                        document.documentElement.style.setProperty(k, v);
+                    }
+                    themeIcon.textContent = dark ? '☀️' : '🌙';
+                    localStorage.setItem('theme', dark ? 'dark' : 'light');
+                }
+                themeToggle.addEventListener('click', () => {
+                    const isDark = localStorage.getItem('theme') === 'dark';
+                    setTheme(!isDark);
+                });
+                // On load, set theme from localStorage or system
+                (function() {
+                    const saved = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    setTheme(saved === 'dark' || (!saved && prefersDark));
+                })();
+            </script>            
         </div>
 
         <!-- Google Sign-In First -->

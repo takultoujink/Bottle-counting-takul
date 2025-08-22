@@ -20,7 +20,7 @@
 
 ### 📊 **Database**
 - Firebase Authentication
-- Firebase Realtime Database
+- Firebase Realtime Databaseไ
 - Firebase Firestore
 
 ---

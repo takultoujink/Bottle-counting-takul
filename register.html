@@ -329,6 +329,22 @@
             gap: 8px;
         }
 
+        /* Loading spinner */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @media (max-width: 480px) {
             .register-container {
                 padding: 2rem;
@@ -429,7 +445,10 @@
                 <input type="password" id="confirmPassword" name="confirmPassword" placeholder="กรอกรหัสผ่านอีกครั้ง" required>
             </div>
 
-            <button type="submit" class="register-btn" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="1400">สมัครสมาชิก</button>
+            <button type="submit" class="register-btn" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="1400">
+                <div class="loading-spinner"></div>
+                <span id="registerBtnText">สมัครสมาชิก</span>
+            </button>
         </form>
 
         <div class="login-link" data-aos="fade-up" data-aos-duration="600" data-aos-delay="1500">
@@ -439,6 +458,65 @@
 
     <!-- AOS Animation Library Script -->
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    
+    <!-- Firebase SDK v9 -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            updateProfile,
+            onAuthStateChanged 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            collection, 
+            query, 
+            where, 
+            getDocs 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmw1lDRZIxYKDblO8nhS3SR5aTVCVPJbg",
+            authDomain: "takultoujink.firebaseapp.com",
+            projectId: "takultoujink",
+            storageBucket: "takultoujink.firebasestorage.app",
+            messagingSenderId: "865462073491",
+            appId: "1:865462073491:web:5985dfd8a0e91b71fa3566",
+            measurementId: "G-ZVXD02VSWF"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        console.log('Firebase initialized successfully');
+
+        // Check if user is already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('User already logged in, redirecting...');
+                window.location.href = 'dashboard.html'; // หรือหน้าหลักที่คุณต้องการ
+            }
+        });
+
+        // Make Firebase functions available globally
+        window.auth = auth;
+        window.db = db;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.updateProfile = updateProfile;
+        window.setDoc = setDoc;
+        window.doc = doc;
+        window.collection = collection;
+        window.query = query;
+        window.where = where;
+        window.getDocs = getDocs;
+    </script>
     
     <script>
         // Initialize AOS
@@ -452,7 +530,7 @@
 
         // Student ID Card Validation Function (รหัสนักเรียน 5 หลัก)
         function validateStudentID(id) {
-            console.log('Validating ID:', id); // Debug log
+            console.log('Validating ID:', id);
             
             // Remove all non-numeric characters
             const cleanId = id.replace(/\D/g, '');
@@ -467,23 +545,6 @@
             // แบบที่ 1: รับทุกรหัส 5 หลัก (ไม่ตรวจสอบ checksum)
             console.log('All 5-digit student IDs accepted');
             return true;
-
-            // หรือใช้แบบเดิมถ้าต้องการตรวจสอบ checksum (uncomment บรรทัดด้านล่าง)
-            /*
-            // Calculate checksum using custom algorithm for 5-digit student ID
-            let sum = 0;
-            for (let i = 0; i < 4; i++) {
-                const digit = parseInt(cleanId.charAt(i));
-                const weight = 5 - i;
-                sum += digit * weight;
-            }
-            
-            const remainder = sum % 11;
-            const checkDigit = (11 - remainder) % 10;
-            const actualLastDigit = parseInt(cleanId.charAt(4));
-            
-            return checkDigit === actualLastDigit;
-            */
         }
 
         // Password strength checker
@@ -530,7 +591,7 @@
             errorDiv.innerHTML = `❌ ${message}`;
             
             document.querySelector('.register-header').after(errorDiv);
-            setTimeout(() => errorDiv.remove(), 5000);
+            setTimeout(() => errorDiv.remove(), 7000);
         }
 
         // Show success message
@@ -546,6 +607,108 @@
             setTimeout(() => successDiv.remove(), 5000);
         }
 
+        // Show loading state
+        function setLoading(isLoading) {
+            const btn = document.querySelector('.register-btn');
+            const spinner = btn.querySelector('.loading-spinner');
+            const text = btn.querySelector('#registerBtnText');
+            
+            if (isLoading) {
+                btn.disabled = true;
+                spinner.style.display = 'block';
+                text.textContent = 'กำลังสมัครสมาชิก...';
+            } else {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                text.textContent = 'สมัครสมาชิก';
+            }
+        }
+
+        // Check if student ID already exists
+        async function checkStudentIdExists(studentId) {
+            try {
+                const usersRef = window.collection(window.db, 'users');
+                const q = window.query(usersRef, window.where('studentId', '==', studentId));
+                const querySnapshot = await window.getDocs(q);
+                return !querySnapshot.empty;
+            } catch (error) {
+                console.error('Error checking student ID:', error);
+                return false;
+            }
+        }
+
+        // Register user with Firebase
+        async function registerUser(userData) {
+            try {
+                setLoading(true);
+                
+                // Check if student ID already exists
+                const idExists = await checkStudentIdExists(userData.studentIdCard);
+                if (idExists) {
+                    throw new Error('เลขประจำตัวนักเรียนนี้ถูกใช้แล้ว');
+                }
+
+                // Create user with email and password
+                const userCredential = await window.createUserWithEmailAndPassword(
+                    window.auth, 
+                    userData.email, 
+                    userData.password
+                );
+
+                const user = userCredential.user;
+                console.log('User created:', user.uid);
+
+                // Update user profile
+                await window.updateProfile(user, {
+                    displayName: userData.displayName
+                });
+
+                // Save additional user data to Firestore
+                await window.setDoc(window.doc(window.db, 'users', user.uid), {
+                    uid: user.uid,
+                    displayName: userData.displayName,
+                    email: userData.email,
+                    studentId: userData.studentIdCard,
+                    createdAt: new Date().toISOString(),
+                    role: 'student',
+                    isActive: true
+                });
+
+                showSuccess(`สมัครสมาชิกสำเร็จ! ยินดีต้อนรับ ${userData.displayName}`);
+                
+                // Redirect to login page after short delay
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                
+                let errorMessage = 'เกิดข้อผิดพลาดในการสมัครสมาชิก';
+                
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'อีเมลนี้ถูกใช้แล้ว กรุณาใช้อีเมลอื่น';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'รหัสผ่านไม่แข็งแรงพอ กรุณาใช้รหัสผ่านที่มีอย่างน้อย 6 ตัวอักษร';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่';
+                        break;
+                    default:
+                        errorMessage = error.message || errorMessage;
+                }
+                
+                showError(errorMessage);
+            } finally {
+                setLoading(false);
+            }
+        }
+
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, setting up event listeners...');
@@ -555,93 +718,89 @@
             const validationDiv = document.getElementById('idCardValidation');
             
             if (!studentIdInput || !validationDiv) {
-            console.error('Required elements not found!');
-            return;
+                console.error('Required elements not found!');
+                return;
             }
 
             studentIdInput.addEventListener('input', function() {
-            console.log('Student ID input event triggered:', this.value);
-            
-            let value = this.value.replace(/\D/g, ''); // Remove non-numeric
-            if (value.length > 5) value = value.substring(0, 5); // Limit to 5 digits
-            this.value = value;
-            
-            if (value.length === 0) {
-                validationDiv.textContent = '';
-                validationDiv.className = 'validation-message';
-                return;
-            }
-            
-            if (value.length < 5) {
-                validationDiv.innerHTML = '⌛ กรุณากรอกเลขประจำตัวให้ครบ 5 หลัก';
-                validationDiv.className = 'validation-message validation-invalid';
-            } else if (validateStudentID(value)) {
-                validationDiv.innerHTML = '✅ เลขประจำตัวนักเรียนถูกต้อง';
-                validationDiv.className = 'validation-message validation-valid';
-            } else {
-                validationDiv.innerHTML = '❌ เลขประจำตัวนักเรียนไม่ถูกต้อง';
-                validationDiv.className = 'validation-message validation-invalid';
-            }
+                console.log('Student ID input event triggered:', this.value);
+                
+                let value = this.value.replace(/\D/g, ''); // Remove non-numeric
+                if (value.length > 5) value = value.substring(0, 5); // Limit to 5 digits
+                this.value = value;
+                
+                if (value.length === 0) {
+                    validationDiv.textContent = '';
+                    validationDiv.className = 'validation-message';
+                    return;
+                }
+                
+                if (value.length < 5) {
+                    validationDiv.innerHTML = '⏳ กรุณากรอกเลขประจำตัวให้ครบ 5 หลัก';
+                    validationDiv.className = 'validation-message validation-invalid';
+                } else if (validateStudentID(value)) {
+                    validationDiv.innerHTML = '✅ เลขประจำตัวนักเรียนถูกต้อง';
+                    validationDiv.className = 'validation-message validation-valid';
+                } else {
+                    validationDiv.innerHTML = '❌ เลขประจำตัวนักเรียนไม่ถูกต้อง';
+                    validationDiv.className = 'validation-message validation-invalid';
+                }
             });
 
             // Password strength check on input
             document.getElementById('password').addEventListener('input', function() {
-            checkPasswordStrength(this.value);
+                checkPasswordStrength(this.value);
             });
 
-            // Form submission (redirect to login.html on success)
-            document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const displayName = document.getElementById('displayName').value.trim();
-            const studentIdCard = document.getElementById('studentIdCard').value.replace(/\D/g, '');
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            // Basic validation
-            if (!displayName || !studentIdCard || !email || !password || !confirmPassword) {
-                showError('กรุณากรอกข้อมูลให้ครบถ้วน');
-                return;
-            }
+            // Form submission with Firebase registration
+            document.getElementById('registerForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const displayName = document.getElementById('displayName').value.trim();
+                const studentIdCard = document.getElementById('studentIdCard').value.replace(/\D/g, '');
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // Basic validation
+                if (!displayName || !studentIdCard || !email || !password || !confirmPassword) {
+                    showError('กรุณากรอกข้อมูลให้ครบถ้วน');
+                    return;
+                }
 
-            if (studentIdCard.length !== 5 || !validateStudentID(studentIdCard)) {
-                showError('กรุณากรอกเลขประจำตัวนักเรียนให้ถูกต้อง');
-                return;
-            }
+                if (studentIdCard.length !== 5 || !validateStudentID(studentIdCard)) {
+                    showError('กรุณากรอกเลขประจำตัวนักเรียนให้ถูกต้อง');
+                    return;
+                }
 
-            if (password !== confirmPassword) {
-                showError('รหัสผ่านไม่ตรงกัน');
-                return;
-            }
+                if (password !== confirmPassword) {
+                    showError('รหัสผ่านไม่ตรงกัน');
+                    return;
+                }
 
-            if (password.length < 6) {
-                showError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
-                return;
-            }
+                if (password.length < 6) {
+                    showError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+                    return;
+                }
 
-            showSuccess(`ข้อมูลถูกต้อง! ยินดีต้อนรับ ${displayName}`);
-            console.log('Form validation passed:', {
-                displayName,
-                studentIdCard,
-                email
-            });
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showError('รูปแบบอีเมลไม่ถูกต้อง');
+                    return;
+                }
 
-            // Redirect to login.html after short delay
-            setTimeout(function() {
-                window.location.href = 'login.html';
-            }, 1200);
+                // Register user with Firebase
+                await registerUser({
+                    displayName,
+                    studentIdCard,
+                    email,
+                    password
+                });
             });
             
             console.log('Event listeners set up successfully');
         });
     </script>
-
-    <!-- Firebase SDK (Optional - can be added back when needed) -->
-    <!--
-    <script type="module">
-        // Firebase code can be added here when needed
-    </script>
-    -->
 </body>
 </html>

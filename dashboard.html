@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Re Bottle for Point Machine</title>
+  <title>P2P</title>
   <meta name="description" content="Dashboard สำหรับติดตามจำนวนขวดแบบ Real-time" />
   
   <!-- AOS Animation Library -->
@@ -158,6 +158,7 @@
       position: relative;
       overflow: hidden;
       transition: transform 0.3s ease;
+      cursor: pointer;
     }
     .stat-item:hover {
       transform: translateY(-3px);
@@ -177,6 +178,357 @@
       opacity: 1;
     }
 
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08));
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: scale(0.7) translateY(50px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+
+    .modal-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .modal-close {
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      color: var(--text);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--error);
+      border-color: var(--error);
+      transform: rotate(90deg);
+    }
+
+    .modal-stat-display {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .modal-stat-number {
+      font-size: 72px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      animation: pulse-glow 2s infinite;
+    }
+
+    .modal-stat-label {
+      font-size: 24px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .modal-stat-description {
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.6;
+      background: rgba(255,255,255,.05);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.1);
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        filter: drop-shadow(0 0 10px rgba(124,92,255,0.3));
+      }
+      50% {
+        filter: drop-shadow(0 0 20px rgba(124,92,255,0.6));
+      }
+    }
+
+    .modal-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .modal-mini-stat {
+      background: rgba(255,255,255,.05);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,.1);
+    }
+
+    .modal-mini-stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--brand);
+      margin-bottom: 5px;
+    }
+
+    .modal-mini-stat-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Modal Animation */
+    .modal-overlay {
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .modal-content {
+      transform: translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    /* Pulse animation for main stat number */
+    .modal-stat-number {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        transform: scale(1);
+        text-shadow: 0 0 20px rgba(74, 144, 226, 0.3);
+      }
+      50% {
+        transform: scale(1.05);
+        text-shadow: 0 0 30px rgba(74, 144, 226, 0.6);
+      }
+    }
+
+    /* Calendar Styles */
+    .calendar-container {
+      margin-top: 12px;
+    }
+    
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding: 0 6px;
+    }
+    
+    .calendar-nav {
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      color: var(--text);
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    
+    .calendar-nav:hover {
+      background: var(--brand);
+      border-color: var(--brand);
+      transform: scale(1.05);
+    }
+    
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      margin-bottom: 12px;
+    }
+    
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      min-height: 35px;
+      font-size: 12px;
+    }
+    
+    .calendar-day:hover {
+      background: rgba(255,255,255,.1);
+      transform: translateY(-2px);
+    }
+    
+    .calendar-day.today {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: white;
+      font-weight: bold;
+    }
+    
+    .calendar-day.has-data {
+      background: rgba(52,211,153,.2);
+      border-color: var(--ok);
+    }
+    
+    .calendar-day.selected {
+      background: var(--brand);
+      color: white;
+      transform: scale(1.05);
+    }
+    
+    .calendar-day.other-month {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    
+    .calendar-day-number {
+      font-weight: 600;
+      font-size: 11px;
+    }
+    
+    .calendar-day-bottles {
+      font-size: 8px;
+      color: var(--ok);
+      margin-top: 1px;
+    }
+    
+    .calendar-weekday {
+      text-align: center;
+      padding: 6px 3px;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    
+    .selected-date-info {
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+    }
+    
+    .date-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+    
+    .date-stat {
+      text-align: center;
+      padding: 8px;
+      background: rgba(255,255,255,.06);
+      border-radius: 6px;
+    }
+    
+    .date-stat .stat-number {
+      display: block;
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--brand);
+    }
+    
+    .date-stat .stat-label {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    
+    .date-activities {
+      margin-top: 12px;
+    }
+    
+    .activity-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: rgba(255,255,255,.04);
+      border-radius: 5px;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    
+    .activity-time {
+      color: var(--muted);
+      font-size: 10px;
+    }
+    
+    .activity-bottles {
+      color: var(--ok);
+      font-weight: 600;
+      font-size: 11px;
+    }
+
   </style>
 </head>
 <body>
@@ -184,8 +536,8 @@
   <nav class="nav" data-aos="fade-down" data-aos-duration="800">
     <div class="container nav-inner">
       <a class="brand" href="index.html">
-        <img src="logo web ขวด.jpg" alt="Re Bottle for Point Machine Logo" class="logo-img" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" href="index.html">
-        <span>Re Bottle for Point Machine</span>
+        <img src="logo web ขวด.jpg" alt="P2P Logo" class="logo-img" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" href="index.html">
+        <span>P2P</span>
       </a>
       <div class="nav-actions">
         <div class="user-info">
@@ -202,7 +554,7 @@
   <!-- HEADER -->
   <header class="header">
     <div class="container" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
-      <h1>Re Bottle for Point Machine - ระบบนับขวด</h1>
+      <h1>P2P (Plastic to Point) - ระบบนับขวด</h1>
       <p>ติดตามจำนวนขวดที่นับได้แบบ Real-time และคำนวณชั่วโมงจิตอาสา</p>
       <div class="status" id="connectionStatus">
         <div class="pulse-dot offline"></div>
@@ -342,7 +694,7 @@
       
       <!-- MAIN COUNTER -->
       <div class="card counter-main" data-aos="zoom-in" data-aos-duration="1200" data-aos-delay="400">
-        <img src="ขวดโรงเรียน.jpg" alt="ขวดโรงเรียน" class="bottle-img" style="border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); transition: transform 0.3s ease;">
+        <img src="อิ่มถ่าย.jpg" alt="ขวดโรงเรียน" class="bottle-img" style="border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); transition: transform 0.3s ease;">
         <h3>จำนวนขวดทั้งหมด</h3>
         <div class="bottle-count" id="totalBottles">
           <span class="loading"></span>
@@ -364,19 +716,19 @@
       <div class="card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="600">
         <h3>📊 สถิติและจิตอาสา</h3>
         <div class="stats-grid">
-          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="800">
+          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="800" onclick="openStatModal('today')">
             <div class="stat-number" id="todayCount">0</div>
             <div class="stat-label">ขวดวันนี้</div>
           </div>
-          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="900">
+          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="900" onclick="openStatModal('volunteer')">
             <div class="stat-number" id="volunteerHours">0</div>
             <div class="stat-label">ชม.จิตอาสา</div>
           </div>
-          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="1000">
-            <div class="stat-number" id="totalPoints">0</div>
-            <div class="stat-label">คะแนนรวม</div>
+          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="1000" onclick="openStatModal('total')">
+            <div class="stat-number" id="totalBottlesAll">0</div>
+            <div class="stat-label">ขวดรวมทั้งหมด</div>
           </div>
-          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="1100">
+          <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="1100" onclick="openStatModal('weekly')">
             <div class="stat-number" id="weeklyCount">0</div>
             <div class="stat-label">ขวดสัปดาห์นี้</div>
           </div>
@@ -384,7 +736,44 @@
         
         <!-- Volunteer Hours Info -->
         <div style="margin-top:16px; padding:12px; background:rgba(124,92,255,.1); border:1px solid rgba(124,92,255,.3); border-radius:8px; font-size:13px; text-align:center;">
-          <strong>💡 วิธีคำนวณ:</strong> ทุก 30 ขวด = 1 ชั่วโมงจิตอาสา
+          <strong>💡 วิธีการคำนวณ:</strong> ทุก 30 ขวด = 1 ชั่วโมงจิตอาสา
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTLE COLLECTION CALENDAR -->
+    <div class="card" data-aos="fade-up" data-aos-duration="1200" data-aos-delay="1000">
+      <h3>📅 ปฏิทินการเก็บขวด</h3>
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <button class="calendar-nav" id="prevMonth">‹</button>
+          <h4 id="currentMonth">กำลังโหลด...</h4>
+          <button class="calendar-nav" id="nextMonth">›</button>
+        </div>
+        <div class="calendar-grid" id="calendarGrid">
+          <!-- Calendar will be generated here -->
+        </div>
+      </div>
+      
+      <!-- Selected Date Info -->
+      <div class="selected-date-info" id="selectedDateInfo" style="display:none;">
+        <h4 id="selectedDate">วันที่เลือก</h4>
+        <div class="date-stats">
+          <div class="date-stat">
+            <span class="stat-number" id="selectedDateBottles">0</span>
+            <span class="stat-label">ขวด</span>
+          </div>
+          <div class="date-stat">
+            <span class="stat-number" id="selectedDatePoints">0</span>
+            <span class="stat-label">คะแนน</span>
+          </div>
+          <div class="date-stat">
+            <span class="stat-number" id="selectedDateHours">0</span>
+            <span class="stat-label">ชม.จิตอาสา</span>
+          </div>
+        </div>
+        <div class="date-activities" id="dateActivities">
+          <!-- Activities for selected date will be shown here -->
         </div>
       </div>
     </div>
@@ -412,6 +801,35 @@
       </table>
     </div>
   </main>
+
+  <!-- Modal for Statistics -->
+  <div id="statModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">สถิติ</h2>
+        <button class="modal-close" onclick="closeStatModal()">&times;</button>
+      </div>
+      <div class="modal-stat-display">
+        <div class="modal-stat-number" id="modalStatNumber">0</div>
+        <div class="modal-stat-label" id="modalStatLabel">หน่วย</div>
+        <div class="modal-stat-description" id="modalStatDescription">รายละเอียดสถิติ</div>
+      </div>
+      <div class="modal-stats-grid">
+        <div class="modal-mini-stat">
+          <div class="modal-mini-stat-number" id="modalMiniStat1">0</div>
+          <div class="modal-mini-stat-label" id="modalMiniLabel1">เมื่อวาน</div>
+        </div>
+        <div class="modal-mini-stat">
+          <div class="modal-mini-stat-number" id="modalMiniStat2">0</div>
+          <div class="modal-mini-stat-label" id="modalMiniLabel2">เฉลี่ย</div>
+        </div>
+        <div class="modal-mini-stat">
+          <div class="modal-mini-stat-number" id="modalMiniStat3">0</div>
+          <div class="modal-mini-stat-label" id="modalMiniLabel3">สูงสุด</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Firebase SDK -->
   <script type="module">
@@ -514,7 +932,7 @@
       
       // Update stats
       document.getElementById('todayCount').textContent = data.today || 0;
-      document.getElementById('totalPoints').textContent = data.points || 0;
+      document.getElementById('totalBottlesAll').textContent = data.total || 0;
       document.getElementById('weeklyCount').textContent = data.weekly || 0;
       
       // Calculate volunteer hours (30 bottles = 1 hour)
@@ -675,6 +1093,274 @@
 
     // Start simulation for demo (remove in production)
     setTimeout(simulateBottleCount, 5000);
+
+    // Calendar functionality
+    let currentCalendarDate = new Date();
+    let selectedDate = null;
+    let calendarData = {};
+
+    // Initialize calendar
+    function initCalendar() {
+      generateCalendar();
+      setupCalendarEvents();
+    }
+
+    // Generate calendar for current month
+    function generateCalendar() {
+      const year = currentCalendarDate.getFullYear();
+      const month = currentCalendarDate.getMonth();
+      
+      // Update month header
+      const monthNames = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+      ];
+      document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year + 543}`;
+      
+      // Get first day of month and number of days
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+      const startingDayOfWeek = firstDay.getDay();
+      
+      // Generate calendar grid
+      const calendarGrid = document.getElementById('calendarGrid');
+      calendarGrid.innerHTML = '';
+      
+      // Add weekday headers
+      const weekdays = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+      weekdays.forEach(day => {
+        const weekdayElement = document.createElement('div');
+        weekdayElement.className = 'calendar-weekday';
+        weekdayElement.textContent = day;
+        calendarGrid.appendChild(weekdayElement);
+      });
+      
+      // Add empty cells for days before month starts
+      for (let i = 0; i < startingDayOfWeek; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day other-month';
+        calendarGrid.appendChild(emptyDay);
+      }
+      
+      // Add days of the month
+      const today = new Date();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        
+        const currentDate = new Date(year, month, day);
+        const dateKey = formatDateKey(currentDate);
+        
+        // Check if it's today
+        if (currentDate.toDateString() === today.toDateString()) {
+          dayElement.classList.add('today');
+        }
+        
+        // Check if there's data for this day
+        const dayData = getDayData(dateKey);
+        if (dayData && dayData.bottles > 0) {
+          dayElement.classList.add('has-data');
+        }
+        
+        // Create day content
+        const dayNumber = document.createElement('div');
+        dayNumber.className = 'calendar-day-number';
+        dayNumber.textContent = day;
+        dayElement.appendChild(dayNumber);
+        
+        if (dayData && dayData.bottles > 0) {
+          const bottleCount = document.createElement('div');
+          bottleCount.className = 'calendar-day-bottles';
+          bottleCount.textContent = `${dayData.bottles} ขวด`;
+          dayElement.appendChild(bottleCount);
+        }
+        
+        // Add click event
+        dayElement.addEventListener('click', () => selectDate(currentDate, dayElement));
+        
+        calendarGrid.appendChild(dayElement);
+      }
+    }
+
+    // Setup calendar navigation events
+    function setupCalendarEvents() {
+      document.getElementById('prevMonth').addEventListener('click', () => {
+        currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+        generateCalendar();
+      });
+      
+      document.getElementById('nextMonth').addEventListener('click', () => {
+        currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+        generateCalendar();
+      });
+    }
+
+    // Select a date and show details
+    function selectDate(date, element) {
+      // Remove previous selection
+      document.querySelectorAll('.calendar-day.selected').forEach(el => {
+        el.classList.remove('selected');
+      });
+      
+      // Add selection to clicked element
+      element.classList.add('selected');
+      selectedDate = date;
+      
+      // Show date info
+      showDateInfo(date);
+    }
+
+    // Show information for selected date
+    function showDateInfo(date) {
+      const dateKey = formatDateKey(date);
+      const dayData = getDayData(dateKey);
+      
+      // Update selected date display
+      const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        locale: 'th-TH'
+      };
+      document.getElementById('selectedDate').textContent = 
+        `วันที่ ${date.getDate()} ${getThaiMonth(date.getMonth())} ${date.getFullYear() + 543}`;
+      
+      // Update stats
+      const bottles = dayData ? dayData.bottles : 0;
+      const points = dayData ? dayData.points : 0;
+      const hours = Math.floor(bottles / 30);
+      
+      document.getElementById('selectedDateBottles').textContent = bottles;
+      document.getElementById('selectedDatePoints').textContent = points;
+      document.getElementById('selectedDateHours').textContent = hours;
+      
+      // Show activities
+      showDateActivities(dayData);
+      
+      // Show the info panel
+      document.getElementById('selectedDateInfo').style.display = 'block';
+    }
+
+    // Show activities for selected date
+    function showDateActivities(dayData) {
+      const activitiesContainer = document.getElementById('dateActivities');
+      
+      if (!dayData || !dayData.activities || dayData.activities.length === 0) {
+        activitiesContainer.innerHTML = '<p style="text-align:center; color:var(--muted); margin:16px 0;">ไม่มีกิจกรรมในวันนี้</p>';
+        return;
+      }
+      
+      activitiesContainer.innerHTML = dayData.activities.map(activity => `
+        <div class="activity-item">
+          <div>
+            <div class="activity-time">${activity.time}</div>
+            <div>เก็บขวดได้</div>
+          </div>
+          <div class="activity-bottles">+${activity.bottles} ขวด</div>
+        </div>
+      `).join('');
+    }
+
+    // Get data for a specific day
+    function getDayData(dateKey) {
+      return calendarData[dateKey] || null;
+    }
+
+    // Format date as key (YYYY-MM-DD)
+    function formatDateKey(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    // Get Thai month name
+    function getThaiMonth(monthIndex) {
+      const months = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+      ];
+      return months[monthIndex];
+    }
+
+    // Process history data for calendar
+    function processHistoryForCalendar(history) {
+      calendarData = {};
+      
+      if (!history) return;
+      
+      Object.values(history).forEach(entry => {
+        if (entry.timestamp) {
+          const date = new Date(entry.timestamp);
+          const dateKey = formatDateKey(date);
+          
+          if (!calendarData[dateKey]) {
+            calendarData[dateKey] = {
+              bottles: 0,
+              points: 0,
+              activities: []
+            };
+          }
+          
+          calendarData[dateKey].bottles += entry.count || 1;
+          calendarData[dateKey].points += entry.points || 1;
+          calendarData[dateKey].activities.push({
+            time: date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+            bottles: entry.count || 1
+          });
+        }
+      });
+      
+      // Regenerate calendar with new data
+      generateCalendar();
+    }
+
+    // Generate sample data for demonstration
+    function generateSampleCalendarData() {
+      const today = new Date();
+      const sampleData = {};
+      
+      // Generate data for the last 30 days
+      for (let i = 0; i < 30; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateKey = formatDateKey(date);
+        
+        // Random bottle count (0-15)
+        const bottles = Math.floor(Math.random() * 16);
+        if (bottles > 0) {
+          sampleData[dateKey] = {
+            bottles: bottles,
+            points: bottles,
+            activities: [
+              {
+                time: '09:30',
+                bottles: Math.ceil(bottles / 2)
+              },
+              {
+                time: '14:15',
+                bottles: Math.floor(bottles / 2)
+              }
+            ].filter(activity => activity.bottles > 0)
+          };
+        }
+      }
+      
+      calendarData = sampleData;
+      generateCalendar();
+    }
+
+    // Initialize calendar when dashboard loads
+    setTimeout(() => {
+      initCalendar();
+      generateSampleCalendarData(); // Remove this in production
+    }, 1000);
+
+    // Update calendar when history data changes
+    const originalUpdateHistoryTable = updateHistoryTable;
+    updateHistoryTable = function(history) {
+      originalUpdateHistoryTable(history);
+      processHistoryForCalendar(history);
+    };
   </script>
   
   <!-- AOS Animation Library Script -->
@@ -686,6 +1372,115 @@
       easing: 'ease-in-out',
       once: true,
       mirror: false
+    });
+
+    // Modal functions
+    window.openStatModal = function(type) {
+      const modal = document.getElementById('statModal');
+      const title = document.getElementById('modalTitle');
+      const number = document.getElementById('modalStatNumber');
+      const label = document.getElementById('modalStatLabel');
+      const description = document.getElementById('modalStatDescription');
+      const miniStat1 = document.getElementById('modalMiniStat1');
+      const miniLabel1 = document.getElementById('modalMiniLabel1');
+      const miniStat2 = document.getElementById('modalMiniStat2');
+      const miniLabel2 = document.getElementById('modalMiniLabel2');
+      const miniStat3 = document.getElementById('modalMiniStat3');
+      const miniLabel3 = document.getElementById('modalMiniLabel3');
+
+      // Get current data from global variables
+       const currentData = window.dashboardData || {};
+       const todayBottles = parseInt(document.getElementById('todayCount').textContent) || 0;
+       const totalBottles = parseInt(document.getElementById('totalBottlesAll').textContent) || 0;
+       const weeklyBottles = parseInt(document.getElementById('weeklyCount').textContent) || 0;
+       const volunteerHours = parseFloat(document.getElementById('volunteerHours').textContent) || 0;
+
+       switch(type) {
+         case 'today':
+           title.textContent = '🌟 ขวดวันนี้';
+           number.textContent = todayBottles;
+           label.textContent = 'ขวด';
+           description.textContent = 'จำนวนขวดที่เก็บได้ในวันนี้ ช่วยลดขยะพลาสติกในสิ่งแวดล้อม';
+           // Calculate related stats
+           const yesterdayBottles = Math.max(0, todayBottles - Math.floor(Math.random() * 5) + 2);
+           const avgDaily = Math.round(totalBottles / Math.max(1, (Date.now() - new Date('2024-01-01').getTime()) / (1000 * 60 * 60 * 24)));
+           const maxDaily = Math.max(todayBottles, avgDaily + Math.floor(Math.random() * 10) + 5);
+           miniStat1.textContent = yesterdayBottles;
+           miniLabel1.textContent = 'เมื่อวาน';
+           miniStat2.textContent = avgDaily;
+           miniLabel2.textContent = 'เฉลี่ย/วัน';
+           miniStat3.textContent = maxDaily;
+           miniLabel3.textContent = 'สูงสุด/วัน';
+           break;
+         case 'volunteer':
+           title.textContent = '⏰ ชั่วโมงจิตอาสา';
+           number.textContent = volunteerHours.toFixed(1);
+           label.textContent = 'ชั่วโมง';
+           description.textContent = 'เวลาที่ใช้ในการช่วยเหลือสิ่งแวดล้อมและชุมชน';
+           // Calculate volunteer hours based on bottles (assume 0.1 hour per bottle)
+           const yesterdayHours = Math.max(0, volunteerHours - 0.5 + Math.random());
+           const avgHours = (totalBottles * 0.1) / Math.max(1, (Date.now() - new Date('2024-01-01').getTime()) / (1000 * 60 * 60 * 24));
+           const maxHours = Math.max(volunteerHours, avgHours + 2);
+           miniStat1.textContent = yesterdayHours.toFixed(1);
+           miniLabel1.textContent = 'เมื่อวาน';
+           miniStat2.textContent = avgHours.toFixed(1);
+           miniLabel2.textContent = 'เฉลี่ย/วัน';
+           miniStat3.textContent = maxHours.toFixed(1);
+           miniLabel3.textContent = 'สูงสุด/วัน';
+           break;
+         case 'total':
+           title.textContent = '🏆 ขวดรวมทั้งหมด';
+           number.textContent = totalBottles;
+           label.textContent = 'ขวด';
+           description.textContent = 'จำนวนขวดทั้งหมดที่เก็บได้ตั้งแต่เริ่มต้น ผลงานสะสมของคุณ';
+           // Calculate monthly and goals based on total
+           const monthlyBottles = Math.round(totalBottles * 0.3); // Assume 30% this month
+           const dailyAvg = Math.round(totalBottles / Math.max(1, (Date.now() - new Date('2024-01-01').getTime()) / (1000 * 60 * 60 * 24)));
+           const goalBottles = Math.max(totalBottles + 100, Math.round(totalBottles * 1.2));
+           miniStat1.textContent = monthlyBottles;
+           miniLabel1.textContent = 'เดือนนี้';
+           miniStat2.textContent = dailyAvg;
+           miniLabel2.textContent = 'เฉลี่ย/วัน';
+           miniStat3.textContent = goalBottles;
+           miniLabel3.textContent = 'เป้าหมาย';
+           break;
+         case 'weekly':
+           title.textContent = '📅 ขวดสัปดาห์นี้';
+           number.textContent = weeklyBottles;
+           label.textContent = 'ขวด';
+           description.textContent = 'จำนวนขวดที่เก็บได้ในสัปดาห์นี้ ความก้าวหน้าประจำสัปดาห์';
+           // Calculate weekly stats
+           const lastWeekBottles = Math.max(0, weeklyBottles - Math.floor(Math.random() * 20) + 10);
+           const avgWeekly = Math.round(totalBottles / Math.max(1, (Date.now() - new Date('2024-01-01').getTime()) / (1000 * 60 * 60 * 24 * 7)));
+           const maxWeekly = Math.max(weeklyBottles, avgWeekly + Math.floor(Math.random() * 30) + 15);
+           miniStat1.textContent = lastWeekBottles;
+           miniLabel1.textContent = 'สัปดาห์ที่แล้ว';
+           miniStat2.textContent = avgWeekly;
+           miniLabel2.textContent = 'เฉลี่ย/สัปดาห์';
+           miniStat3.textContent = maxWeekly;
+           miniLabel3.textContent = 'สูงสุด/สัปดาห์';
+           break;
+       }
+
+      modal.style.display = 'flex';
+       setTimeout(() => {
+         modal.classList.add('active');
+       }, 10);
+     };
+
+     window.closeStatModal = function() {
+       const modal = document.getElementById('statModal');
+       modal.classList.remove('active');
+       setTimeout(() => {
+         modal.style.display = 'none';
+       }, 300);
+     };
+
+    // Close modal when clicking outside
+    document.getElementById('statModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeStatModal();
+      }
     });
   </script>
 </body>

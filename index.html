@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Re Bottle for Point Machine</title>
+  <title>P2P</title>
   <meta name="description" content="เปลี่ยนขวดพลาสติกเป็นแต้มสะสม ง่ายๆ แค่โยนขวด รับแต้มทันที เพื่อโลกที่ยั่งยืน" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
   <style>
@@ -199,6 +199,40 @@
     .btn { transition: transform 0.3s ease, box-shadow 0.3s ease; }
     .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
 
+    /* Leaderboard */
+    .leaderboard-container{ background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.12); border-radius: var(--radius-xl); padding:32px; box-shadow: var(--shadow); }
+    .leaderboard-loading{ text-align:center; padding:40px; }
+    .loading-spinner{ width:40px; height:40px; border:4px solid rgba(167, 139, 250, 0.2); border-top:4px solid var(--brand); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 16px; }
+    @keyframes spin{ 0%{ transform:rotate(0deg); } 100%{ transform:rotate(360deg); } }
+    .leaderboard-podium{ display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; margin-bottom:32px; }
+    .podium-item{ background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border:2px solid; border-radius: var(--radius); padding:24px; text-align:center; position:relative; transition: all 0.3s ease; }
+    .podium-item:hover{ transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+    .podium-item.first{ border-color: #ffd700; background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05)); }
+    .podium-item.second{ border-color: #c0c0c0; background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(192, 192, 192, 0.05)); }
+    .podium-item.third{ border-color: #cd7f32; background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(205, 127, 50, 0.05)); }
+    .podium-rank{ position:absolute; top:-12px; left:50%; transform:translateX(-50%); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; }
+    .podium-rank.first{ background: linear-gradient(135deg, #ffd700, #ffed4e); color:#000; }
+    .podium-rank.second{ background: linear-gradient(135deg, #c0c0c0, #e5e5e5); color:#000; }
+    .podium-rank.third{ background: linear-gradient(135deg, #cd7f32, #daa520); color:#fff; }
+    .podium-avatar{ width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:24px; color:white; font-weight:800; }
+    .podium-name{ font-weight:700; margin-bottom:8px; color:var(--text); }
+    .podium-bottles{ font-size:20px; font-weight:800; margin-bottom:4px; }
+    .podium-bottles.first{ background: linear-gradient(135deg, #ffd700, #ffed4e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .podium-bottles.second{ background: linear-gradient(135deg, #c0c0c0, #e5e5e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .podium-bottles.third{ background: linear-gradient(135deg, #cd7f32, #daa520); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .podium-hours{ color:var(--muted); font-size:14px; }
+    .leaderboard-list{ }
+    .leaderboard-item{ display:flex; align-items:center; gap:16px; padding:16px; background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius: var(--radius); margin-bottom:12px; transition: all 0.3s ease; }
+    .leaderboard-item:hover{ background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border-color: rgba(255,255,255,.15); transform: translateX(8px); }
+    .leaderboard-rank{ width:32px; height:32px; border-radius:50%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0; }
+    .leaderboard-avatar{ width:48px; height:48px; border-radius:50%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); display:flex; align-items:center; justify-content:center; font-size:18px; color:white; font-weight:700; flex-shrink:0; }
+    .leaderboard-info{ flex:1; }
+    .leaderboard-name{ font-weight:600; margin-bottom:4px; color:var(--text); }
+    .leaderboard-details{ color:var(--muted); font-size:14px; }
+    .leaderboard-bottles{ font-size:18px; font-weight:800; color:var(--brand); margin-right:8px; }
+    .leaderboard-hours{ color:var(--muted); font-size:14px; }
+    .leaderboard-error{ text-align:center; padding:40px; color:var(--muted); }
+
     /* Modal */
     .modal-overlay {
       position: fixed;
@@ -333,6 +367,12 @@
       .scoring-card{ padding:28px; }
       .scoring-icon{ font-size:48px; }
     }
+    @media (max-width: 900px){
+      .leaderboard-podium{ grid-template-columns: 1fr; gap:16px; }
+      .podium-item{ padding:20px; }
+      .podium-avatar{ width:50px; height:50px; font-size:20px; }
+      .leaderboard-container{ padding:24px; }
+    }
     @media (max-width: 560px){
       .features{ grid-template-columns: 1fr; }
       .how-to-use-grid{ grid-template-columns: 1fr; gap:16px; }
@@ -350,6 +390,13 @@
       .scoring-card h3{ font-size:20px; }
       .scoring-item{ font-size:18px; gap:12px; flex-wrap:wrap; }
       .modal { padding: 24px; }
+      .leaderboard-container{ padding:20px; }
+      .podium-item{ padding:16px; }
+      .podium-avatar{ width:40px; height:40px; font-size:16px; }
+      .podium-bottles{ font-size:18px; }
+      .leaderboard-item{ padding:12px; gap:12px; }
+      .leaderboard-avatar{ width:40px; height:40px; font-size:16px; }
+      .leaderboard-bottles{ font-size:16px; }
     }
   </style>
 </head>
@@ -358,8 +405,8 @@
   <nav class="nav">
     <div class="container nav-inner">
       <a class="brand" href="#" data-aos="fade-right" data-aos-duration="800">
-        <img src="nnn.jpg" alt="Re Bottle for Point Machine Logo" class="logo-img" style="border-radius: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
-        <span>Re Bottle for Point Machine</span>
+        <img src="nnn.jpg" alt="P2P Logo" class="logo-img" style="border-radius: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
+        <span>P2P</span>
       </a>
       <div class="nav-links" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
         <a href="#features">คุณสมบัติ</a>
@@ -402,9 +449,9 @@
         <span class="eyebrow" data-aos="fade-up" data-aos-duration="800">
           <span class="pulse-dot"></span> ระบบ AI ตรวจจับขวด 
         </span>
-        <h1 data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">โยนขวด รับแต้ม</h1>
+        <h1 data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">หย่อนขวด รับแต้ม</h1>
         <p class="lead" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
-          โครงงาน Re Bottle for Point Machine – ระบบแยกขวดอัจฉริยะ เชื่อมต่อ AI และ Arduino เพื่อแปลงขวดพลาสติกเป็นแต้มสะสม เก็บข้อมูลผ่าน Firebase และส่งเสริมการรีไซเคิลอย่างยั่งยืน
+          โครงงาน P2P (Plastic to Point) – ระบบแยกขวดอัจฉริยะ เชื่อมต่อ AI และ Arduino เพื่อแปลงขวดพลาสติกเป็นแต้มสะสม เก็บข้อมูลผ่าน Firebase และส่งเสริมการรีไซเคิลอย่างยั่งยืน
         </p>
         <div class="cta" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="600">
           <a class="btn btn-primary" href="login.html">log_in</a>
@@ -525,6 +572,31 @@
     </div>
   </section>
 
+  <!-- LEADERBOARD -->
+  <section id="leaderboard" class="section">
+    <div class="container">
+      <h2 data-aos="fade-up" data-aos-duration="800">🏆 อันดับผู้เก็บขวดยอดเยี่ยม</h2>
+      <div class="leaderboard-container" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+        <div class="leaderboard-loading" id="leaderboard-loading">
+          <div class="loading-spinner"></div>
+          <p>กำลังโหลดข้อมูล...</p>
+        </div>
+        <div class="leaderboard-content" id="leaderboard-content" style="display: none;">
+          <div class="leaderboard-podium">
+            <!-- Top 3 will be inserted here -->
+          </div>
+          <div class="leaderboard-list">
+            <!-- Other rankings will be inserted here -->
+          </div>
+        </div>
+        <div class="leaderboard-error" id="leaderboard-error" style="display: none;">
+          <p>⚠️ ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง</p>
+          <button class="btn btn-ghost" onclick="loadLeaderboard()">โหลดใหม่</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- CTA STRIP -->
   <section class="container cta-strip" id="start" data-aos="zoom-in" data-aos-duration="800">
     <strong>พร้อมเริ่มหรือยัง?</strong>
@@ -573,13 +645,158 @@
   <!-- FOOTER -->
   <footer data-aos="fade-up" data-aos-duration="600">
     <div class="container foot">
-      <p>© 2025 Re Bottle for Point Machine. สงวนลิขสิทธิ์</p>
+      <p>© 2025 P2P (Plastic to Point). สงวนลิขสิทธิ์</p>
       <div>ทำด้วย ❤ และ Vanilla CSS</div>
     </div>
   </footer>
 
   <!-- AOS JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAmw1lDRZIxYKDblO8nhS3SR5aTVCVPJbg",
+      authDomain: "takultoujink.firebaseapp.com",
+      projectId: "takultoujink",
+      storageBucket: "takultoujink.firebasestorage.app",
+      messagingSenderId: "865462073491",
+      appId: "1:865462073491:web:5985dfd8a0e91b71fa3566",
+      measurementId: "G-ZVXD02VSWF",
+      databaseURL: "https://takultoujink-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Leaderboard functions
+    window.loadLeaderboard = async function() {
+      const loadingEl = document.getElementById('leaderboard-loading');
+      const contentEl = document.getElementById('leaderboard-content');
+      const errorEl = document.getElementById('leaderboard-error');
+      
+      // Show loading state
+      loadingEl.style.display = 'block';
+      contentEl.style.display = 'none';
+      errorEl.style.display = 'none';
+      
+      try {
+        // Get all users' bottle data
+        const bottlesRef = ref(database, 'bottles');
+        onValue(bottlesRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            const leaderboardData = [];
+            
+            // Process user data
+            Object.keys(data).forEach(userId => {
+              const userData = data[userId];
+              if (userData && userData.total > 0) {
+                leaderboardData.push({
+                  userId: userId,
+                  name: userData.displayName || userData.email || 'ผู้ใช้ไม่ระบุชื่อ',
+                  bottles: userData.total || 0,
+                  hours: Math.floor((userData.total || 0) / 30)
+                });
+              }
+            });
+            
+            // Sort by bottles count (descending)
+            leaderboardData.sort((a, b) => b.bottles - a.bottles);
+            
+            // Display leaderboard
+            displayLeaderboard(leaderboardData);
+            
+            // Hide loading, show content
+            loadingEl.style.display = 'none';
+            contentEl.style.display = 'block';
+          } else {
+            throw new Error('ไม่พบข้อมูล');
+          }
+        }, (error) => {
+          console.error('Error loading leaderboard:', error);
+          loadingEl.style.display = 'none';
+          errorEl.style.display = 'block';
+        });
+      } catch (error) {
+        console.error('Error loading leaderboard:', error);
+        loadingEl.style.display = 'none';
+        errorEl.style.display = 'block';
+      }
+    };
+
+    function displayLeaderboard(data) {
+      const podiumEl = document.querySelector('.leaderboard-podium');
+      const listEl = document.querySelector('.leaderboard-list');
+      
+      // Clear existing content
+      podiumEl.innerHTML = '';
+      listEl.innerHTML = '';
+      
+      // Display top 3 in podium
+      const top3 = data.slice(0, 3);
+      top3.forEach((user, index) => {
+        const rank = index + 1;
+        const rankClass = rank === 1 ? 'first' : rank === 2 ? 'second' : 'third';
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
+        
+        const podiumItem = document.createElement('div');
+        podiumItem.className = `podium-item ${rankClass}`;
+        podiumItem.innerHTML = `
+          <div class="podium-rank ${rankClass}">${rank}</div>
+          <div class="podium-avatar">${user.name.charAt(0).toUpperCase()}</div>
+          <div class="podium-name">${user.name}</div>
+          <div class="podium-bottles ${rankClass}">${user.bottles} ขวด</div>
+          <div class="podium-hours">${user.hours} ชั่วโมงจิตอาสา</div>
+        `;
+        podiumEl.appendChild(podiumItem);
+      });
+      
+      // Display remaining users in list
+      const remaining = data.slice(3);
+      remaining.forEach((user, index) => {
+        const rank = index + 4;
+        
+        const listItem = document.createElement('div');
+        listItem.className = 'leaderboard-item';
+        listItem.innerHTML = `
+          <div class="leaderboard-rank">${rank}</div>
+          <div class="leaderboard-avatar">${user.name.charAt(0).toUpperCase()}</div>
+          <div class="leaderboard-info">
+            <div class="leaderboard-name">${user.name}</div>
+            <div class="leaderboard-details">${user.hours} ชั่วโมงจิตอาสา</div>
+          </div>
+          <div>
+            <span class="leaderboard-bottles">${user.bottles}</span>
+            <span class="leaderboard-hours">ขวด</span>
+          </div>
+        `;
+        listEl.appendChild(listItem);
+      });
+      
+      // If no data to show in list
+      if (remaining.length === 0 && top3.length > 0) {
+        listEl.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">🎉 ยินดีด้วย! คุณอยู่ใน Top 3</div>';
+      } else if (data.length === 0) {
+        podiumEl.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted); grid-column: 1 / -1;">📊 ยังไม่มีข้อมูลการเก็บขวด<br><small>เริ่มเก็บขวดเพื่อขึ้นอันดับกันเถอะ!</small></div>';
+      }
+    }
+
+    // Load leaderboard when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      loadLeaderboard();
+      
+      // Auto refresh every 30 seconds
+      setInterval(loadLeaderboard, 30000);
+    });
+  </script>
+  
   <script>
     // Initialize AOS
     AOS.init({

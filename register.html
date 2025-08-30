@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Re Bottle for Point Machine</title>
+    <title>P2P</title>
     
     <!-- AOS Animation Library -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
@@ -269,6 +269,26 @@
             flex-shrink: 0;
         }
 
+
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .register-btn {
             background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
             color: white;
@@ -460,6 +480,8 @@
             <span>สมัครด้วย Google</span>
             <div class="loading-spinner"></div>
         </button>
+
+
 
         <div class="divider">
             <span>หรือ</span>
@@ -727,6 +749,8 @@
                 text.textContent = 'สมัครด้วย Google';
             }
         }
+        
+
 
         function setRegisterLoading(isLoading) {
             const btn = document.querySelector('.register-btn');
@@ -945,6 +969,8 @@
                     setGoogleLoading(false);
                 }
             });
+            
+
             
             // Student ID validation on input
             const studentIdInput = document.getElementById('studentIdCard');

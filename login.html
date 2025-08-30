@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Re Bottle for Point Machine</title>
+    <title>P2P</title>
     
     <!-- AOS Animation Library -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
@@ -295,6 +295,49 @@
             color: white;
         }
 
+
+        
+
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .button span {
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover span {
+            transform: translateX(2px);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .button.loading {
+            animation: pulse 1.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .button.loading svg {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .register-link {
             text-align: center;
             color: #666;
@@ -369,7 +412,7 @@
         <div class="login-header" data-aos="fade-down" data-aos-duration="600" data-aos-delay="400">
             <div class="logo-img-main" data-aos="bounce-in" data-aos-duration="800" data-aos-delay="600"></div>
             <h1>เข้าสู่ระบบ</h1>
-            <p>ยินดีต้อนรับกลับสู่ EcoBottle!</p>
+            <p>ยินดีต้อนรับเข้าสู่ P2P</p>
             <!-- Theme Toggle Button -->
             <button id="themeToggle" type="button" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;" aria-label="เปลี่ยนธีม">
                 <span id="themeIcon" style="font-size:1.5rem;">🌙</span>
@@ -421,7 +464,7 @@
             </script>            
         </div>
 
-        <!-- Google Sign-In First -->
+        <!-- Social Login Buttons -->
         <div class="social-login" data-aos="fade-up" data-aos-duration="800" data-aos-delay="800">
             <button type="button" class="social-btn google-btn" id="googleSignIn">
                 <svg width="18" height="18" viewBox="0 0 24 24">
@@ -433,6 +476,8 @@
                 เข้าสู่ระบบด้วย Google
             </button>
         </div>
+
+
 
         <div class="divider" data-aos="fade-in" data-aos-duration="600" data-aos-delay="1000">
             <span>หรือ</span>
@@ -496,6 +541,8 @@
         googleProvider.setCustomParameters({
             prompt: 'select_account'
         });
+
+
 
         // Show loading state
         function showLoading(element, show, originalText) {
@@ -626,6 +673,8 @@
             }
         });
 
+
+
         // Email/Password login
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -688,9 +737,10 @@
 
         // Initialize page
         window.addEventListener('load', function() {
-            console.log('Re Bottle for Point Machine Login System Initialized');
+            console.log('P2P (Plastic to Point) Login System Initialized');
             console.log('Firebase Auth:', auth);
             console.log('Google Provider configured');
+
         });
     </script>
     

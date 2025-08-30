@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สมัครสมาชิก - EcoBottle</title>
+    <title>Re Bottle for Point Machine</title>
     
     <!-- AOS Animation Library -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
@@ -231,24 +231,51 @@
             border: 1px solid rgba(74, 222, 128, 0.2);
         }
 
-        .register-btn {
+        .btn {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-            color: white;
             border: none;
             border-radius: var(--radius);
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 1.5rem;
             box-shadow: var(--shadow-soft);
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .google-signin-btn {
+            background: white;
+            color: #424242;
+            border: 2px solid #e0e0e0;
+            margin-bottom: 1.5rem;
+        }
+
+        .google-signin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: #4285f4;
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .register-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+            color: white;
+            margin-top: 1.5rem;
         }
         
-        .register-btn::before {
+        .btn::before {
             content: '';
             position: absolute;
             top: 0;
@@ -259,27 +286,51 @@
             transition: left 0.5s;
         }
         
-        .register-btn:hover::before {
+        .btn:hover::before {
             left: 100%;
         }
 
-        .register-btn:hover {
+        .btn:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow);
         }
         
-        .register-btn:active {
+        .btn:active {
             transform: translateY(-1px);
         }
 
-        .register-btn:disabled {
+        .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
         
-        .register-btn:disabled::before {
+        .btn:disabled::before {
             display: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(251, 113, 133, 0.2);
+        }
+
+        .divider span {
+            background: var(--card);
+            padding: 0 15px;
+            position: relative;
         }
 
         .login-link {
@@ -329,6 +380,20 @@
             gap: 8px;
         }
 
+        .warning-message {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--accent-3);
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            margin: 15px 0;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         /* Loading spinner */
         .loading-spinner {
             display: none;
@@ -338,11 +403,25 @@
             border-radius: 50%;
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 1.4rem;
         }
 
         @media (max-width: 480px) {
@@ -363,57 +442,27 @@
             <img src="back ground.jpg" alt="EcoBottle Logo" class="logo-img-main" data-aos="bounce-in" data-aos-duration="900" data-aos-delay="500">
             <h1>สมัครสมาชิก</h1>
             <p>ร่วมเป็นส่วนหนึ่งของ EcoBottle!</p>
+            
             <!-- Theme Toggle Button -->
-            <button id="themeToggle" type="button" style="position:absolute;top:18px;right:18px;background:var(--bg-secondary);border:none;border-radius:50%;width:44px;height:44px;box-shadow:0 2px 8px rgba(0,0,0,0.07);cursor:pointer;transition:background 0.2s;">
-                <span id="themeIcon" style="font-size:1.4rem;">🌙</span>
+            <button id="themeToggle" type="button" class="theme-toggle">
+                <span id="themeIcon">🌙</span>
             </button>
-            <script>
-                // Dark mode CSS variables
-                const darkTheme = {
-                    '--bg': '#181825',
-                    '--bg-secondary': '#232336',
-                    '--card': '#232336',
-                    '--text': '#f3f3fa',
-                    '--muted': '#bdbdd6',
-                    '--brand': '#a78bfa',
-                    '--brand-2': '#67e8f9',
-                    '--accent': '#fb7185',
-                    '--accent-2': '#4ade80',
-                    '--accent-3': '#fbbf24'
-                };
-                const lightTheme = {
-                    '--bg': '#fdfbff',
-                    '--bg-secondary': '#f8f4ff',
-                    '--card': '#ffffff',
-                    '--text': '#2d1b4e',
-                    '--muted': '#6b5b73',
-                    '--brand': '#a78bfa',
-                    '--brand-2': '#67e8f9',
-                    '--accent': '#fb7185',
-                    '--accent-2': '#4ade80',
-                    '--accent-3': '#fbbf24'
-                };
+        </div>
 
-                function setTheme(theme) {
-                    const root = document.documentElement;
-                    const vars = theme === 'dark' ? darkTheme : lightTheme;
-                    Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
-                    document.getElementById('themeIcon').textContent = theme === 'dark' ? '☀️' : '🌙';
-                    localStorage.setItem('theme', theme);
-                }
+        <!-- Google Sign-In Button -->
+        <button type="button" id="googleSignInBtn" class="btn google-signin-btn" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+            <svg class="google-icon" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>สมัครด้วย Google</span>
+            <div class="loading-spinner"></div>
+        </button>
 
-                // Initial theme
-                (function() {
-                    const saved = localStorage.getItem('theme');
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    setTheme(saved ? saved : (prefersDark ? 'dark' : 'light'));
-                })();
-
-                document.getElementById('themeToggle').onclick = function() {
-                    const current = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
-                    setTheme(current === 'dark' ? 'light' : 'dark');
-                };
-            </script>
+        <div class="divider">
+            <span>หรือ</span>
         </div>
 
         <form id="registerForm" data-aos="fade-up" data-aos-duration="800" data-aos-delay="700">
@@ -445,7 +494,7 @@
                 <input type="password" id="confirmPassword" name="confirmPassword" placeholder="กรอกรหัสผ่านอีกครั้ง" required>
             </div>
 
-            <button type="submit" class="register-btn" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="1400">
+            <button type="submit" class="btn register-btn" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="1400">
                 <div class="loading-spinner"></div>
                 <span id="registerBtnText">สมัครสมาชิก</span>
             </button>
@@ -467,7 +516,9 @@
             getAuth, 
             createUserWithEmailAndPassword, 
             updateProfile,
-            onAuthStateChanged 
+            onAuthStateChanged,
+            GoogleAuthProvider,
+            signInWithPopup
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { 
             getFirestore, 
@@ -501,7 +552,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 console.log('User already logged in, redirecting...');
-                window.location.href = 'dashboard.html'; // หรือหน้าหลักที่คุณต้องการ
+                window.location.href = 'dashboard.html';
             }
         });
 
@@ -516,6 +567,8 @@
         window.query = query;
         window.where = where;
         window.getDocs = getDocs;
+        window.GoogleAuthProvider = GoogleAuthProvider;
+        window.signInWithPopup = signInWithPopup;
     </script>
     
     <script>
@@ -528,21 +581,63 @@
             offset: 30
         });
 
-        // Student ID Card Validation Function (รหัสนักเรียน 5 หลัก)
+        // Theme Toggle
+        const darkTheme = {
+            '--bg': '#181825',
+            '--bg-secondary': '#232336',
+            '--card': '#232336',
+            '--text': '#f3f3fa',
+            '--muted': '#bdbdd6',
+            '--brand': '#a78bfa',
+            '--brand-2': '#67e8f9',
+            '--accent': '#fb7185',
+            '--accent-2': '#4ade80',
+            '--accent-3': '#fbbf24'
+        };
+        const lightTheme = {
+            '--bg': '#fdfbff',
+            '--bg-secondary': '#f8f4ff',
+            '--card': '#ffffff',
+            '--text': '#2d1b4e',
+            '--muted': '#6b5b73',
+            '--brand': '#a78bfa',
+            '--brand-2': '#67e8f9',
+            '--accent': '#fb7185',
+            '--accent-2': '#4ade80',
+            '--accent-3': '#fbbf24'
+        };
+
+        function setTheme(theme) {
+            const root = document.documentElement;
+            const vars = theme === 'dark' ? darkTheme : lightTheme;
+            Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
+            document.getElementById('themeIcon').textContent = theme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', theme);
+        }
+
+        // Initialize theme
+        (function() {
+            const saved = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            setTheme(saved ? saved : (prefersDark ? 'dark' : 'light'));
+        })();
+
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const current = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        });
+
+        // Student ID Card Validation Function
         function validateStudentID(id) {
             console.log('Validating ID:', id);
-            
-            // Remove all non-numeric characters
             const cleanId = id.replace(/\D/g, '');
             console.log('Clean ID:', cleanId);
             
-            // รหัสนักเรียนต้องมี 5 หลัก
             if (cleanId.length !== 5) {
                 console.log('Length validation failed');
                 return false;
             }
 
-            // แบบที่ 1: รับทุกรหัส 5 หลัก (ไม่ตรวจสอบ checksum)
             console.log('All 5-digit student IDs accepted');
             return true;
         }
@@ -581,34 +676,59 @@
             return strength;
         }
 
-        // Show error message
-        function showError(message) {
-            const existingError = document.querySelector('.error-message');
-            if (existingError) existingError.remove();
+        // Show messages with auto-dismiss
+        function showMessage(message, type = 'error', duration = 7000) {
+            // Remove existing message
+            const existing = document.querySelector(`.${type}-message`);
+            if (existing) existing.remove();
 
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.innerHTML = `❌ ${message}`;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `${type}-message`;
             
-            document.querySelector('.register-header').after(errorDiv);
-            setTimeout(() => errorDiv.remove(), 7000);
+            const icon = {
+                error: '❌',
+                success: '✅', 
+                warning: '⚠️'
+            }[type] || '❌';
+            
+            messageDiv.innerHTML = `${icon} ${message}`;
+            
+            document.querySelector('.register-header').after(messageDiv);
+            if (duration > 0) {
+                setTimeout(() => messageDiv.remove(), duration);
+            }
         }
 
-        // Show success message
-        function showSuccess(message) {
-            const existingSuccess = document.querySelector('.success-message');
-            if (existingSuccess) existingSuccess.remove();
-
-            const successDiv = document.createElement('div');
-            successDiv.className = 'success-message';
-            successDiv.innerHTML = `✅ ${message}`;
-            
-            document.querySelector('.register-header').after(successDiv);
-            setTimeout(() => successDiv.remove(), 5000);
+        function showError(message, duration = 7000) {
+            showMessage(message, 'error', duration);
         }
 
-        // Show loading state
-        function setLoading(isLoading) {
+        function showSuccess(message, duration = 5000) {
+            showMessage(message, 'success', duration);
+        }
+
+        function showWarning(message, duration = 6000) {
+            showMessage(message, 'warning', duration);
+        }
+
+        // Loading states
+        function setGoogleLoading(isLoading) {
+            const btn = document.getElementById('googleSignInBtn');
+            const spinner = btn.querySelector('.loading-spinner');
+            const text = btn.querySelector('span');
+            
+            if (isLoading) {
+                btn.disabled = true;
+                spinner.style.display = 'block';
+                text.textContent = 'กำลังเข้าสู่ระบบ...';
+            } else {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                text.textContent = 'สมัครด้วย Google';
+            }
+        }
+
+        function setRegisterLoading(isLoading) {
             const btn = document.querySelector('.register-btn');
             const spinner = btn.querySelector('.loading-spinner');
             const text = btn.querySelector('#registerBtnText');
@@ -637,10 +757,92 @@
             }
         }
 
-        // Register user with Firebase
+        // Google Sign-In with better error handling
+        async function signInWithGoogle() {
+            setGoogleLoading(true);
+            try {
+                // Check if we're running on localhost or unauthorized domain
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    showWarning('Google Sign-In อาจไม่ทำงานใน localhost กรุณาใช้การสมัครด้วยอีเมลแทน', 8000);
+                }
+
+                const provider = new window.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+                
+                const result = await window.signInWithPopup(window.auth, provider);
+                const user = result.user;
+                
+                console.log('Google sign-in successful:', user.uid);
+
+                // Check if user already exists in Firestore
+                const usersRef = window.collection(window.db, 'users');
+                const q = window.query(usersRef, window.where('uid', '==', user.uid));
+                const querySnapshot = await window.getDocs(q);
+
+                if (querySnapshot.empty) {
+                    // New user - create profile
+                    await window.setDoc(window.doc(window.db, 'users', user.uid), {
+                        uid: user.uid,
+                        displayName: user.displayName || '',
+                        email: user.email,
+                        studentId: '', // Can be updated later
+                        createdAt: new Date().toISOString(),
+                        role: 'student',
+                        isActive: true,
+                        provider: 'google',
+                        photoURL: user.photoURL || ''
+                    });
+                    
+                    showSuccess(`ยินดีต้อนรับ ${user.displayName || 'ผู้ใช้ใหม่'}! สมัครสมาชิกสำเร็จ`);
+                } else {
+                    showSuccess(`ยินดีต้อนรับกลับ ${user.displayName || 'ผู้ใช้'}!`);
+                }
+
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Google sign-in error:', error);
+                let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบด้วย Google';
+                
+                switch (error.code) {
+                    case 'auth/unauthorized-domain':
+                        errorMessage = 'โดเมนนี้ไม่ได้รับอนุญาตใน Firebase หรือใช้การสมัครด้วยอีเมลแทน';
+                        showError(errorMessage, 10000);
+                        showWarning('กรุณาใช้ฟอร์มสมัครด้วยอีเมลด้านล่างแทน', 8000);
+                        break;
+                    case 'auth/popup-closed-by-user':
+                        errorMessage = 'คุณปิดหน้าต่าง Google Sign-In';
+                        break;
+                    case 'auth/popup-blocked':
+                        errorMessage = 'เบราว์เซอร์บล็อค popup กรุณาอนุญาต popup';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'มีการร้องขอมากเกินไป กรุณารอสักครู่';
+                        break;
+                    default:
+                        if (error.message.includes('unauthorized-domain')) {
+                            errorMessage = 'โดเมนไม่ได้รับอนุญาต กรุณาใช้การสมัครด้วยอีเมลแทน';
+                            showWarning('กรุณาใช้ฟอร์มสมัครด้วยอีเมลด้านล่างแทน', 8000);
+                        }
+                }
+                
+                showError(errorMessage);
+            } finally {
+                setGoogleLoading(false);
+            }
+        }
+
+        // Register user with email/password
         async function registerUser(userData) {
             try {
-                setLoading(true);
+                setRegisterLoading(true);
                 
                 // Check if student ID already exists
                 const idExists = await checkStudentIdExists(userData.studentIdCard);
@@ -671,14 +873,15 @@
                     studentId: userData.studentIdCard,
                     createdAt: new Date().toISOString(),
                     role: 'student',
-                    isActive: true
+                    isActive: true,
+                    provider: 'email'
                 });
 
                 showSuccess(`สมัครสมาชิกสำเร็จ! ยินดีต้อนรับ ${userData.displayName}`);
                 
-                // Redirect to login page after short delay
+                // Redirect to dashboard after short delay
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = 'dashboard.html';
                 }, 2000);
 
             } catch (error) {
@@ -705,13 +908,43 @@
                 
                 showError(errorMessage);
             } finally {
-                setLoading(false);
+                setRegisterLoading(false);
             }
         }
 
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, setting up event listeners...');
+            
+            // Google Sign-In Button
+            document.getElementById('googleSignInBtn').addEventListener('click', async function() {
+                try {
+                    setGoogleLoading(true);
+                    const provider = new window.GoogleAuthProvider();
+                    const result = await window.signInWithPopup(window.auth, provider);
+                    const user = result.user;
+                    const userDocRef = window.doc(window.db, 'users', user.uid);
+                    const userDocSnap = await window.getDocs(window.query(window.collection(window.db, 'users'), window.where('uid', '==', user.uid)));
+                    if (userDocSnap.empty) {
+                        await window.setDoc(userDocRef, {
+                            uid: user.uid,
+                            displayName: user.displayName || '',
+                            email: user.email,
+                            studentId: '',
+                            createdAt: new Date().toISOString(),
+                            role: 'student',
+                            isActive: true
+                        });
+                    }
+                    showSuccess('เข้าสู่ระบบด้วย Google สำเร็จ!');
+                    setTimeout(() => window.location.href = 'dashboard.html', 1500);
+                } catch (error) {
+                    console.error('Google Sign-In Error:', error);
+                    showError('เข้าสู่ระบบด้วย Google ไม่สำเร็จ: ' + (error.message || ''));
+                } finally {
+                    setGoogleLoading(false);
+                }
+            });
             
             // Student ID validation on input
             const studentIdInput = document.getElementById('studentIdCard');

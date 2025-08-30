@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EcoBottle - เครื่องขวดแลกแต้ม</title>
+  <title>Re Bottle for Point Machine</title>
   <meta name="description" content="เปลี่ยนขวดพลาสติกเป็นแต้มสะสม ง่ายๆ แค่โยนขวด รับแต้มทันที เพื่อโลกที่ยั่งยืน" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
   <style>
@@ -122,15 +122,16 @@
     /* Hero */
     .hero{ padding:100px 0 60px; }
     .hero-grid{ display:grid; grid-template-columns: 1.2fr .8fr; gap:40px; align-items:center; }
-    .eyebrow{ display:inline-flex; align-items:center; gap:12px; padding:8px 16px; border:2px solid var(--brand); border-radius:999px; color:var(--brand); background: linear-gradient(135deg, var(--brand), var(--brand-2)); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:700; }
+    .eyebrow{ display:inline-flex; align-items:center; gap:12px; padding:8px 16px; border:2px solid var(--brand); border-radius:999px; color:var(--brand); background: linear-gradient(135deg, var(--brand), var(--brand-2)); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:700; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .eyebrow:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(167, 139, 250, 0.2); }
     .pulse-dot{ width:10px; height:10px; border-radius:50%; background: var(--accent-2); box-shadow:0 0 0 8px rgba(74, 222, 128, 0.2); animation:pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.1); opacity:0.8; } }
-    h1{ font-size: clamp(40px, 6vw, 72px); line-height:1.1; margin:20px 0 18px; background:linear-gradient(135deg, var(--text), var(--brand)); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:900; }
+    @keyframes pulse { 0%, 100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.2); opacity:0.7; } }
+    h1{ font-size: clamp(40px, 6vw, 72px); line-height:1.1; margin:20px 0 18px; background:linear-gradient(135deg, var(--text), var(--brand)); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:900; text-shadow: 0 5px 15px rgba(167, 139, 250, 0.2); }
     .lead{ font-size: clamp(18px, 2vw, 22px); color:var(--muted); max-width:60ch; line-height:1.7; }
     .cta{ display:flex; gap:16px; margin-top:32px; flex-wrap:wrap; }
     .btn{ appearance:none; border:none; cursor:pointer; font-weight:700; padding:16px 24px; border-radius:var(--radius); transition: all .3s ease; text-decoration:none; font-size:16px; }
     .btn-primary{ background:linear-gradient(135deg, var(--brand), var(--brand-2)); color:white; box-shadow:var(--shadow); }
-    .btn-primary:hover{ transform: translateY(-3px); box-shadow:0 25px 50px -12px rgba(167, 139, 250, 0.4); }
+    .btn-primary:hover{ transform: translateY(-3px); box-shadow:0 25px 50px -12px rgba(167, 139, 250, 0.4); filter: brightness(1.05); }
     .btn-ghost{ background:var(--card); color:var(--text); border:2px solid var(--brand); box-shadow:var(--shadow-soft); }
     .btn-ghost:hover{ background:var(--brand); color:white; transform: translateY(-3px); }
 
@@ -141,18 +142,47 @@
 
     /* Feature cards */
     .section{ padding:48px 0; }
-    .section h2{ font-size: clamp(24px, 3.8vw, 36px); margin:0 0 18px; }
-    .features{ display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; }
-    .card{ background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.12); border-radius: var(--radius); padding:18px; box-shadow: var(--shadow-soft); }
+    .section h2{ font-size: clamp(24px, 3.8vw, 36px); margin:0 0 18px; position: relative; display: inline-block; }
+    .section h2::after { content: ''; position: absolute; bottom: -8px; left: 0; width: 60px; height: 3px; background: linear-gradient(90deg, var(--brand), var(--brand-2)); border-radius: 3px; }
+    .features{ display:grid; grid-template-columns: repeat(3, 1fr); gap:24px; }
+    .card{ background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.15); border-radius: var(--radius); padding:24px; box-shadow: var(--shadow-soft); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.25); }
     .card h3{ margin:8px 0 8px; font-size: 18px; }
     .card p{ color:var(--muted); margin:0; }
     .chip{ display:inline-flex; align-items:center; gap:8px; font-size:12px; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:var(--muted); }
 
     /* Stats */
-    .stats{ display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; margin-top:14px; }
-    .stat{ background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:16px; text-align:center; }
-    .stat strong{ display:block; font-size: clamp(22px, 3vw, 28px); }
-    .stat span{ color:var(--muted); font-size:13px; }
+    .stats{ display:grid; grid-template-columns: repeat(4, 1fr); gap:18px; margin-top:24px; }
+    .stat{ background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius); padding:20px; text-align:center; transition:all 0.3s ease; box-shadow:var(--shadow-soft); position:relative; overflow:hidden; }
+    .stat:hover{ transform:translateY(-5px); box-shadow:0 12px 24px rgba(0,0,0,.25); border-color:rgba(255,255,255,.2); }
+    .stat::before{ content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%); opacity:0; transition:opacity 0.5s ease; pointer-events:none; }
+    .stat:hover::before{ opacity:1; }
+    .stat-icon{ font-size:36px; margin-bottom:12px; display:inline-block; transform:scale(1); transition:transform 0.3s ease; }
+    .stat:hover .stat-icon{ transform:scale(1.2); }
+    .stat strong{ display:block; font-size: clamp(18px, 2vw, 22px); margin-bottom:8px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; overflow:hidden; text-overflow:ellipsis; }
+    .stat span{ color:var(--muted); font-size:13px; line-height:1.3; display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; }
+
+    /* How to Use */
+    .how-to-use-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:24px; margin-bottom:40px; }
+    .step-card{ background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.15); border-radius: var(--radius); padding:28px; text-align:center; box-shadow: var(--shadow-soft); transition: all 0.3s ease; position:relative; overflow:hidden; }
+    .step-card:hover{ transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.25); }
+    .step-card::before{ content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%); opacity:0; transition:opacity 0.5s ease; pointer-events:none; }
+    .step-card:hover::before{ opacity:1; }
+    .step-number{ position:absolute; top:16px; right:16px; width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--brand), var(--brand-2)); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
+    .step-icon{ font-size:48px; margin-bottom:16px; display:inline-block; transform:scale(1); transition:transform 0.3s ease; }
+    .step-card:hover .step-icon{ transform:scale(1.1); }
+    .step-card h3{ margin:0 0 12px; font-size:18px; color:var(--text); }
+    .step-card p{ color:var(--muted); margin:0; line-height:1.6; }
+    
+    .scoring-info{ margin-top:32px; }
+    .scoring-card{ background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(103, 232, 249, 0.1)); border:2px solid rgba(167, 139, 250, 0.3); border-radius: var(--radius-xl); padding:32px; text-align:center; box-shadow: var(--shadow); }
+    .scoring-icon{ font-size:56px; margin-bottom:16px; display:inline-block; }
+    .scoring-card h3{ margin:0 0 20px; font-size:24px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .scoring-item{ display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:16px; font-size:20px; font-weight:700; }
+    .bottles{ color:var(--accent); }
+    .equals{ color:var(--muted); font-size:24px; }
+    .hours{ color:var(--accent-2); }
+    .scoring-details p{ color:var(--muted); margin:0; line-height:1.6; max-width:500px; margin:0 auto; }
 
     /* Testimonial */
     .quote{ display:grid; grid-template-columns: .9fr 1.1fr; gap:22px; align-items:center; }
@@ -162,7 +192,12 @@
     .avatar{ width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg, var(--brand), var(--brand-2)); }
 
     /* CTA strip */
-    .cta-strip{ margin:28px 0; padding:20px; border-radius:var(--radius-xl); background: linear-gradient(120deg, rgba(124,92,255,.2), rgba(34,211,238,.18)); border:1px solid rgba(255,255,255,.12); display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .cta-strip{ margin:40px 0; padding:30px; border-radius:var(--radius-xl); background: linear-gradient(120deg, rgba(124,92,255,.25), rgba(34,211,238,.22)); border:1px solid rgba(255,255,255,.18); display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+    .cta-strip::before { content: ''; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%); opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
+    .cta-strip:hover::before { opacity: 1; }
+    .cta-strip strong { font-size: 22px; }
+    .btn { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
 
     /* Modal */
     .modal-overlay {
@@ -287,10 +322,33 @@
       .hero-grid{ grid-template-columns: 1fr; }
       .quote{ grid-template-columns: 1fr; }
       .features{ grid-template-columns: 1fr 1fr; }
-      .stats{ grid-template-columns: 1fr 1fr; }
+      .how-to-use-grid{ grid-template-columns: 1fr 1fr; gap:20px; }
+      .stats{ grid-template-columns: 1fr 1fr; gap:16px; }
+      .stat{ padding:16px; }
+      .stat-icon{ font-size:30px; margin-bottom:8px; }
+      .stat strong{ font-size: clamp(16px, 3vw, 20px); }
+      .stat span{ font-size:12px; }
+      .step-card{ padding:24px; }
+      .step-icon{ font-size:40px; }
+      .scoring-card{ padding:28px; }
+      .scoring-icon{ font-size:48px; }
     }
     @media (max-width: 560px){
       .features{ grid-template-columns: 1fr; }
+      .how-to-use-grid{ grid-template-columns: 1fr; gap:16px; }
+      .stats{ grid-template-columns: 1fr; }
+      .stat{ margin-bottom:4px; padding:14px; }
+      .stat-icon{ font-size:26px; margin-bottom:6px; }
+      .stat strong{ font-size: clamp(15px, 4vw, 18px); }
+      .stat span{ font-size:11px; line-height:1.2; }
+      .step-card{ padding:20px; }
+      .step-icon{ font-size:36px; margin-bottom:12px; }
+      .step-card h3{ font-size:16px; }
+      .step-card p{ font-size:14px; }
+      .scoring-card{ padding:24px; }
+      .scoring-icon{ font-size:40px; }
+      .scoring-card h3{ font-size:20px; }
+      .scoring-item{ font-size:18px; gap:12px; flex-wrap:wrap; }
       .modal { padding: 24px; }
     }
   </style>
@@ -300,8 +358,8 @@
   <nav class="nav">
     <div class="container nav-inner">
       <a class="brand" href="#" data-aos="fade-right" data-aos-duration="800">
-        <img src="nnn.jpg" alt="EcoBottle Logo" class="logo-img">
-        <span>EcoBottle</span>
+        <img src="nnn.jpg" alt="Re Bottle for Point Machine Logo" class="logo-img" style="border-radius: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
+        <span>Re Bottle for Point Machine</span>
       </a>
       <div class="nav-links" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
         <a href="#features">คุณสมบัติ</a>
@@ -346,7 +404,7 @@
         </span>
         <h1 data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">โยนขวด รับแต้ม</h1>
         <p class="lead" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
-          เปลี่ยนขวดพลาสติกเป็นแต้มสะสม ด้วยเทคโนโลยี AI ที่ทันสมัย แค่โยนขวด รับแต้มทันที เพื่อโลกที่ยั่งยืน
+          โครงงาน Re Bottle for Point Machine – ระบบแยกขวดอัจฉริยะ เชื่อมต่อ AI และ Arduino เพื่อแปลงขวดพลาสติกเป็นแต้มสะสม เก็บข้อมูลผ่าน Firebase และส่งเสริมการรีไซเคิลอย่างยั่งยืน
         </p>
         <div class="cta" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="600">
           <a class="btn btn-primary" href="login.html">log_in</a>
@@ -354,27 +412,31 @@
         </div>
         <div class="stats" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="800">
           <div class="stat" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="900">
+            <div class="stat-icon">🌎</div>
             <strong>ขวดที่แยกวันนี้</strong>
             <span>คือ โลกที่สดใสในวันหน้า</span>
           </div>
           <div class="stat" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="1000">
-            <strong>รักโลกเริ่มง่ายๆ</strong>
-            <span>แค่แยกขวดน้ำ</span>
+            <div class="stat-icon">♻️</div>
+            <strong>รักษ์โลกง่ายๆ</strong>
+            <span>เริ่มต้นที่การแยกขวด</span>
           </div>
           <div class="stat" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="1100">
-            <strong>ร่วมกันรักษาสิ่งแวดล้อม</strong>
-            <span>🌱</span>
+            <div class="stat-icon">🌱</div>
+            <strong>ร่วมเป็นส่วนหนึ่ง</strong>
+            <span>ในการดูแลสิ่งแวดล้อม</span>
           </div>
           <div class="stat" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="1200">
-            <strong>หนึ่งขวดที่แยกวันนี้ </strong>
-            <span>คือ โลกที่สดใสในวันหน้า</span>
+            <div class="stat-icon">💧</div>
+            <strong>ทุกขวดมีค่า</strong>
+            <span>เมื่อเรารู้จักจัดการ</span>
           </div>
         </div>
       </div>
       <div class="hero-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="400">
         <div class="hero-media">
-          <img src="https://images.unsplash.com/photo-1529101091764-c3526daf38fe?q=80&w=1200&auto=format&fit=crop" alt="ตัวอย่างแดชบอร์ด"/>
-          <span class="badge">Preview</span>
+          <img src="ขวดโรงเรียน.jpg" alt="ขวดโรงเรียน" style="border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); transition: all 0.5s ease;"/>
+          <span class="badge">ขวดโรงเรียน</span>
         </div>
       </div>
     </div>
@@ -386,20 +448,62 @@
       <h2 data-aos="fade-up" data-aos-duration="800">จุดเด่นหลัก</h2>
       <div class="features">
         <article class="card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
-          <span class="chip">⚡ เร็วและเบา</span>
-          <h3>ขวดที่แยกวันนี้</h3>
-          <p>คือ โลกที่สดใสในวันหน้า.</p>
+          <span class="chip">🏕 Re for green world 🏕</span>
+          <h3>ส่งเสริมพฤติกรรมการรีไซเคิล</h3> 
+          <p>เพื่อโลกที่สะอาดขึ้น.</p>
         </article>
         <article class="card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
-          <span class="chip">🎨 รักโลกเริ่มง่ายๆ</span>
-          <h3>ธีมสีและเงาสวย</h3>
-          <p>แค่แยกขวดน้ำ</p>
+          <span class="chip">🏫 Re for school 🏫</span>
+          <h3>ลดปัญหาขยะขวดน้ำในพื้นที่โรงเรียน</h3>
+          <p>แค่แยกขวดน้ำโรงเรียนก็น่าอยู่ขึ้น</p>
         </article>
         <article class="card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
-          <span class="chip">📱 ตอบสนองทุกจอ</span>
-          <h3>Responsive by default</h3>
-          <p>ใช้ Grid + Clamp เพื่อให้สเกลกับทุกหน้าจออย่างลื่นไหล</p>
+          <span class="chip">☘️ easy to Re ☘️</span>
+          <h3>ใช้งานง่าย ผ่านแอปพลิเคชัน</h3>
+          <p>แค่สแกน QR Code ก็สามารถเช็คจำนวนขวดได้เลย</p>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW TO USE -->
+  <section id="how-to-use" class="section">
+    <div class="container">
+      <h2 data-aos="fade-up" data-aos-duration="800">วิธีการใช้งานเครื่อง</h2>
+      <div class="how-to-use-grid">
+        <div class="step-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+          <div class="step-number">1</div>
+          <div class="step-icon">🔐</div>
+          <h3>เข้าสู่ระบบที่ตัวเครื่อง</h3>
+          <p>ล็อกอินเข้าสู่ระบบผ่านหน้าจอของเครื่องเพื่อเริ่มใช้งาน</p>
+        </div>
+        <div class="step-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+          <div class="step-number">2</div>
+          <div class="step-icon">🍼</div>
+          <h3>ใส่ขวดไปในช่องสำหรับใส่</h3>
+          <p>นำขวดพลาสติกที่ต้องการรีไซเคิลใส่ลงในช่องที่กำหนดไว้</p>
+        </div>
+        <div class="step-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+          <div class="step-number">3</div>
+          <div class="step-icon">📱</div>
+          <h3>ระบบนับขวดและแสดงผล</h3>
+          <p>ระบบ AI จะทำการตรวจจับและนับขวด แล้วแสดงผลในแอปพลิเคชัน</p>
+        </div>
+      </div>
+      
+      <div class="scoring-info" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+        <div class="scoring-card">
+          <div class="scoring-icon">⏰</div>
+          <h3>หลักเกณฑ์การให้คะแนน</h3>
+          <div class="scoring-details">
+            <div class="scoring-item">
+              <span class="bottles">30 ขวด</span>
+              <span class="equals">=</span>
+              <span class="hours">1 ชั่วโมงจิตอาสา</span>
+            </div>
+            <p>แอปพลิเคชันจะแสดงจำนวนขวดที่สะสมและค่าเฉลี่ยขวดที่แปลงเป็นชั่วโมงจิตอาสา</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -411,7 +515,7 @@
         <blockquote>"ขวดไม่ขยะ ถ้าเราแยกอย่างฉลาด."</blockquote>
         <div class="author">
           <div class="avatar" aria-hidden="true"></div>
-          <span>ทีม WebBottle • นักพัฒนา Frontend</span>
+          <span>ทีม อ้ายมา 6 คน • นักพัฒนา Frontend</span>
         </div>
       </div>
       <img class="quote-visual" alt="ภาพประกอบ" 
@@ -427,7 +531,7 @@
     <div class="cta">
       <a class="btn btn-primary" href="login.html">login</a><br>
       <button class="btn btn-ghost" id="contact-btn">พูดคุยกับเรา</button>
-      <a class="btn btn-ghost" href="form.html">ไปหน้าฟอร์ม</a>
+      <a class="btn btn-ghost" href="form.html">บันทึกความพึงพอใจ</a>
     </div>
   </section>
 
@@ -469,7 +573,7 @@
   <!-- FOOTER -->
   <footer data-aos="fade-up" data-aos-duration="600">
     <div class="container foot">
-      <p>© 2025 WebBottle. สงวนลิขสิทธิ์</p>
+      <p>© 2025 Re Bottle for Point Machine. สงวนลิขสิทธิ์</p>
       <div>ทำด้วย ❤ และ Vanilla CSS</div>
     </div>
   </footer>

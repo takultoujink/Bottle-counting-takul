@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard - Bottle Counter</title>
+  <title>Re Bottle for Point Machine</title>
   <meta name="description" content="Dashboard สำหรับติดตามจำนวนขวดแบบ Real-time" />
   
   <!-- AOS Animation Library -->
@@ -47,7 +47,7 @@
       transform: translate(-50%, -50%);
       width: 350px;
       height: 350px;
-      background: url('logo web ขวด.jpg') no-repeat center center;
+      background: url('ขวดโรงเรียน.jpg') no-repeat center center;
       background-size: contain;
       opacity: 0.02;
       z-index: 0;
@@ -131,6 +131,51 @@
     /* Loading animation */
     .loading{ display:inline-block; width:20px; height:20px; border:2px solid rgba(255,255,255,.1); border-radius:50%; border-top-color:var(--brand); animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Enhanced bottle image */
+    .bottle-img {
+      max-width: 180px;
+      margin-bottom: 15px;
+      transition: transform 0.5s ease;
+    }
+    .bottle-img:hover {
+      transform: scale(1.05) rotate(3deg);
+    }
+    
+    /* Enhanced card styles */
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+    
+    /* Enhanced stat items */
+    .stat-item {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    .stat-item:hover {
+      transform: translateY(-3px);
+    }
+    .stat-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(124,92,255,0.2), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .stat-item:hover::before {
+      opacity: 1;
+    }
 
   </style>
 </head>
@@ -138,9 +183,9 @@
   <!-- NAVBAR -->
   <nav class="nav" data-aos="fade-down" data-aos-duration="800">
     <div class="container nav-inner">
-      <a class="brand" href="ลอง.html">
-        <img src="logo web ขวด.jpg" alt="WebBottle AI Logo" class="logo-img">
-        <span>WebBottle AI</span>
+      <a class="brand" href="index.html">
+        <img src="logo web ขวด.jpg" alt="Re Bottle for Point Machine Logo" class="logo-img" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;" href="index.html">
+        <span>Re Bottle for Point Machine</span>
       </a>
       <div class="nav-actions">
         <div class="user-info">
@@ -148,6 +193,7 @@
           <span id="userName">Loading...</span>
           <button class="btn-logout" style="background:var(--brand-2); color:#222; border:none;" onclick="toggleTheme()">Bright</button>
         </div>
+        
         <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
       </div>
     </div>
@@ -156,8 +202,8 @@
   <!-- HEADER -->
   <header class="header">
     <div class="container" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
-      <h1>Dashboard - ระบบนับขวด</h1>
-      <p>ติดตามจำนวนขวดที่นับได้แบบ Real-time</p>
+      <h1>Re Bottle for Point Machine - ระบบนับขวด</h1>
+      <p>ติดตามจำนวนขวดที่นับได้แบบ Real-time และคำนวณชั่วโมงจิตอาสา</p>
       <div class="status" id="connectionStatus">
         <div class="pulse-dot offline"></div>
         <span>กำลังเชื่อมต่อ...</span>
@@ -174,6 +220,9 @@
       <div>
         <strong>ยินดีต้อนรับ!</strong>
         <div>ระบบพร้อมทำงาน เครื่องนับขวดจะอัพเดทข้อมูลแบบ Real-time</div>
+        <div style="margin-top:8px; font-size:13px; color:var(--muted);">
+          💡 <strong>วิธีคำนวณจิตอาสา:</strong> ทุก 30 ขวด = 1 ชั่วโมงจิตอาสา
+        </div>
         <button class="btn-logout" style="background:var(--brand-2); color:#222; border:none; margin-top:10px;" onclick="toggleTheme()">เปลี่ยนธีม Bright</button>
         <script>
             // Improved Bright/Dark Theme Toggle with Animation & More Colors
@@ -293,7 +342,7 @@
       
       <!-- MAIN COUNTER -->
       <div class="card counter-main" data-aos="zoom-in" data-aos-duration="1200" data-aos-delay="400">
-        <img src="ขวด.jpg" alt="ขวด" class="bottle-img">
+        <img src="ขวดโรงเรียน.jpg" alt="ขวดโรงเรียน" class="bottle-img" style="border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); transition: transform 0.3s ease;">
         <h3>จำนวนขวดทั้งหมด</h3>
         <div class="bottle-count" id="totalBottles">
           <span class="loading"></span>
@@ -313,31 +362,36 @@
 
       <!-- STATISTICS -->
       <div class="card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="600">
-        <h3>📊 statistics วันนี้</h3>
+        <h3>📊 สถิติและจิตอาสา</h3>
         <div class="stats-grid">
           <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="800">
             <div class="stat-number" id="todayCount">0</div>
             <div class="stat-label">ขวดวันนี้</div>
           </div>
           <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="900">
-            <div class="stat-number" id="avgPerHour">0</div>
-            <div class="stat-label">เฉลี่ย/ชม.</div>
+            <div class="stat-number" id="volunteerHours">0</div>
+            <div class="stat-label">ชม.จิตอาสา</div>
           </div>
           <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="1000">
             <div class="stat-number" id="totalPoints">0</div>
-            <div class="stat-label">คะแนนสะสม</div>
+            <div class="stat-label">คะแนนรวม</div>
           </div>
           <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="1100">
             <div class="stat-number" id="weeklyCount">0</div>
             <div class="stat-label">ขวดสัปดาห์นี้</div>
           </div>
         </div>
+        
+        <!-- Volunteer Hours Info -->
+        <div style="margin-top:16px; padding:12px; background:rgba(124,92,255,.1); border:1px solid rgba(124,92,255,.3); border-radius:8px; font-size:13px; text-align:center;">
+          <strong>💡 วิธีคำนวณ:</strong> ทุก 30 ขวด = 1 ชั่วโมงจิตอาสา
+        </div>
       </div>
     </div>
 
     <!-- RECENT ACTIVITY -->
     <div class="card" data-aos="fade-up" data-aos-duration="1200" data-aos-delay="800">
-      <h3>📝 กิจกรรมล่าสุด</h3>
+      <h3>🔍 กิจกรรมล่าสุด</h3>
       <table class="history-table">
         <thead>
           <tr>
@@ -463,9 +517,9 @@
       document.getElementById('totalPoints').textContent = data.points || 0;
       document.getElementById('weeklyCount').textContent = data.weekly || 0;
       
-      // Calculate average per hour (assuming 8 working hours)
-      const avgPerHour = Math.round((data.today || 0) / 8 * 10) / 10;
-      document.getElementById('avgPerHour').textContent = avgPerHour;
+      // Calculate volunteer hours (30 bottles = 1 hour)
+      const volunteerHours = Math.floor((data.total || 0) / 30);
+      document.getElementById('volunteerHours').textContent = volunteerHours;
       
       // Update progress bar (goal: 100 bottles per day)
       const dailyGoal = 100;
@@ -575,7 +629,7 @@
       
       setTimeout(() => {
         alert.style.display = 'none';
-      }, 5000);
+      }, 8000); // Show longer to read volunteer info
     }
 
     // Logout function
@@ -595,25 +649,28 @@
       
       setInterval(() => {
         const userId = currentUser.uid;
-        const currentCount = bottleData.total + Math.floor(Math.random() * 3); // Add 0-2 bottles randomly
+        const newBottles = Math.floor(Math.random() * 3); // Add 0-2 bottles randomly
+        const currentCount = bottleData.total + newBottles;
         
-        // Update live count
-        set(ref(database, `live_count/${userId}`), currentCount);
-        
-        // Update main bottle data
-        const updates = {
-          total: currentCount,
-          today: (bottleData.today || 0) + 1,
-          weekly: (bottleData.weekly || 0) + 1,
-          points: (bottleData.points || 0) + 1,
-          lastUpdated: serverTimestamp()
-        };
-        
-        set(ref(database, `bottles/${userId}`), {
-          ...bottleData,
-          ...updates
-        });
-      }, 10000); // Update every 10 seconds for demo
+        if (newBottles > 0) {
+          // Update live count
+          set(ref(database, `live_count/${userId}`), currentCount);
+          
+          // Update main bottle data
+          const updates = {
+            total: currentCount,
+            today: (bottleData.today || 0) + newBottles,
+            weekly: (bottleData.weekly || 0) + newBottles,
+            points: (bottleData.points || 0) + newBottles,
+            lastUpdated: serverTimestamp()
+          };
+          
+          set(ref(database, `bottles/${userId}`), {
+            ...bottleData,
+            ...updates
+          });
+        }
+      }, 12000); // Update every 12 seconds for demo
     }
 
     // Start simulation for demo (remove in production)

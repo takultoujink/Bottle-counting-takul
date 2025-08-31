@@ -399,6 +399,95 @@
             align-items: center;
             gap: 8px;
         }
+        
+        /* Team Color Selector Styles */
+        .team-color-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .team-color-selector input[type="radio"] {
+            display: none;
+        }
+        
+        .color-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid rgba(167, 139, 250, 0.2);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card);
+            font-weight: 500;
+        }
+        
+        .color-option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .color-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            flex-shrink: 0;
+        }
+        
+        .color-option.red .color-circle {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        
+        .color-option.yellow .color-circle {
+            background: linear-gradient(135deg, #eab308, #ca8a04);
+        }
+        
+        .color-option.purple .color-circle {
+            background: linear-gradient(135deg, #a855f7, #9333ea);
+        }
+        
+        .color-option.blue .color-circle {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        
+        .color-option.green .color-circle {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+        
+        .team-color-selector input[type="radio"]:checked + .color-option {
+            border-color: var(--accent);
+            background: rgba(251, 113, 133, 0.05);
+            transform: scale(1.02);
+        }
+        
+        .team-color-selector input[type="radio"]:checked + .color-option.red {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .team-color-selector input[type="radio"]:checked + .color-option.yellow {
+            border-color: #eab308;
+            background: rgba(234, 179, 8, 0.1);
+        }
+        
+        .team-color-selector input[type="radio"]:checked + .color-option.purple {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.1);
+        }
+        
+        .team-color-selector input[type="radio"]:checked + .color-option.blue {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .team-color-selector input[type="radio"]:checked + .color-option.green {
+             border-color: #22c55e;
+             background: rgba(34, 197, 94, 0.1);
+         }
 
         .warning-message {
             background: rgba(251, 191, 36, 0.1);
@@ -514,6 +603,41 @@
             <div class="form-group" data-aos="fade-right" data-aos-duration="600" data-aos-delay="1300">
                 <label for="confirmPassword" class="required">ยืนยันรหัสผ่าน</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" placeholder="กรอกรหัสผ่านอีกครั้ง" required>
+            </div>
+
+            <div class="form-group" data-aos="fade-left" data-aos-duration="600" data-aos-delay="1350">
+                <label for="teamColor" class="required">เลือกทีมสี</label>
+                <div class="team-color-selector">
+                    <input type="radio" id="red" name="teamColor" value="red" required>
+                    <label for="red" class="color-option red">
+                        <span class="color-circle"></span>
+                        <span class="color-name">ทีมแดง</span>
+                    </label>
+                    
+                    <input type="radio" id="yellow" name="teamColor" value="yellow" required>
+                    <label for="yellow" class="color-option yellow">
+                        <span class="color-circle"></span>
+                        <span class="color-name">ทีมเหลือง</span>
+                    </label>
+                    
+                    <input type="radio" id="purple" name="teamColor" value="purple" required>
+                    <label for="purple" class="color-option purple">
+                        <span class="color-circle"></span>
+                        <span class="color-name">ทีมม่วง</span>
+                    </label>
+                    
+                    <input type="radio" id="blue" name="teamColor" value="blue" required>
+                    <label for="blue" class="color-option blue">
+                        <span class="color-circle"></span>
+                        <span class="color-name">ทีมฟ้า</span>
+                    </label>
+                    
+                    <input type="radio" id="green" name="teamColor" value="green" required>
+                    <label for="green" class="color-option green">
+                        <span class="color-circle"></span>
+                        <span class="color-name">ทีมเขียว</span>
+                    </label>
+                </div>
             </div>
 
             <button type="submit" class="btn register-btn" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="1400">
@@ -866,14 +990,17 @@
         // Register user with email/password
         async function registerUser(userData) {
             try {
+                console.log('registerUser called with:', userData);
                 setRegisterLoading(true);
                 
                 // Check if student ID already exists
+                console.log('Checking if student ID exists...');
                 const idExists = await checkStudentIdExists(userData.studentIdCard);
                 if (idExists) {
                     throw new Error('เลขประจำตัวนักเรียนนี้ถูกใช้แล้ว');
                 }
 
+                console.log('Creating user with Firebase Auth...');
                 // Create user with email and password
                 const userCredential = await window.createUserWithEmailAndPassword(
                     window.auth, 
@@ -884,23 +1011,27 @@
                 const user = userCredential.user;
                 console.log('User created:', user.uid);
 
+                console.log('Updating user profile...');
                 // Update user profile
                 await window.updateProfile(user, {
                     displayName: userData.displayName
                 });
 
+                console.log('Saving user data to Firestore...');
                 // Save additional user data to Firestore
                 await window.setDoc(window.doc(window.db, 'users', user.uid), {
                     uid: user.uid,
                     displayName: userData.displayName,
                     email: userData.email,
                     studentId: userData.studentIdCard,
+                    teamColor: userData.teamColor,
                     createdAt: new Date().toISOString(),
                     role: 'student',
                     isActive: true,
                     provider: 'email'
                 });
 
+                console.log('User data saved successfully!');
                 showSuccess(`สมัครสมาชิกสำเร็จ! ยินดีต้อนรับ ${userData.displayName}`);
                 
                 // Redirect to dashboard after short delay
@@ -1020,10 +1151,11 @@
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
+                const teamColor = document.querySelector('input[name="teamColor"]:checked')?.value;
                 
                 // Basic validation
-                if (!displayName || !studentIdCard || !email || !password || !confirmPassword) {
-                    showError('กรุณากรอกข้อมูลให้ครบถ้วน');
+                if (!displayName || !studentIdCard || !email || !password || !confirmPassword || !teamColor) {
+                    showError('กรุณากรอกข้อมูลให้ครบถ้วน รวมถึงการเลือกทีมสี');
                     return;
                 }
 
@@ -1054,7 +1186,8 @@
                     displayName,
                     studentIdCard,
                     email,
-                    password
+                    password,
+                    teamColor
                 });
             });
             

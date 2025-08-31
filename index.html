@@ -205,11 +205,11 @@
     .loading-spinner{ width:40px; height:40px; border:4px solid rgba(167, 139, 250, 0.2); border-top:4px solid var(--brand); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 16px; }
     @keyframes spin{ 0%{ transform:rotate(0deg); } 100%{ transform:rotate(360deg); } }
     .leaderboard-podium{ display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; margin-bottom:32px; }
-    .podium-item{ background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border:2px solid; border-radius: var(--radius); padding:24px; text-align:center; position:relative; transition: all 0.3s ease; }
-    .podium-item:hover{ transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
-    .podium-item.first{ border-color: #ffd700; background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05)); }
-    .podium-item.second{ border-color: #c0c0c0; background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(192, 192, 192, 0.05)); }
-    .podium-item.third{ border-color: #cd7f32; background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(205, 127, 50, 0.05)); }
+    .podium-item{ background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border:2px solid; border-radius: var(--radius); padding:24px; text-align:center; position:relative; transition: all 0.3s ease; animation: bounceIn 0.8s ease-out; opacity: 0; animation-fill-mode: forwards; }
+     .podium-item:hover{ transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); animation: pulseGlow 2s infinite; }
+     .podium-item.first{ border-color: #ffd700; background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05)); animation-delay: 0.2s; }
+     .podium-item.second{ border-color: #c0c0c0; background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(192, 192, 192, 0.05)); animation-delay: 0s; }
+     .podium-item.third{ border-color: #cd7f32; background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(205, 127, 50, 0.05)); animation-delay: 0.4s; }
     .podium-rank{ position:absolute; top:-12px; left:50%; transform:translateX(-50%); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; }
     .podium-rank.first{ background: linear-gradient(135deg, #ffd700, #ffed4e); color:#000; }
     .podium-rank.second{ background: linear-gradient(135deg, #c0c0c0, #e5e5e5); color:#000; }
@@ -221,8 +221,10 @@
     .podium-bottles.second{ background: linear-gradient(135deg, #c0c0c0, #e5e5e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .podium-bottles.third{ background: linear-gradient(135deg, #cd7f32, #daa520); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .podium-hours{ color:var(--muted); font-size:14px; }
-    .leaderboard-list{ }
-    .leaderboard-item{ display:flex; align-items:center; gap:16px; padding:16px; background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius: var(--radius); margin-bottom:12px; transition: all 0.3s ease; }
+    .leaderboard-item{ display:flex; align-items:center; gap:16px; padding:16px; background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius: var(--radius); margin-bottom:12px; transition: all 0.3s ease, transform 0.5s ease, background 0.3s ease; animation: fadeInUp 0.6s ease-out; }
+    .leaderboard-item.updating{ transform: scale(1.02); background: linear-gradient(180deg, rgba(74, 144, 226, 0.1), rgba(74, 144, 226, 0.05)); border-color: rgba(74, 144, 226, 0.3); box-shadow: 0 6px 20px rgba(74, 144, 226, 0.2); }
+    .leaderboard-item.rank-up{ animation: rankUp 0.8s ease; }
+    .leaderboard-item.rank-down{ animation: rankDown 0.8s ease; }
     .leaderboard-item:hover{ background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border-color: rgba(255,255,255,.15); transform: translateX(8px); }
     .leaderboard-rank{ width:32px; height:32px; border-radius:50%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0; }
     .leaderboard-avatar{ width:48px; height:48px; border-radius:50%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); display:flex; align-items:center; justify-content:center; font-size:18px; color:white; font-weight:700; flex-shrink:0; }
@@ -232,6 +234,240 @@
     .leaderboard-bottles{ font-size:18px; font-weight:800; color:var(--brand); margin-right:8px; }
     .leaderboard-hours{ color:var(--muted); font-size:14px; }
     .leaderboard-error{ text-align:center; padding:40px; color:var(--muted); }
+    
+    /* Leaderboard Tabs */
+    .leaderboard-tabs{ display:flex; gap:8px; margin:24px 0; justify-content:center; }
+    .tab-btn{ padding:12px 24px; border:2px solid rgba(255,255,255,.12); background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); color:var(--muted); border-radius: var(--radius); cursor:pointer; transition: all 0.3s ease; font-weight:600; }
+    .tab-btn:hover{ border-color: rgba(167, 139, 250, 0.5); color:var(--text); transform: translateY(-2px); }
+    .tab-btn.active{ border-color: var(--brand); background: linear-gradient(135deg, var(--brand), var(--brand-2)); color:white; box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3); }
+    .podium-team{ color:var(--muted); font-size:12px; margin-bottom:8px; font-weight:500; }
+
+    /* Animation Keyframes */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.3);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+      70% {
+        transform: scale(0.9);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes pulseGlow {
+       0% {
+         transform: scale(1);
+         box-shadow: var(--shadow-soft);
+       }
+       50% {
+         transform: scale(1.02);
+         box-shadow: 0 15px 30px rgba(167, 139, 250, 0.3);
+       }
+       100% {
+         transform: scale(1);
+         box-shadow: var(--shadow-soft);
+       }
+     }
+     
+     @keyframes rankUp {
+       0% {
+         transform: translateY(0);
+       }
+       25% {
+         transform: translateY(-10px) scale(1.05);
+         background: linear-gradient(180deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+         border-color: rgba(34, 197, 94, 0.4);
+       }
+       50% {
+         transform: translateY(-5px) scale(1.02);
+       }
+       100% {
+         transform: translateY(0) scale(1);
+       }
+     }
+     
+     @keyframes rankDown {
+       0% {
+         transform: translateY(0);
+       }
+       25% {
+         transform: translateY(10px) scale(0.98);
+         background: linear-gradient(180deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+         border-color: rgba(239, 68, 68, 0.4);
+       }
+       50% {
+         transform: translateY(5px) scale(0.99);
+       }
+       100% {
+         transform: translateY(0) scale(1);
+       }
+     }
+
+     /* Enhanced Theme Toggle Button */
+     #theme-toggle {
+       position: relative;
+       background: linear-gradient(135deg, var(--brand), var(--brand-2));
+       border: none;
+       color: white;
+       padding: 12px 20px;
+       border-radius: 25px;
+       cursor: pointer;
+       font-size: 16px;
+       font-weight: 600;
+       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+       box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3);
+       overflow: hidden;
+       min-width: 60px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+     }
+
+     #theme-toggle::before {
+       content: '';
+       position: absolute;
+       top: 0;
+       left: -100%;
+       width: 100%;
+       height: 100%;
+       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+       transition: left 0.5s;
+     }
+
+     #theme-toggle:hover {
+       transform: translateY(-2px) scale(1.05);
+       box-shadow: 0 8px 25px rgba(167, 139, 250, 0.4);
+     }
+
+     #theme-toggle:hover::before {
+       left: 100%;
+     }
+
+     #theme-toggle:active {
+       transform: translateY(0) scale(0.98);
+       transition: all 0.1s;
+     }
+
+     /* Theme toggle animation */
+     @keyframes themeSwitch {
+       0% { transform: rotate(0deg) scale(1); }
+       50% { transform: rotate(180deg) scale(1.1); }
+       100% { transform: rotate(360deg) scale(1); }
+     }
+
+     #theme-toggle.switching {
+        animation: themeSwitch 0.6s ease-in-out;
+      }
+
+      /* Loading Skeleton Styles */
+      .skeleton {
+        background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        border-radius: var(--radius);
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      .skeleton-podium {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 32px;
+      }
+
+      .skeleton-podium-item {
+        height: 200px;
+        border-radius: var(--radius);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .skeleton-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .skeleton-list-item {
+        height: 80px;
+        border-radius: var(--radius);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .skeleton-text {
+        height: 20px;
+        margin: 8px 0;
+        border-radius: 4px;
+      }
+
+      .skeleton-text.short {
+        width: 60%;
+      }
+
+      .skeleton-text.medium {
+        width: 80%;
+      }
+
+      .skeleton-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin: 16px auto;
+      }
+
+      /* Hide skeleton when content loads */
+      .leaderboard-content:not([style*="display: none"]) ~ .skeleton-container {
+        display: none;
+      }
 
     /* Modal */
     .modal-overlay {
@@ -414,20 +650,30 @@
         <a href="#rewards">รางวัล</a>
         <button class="btn btn-ghost" id="theme-toggle" title="เปลี่ยนธีม">🌙</button>
         <script>
-          // Theme toggle
+          // Theme toggle with animation
           const themeToggle = document.getElementById('theme-toggle');
           function setTheme(dark) {
-            if (dark) {
-              document.documentElement.setAttribute('data-theme', 'dark');
-              localStorage.setItem('theme', 'dark');
-              themeToggle.textContent = '☀️';
-              themeToggle.title = 'เปลี่ยนเป็นโหมดสว่าง';
-            } else {
-              document.documentElement.removeAttribute('data-theme');
-              localStorage.setItem('theme', 'light');
-              themeToggle.textContent = '🌙';
-              themeToggle.title = 'เปลี่ยนเป็นโหมดมืด';
-            }
+            // Add switching animation
+            themeToggle.classList.add('switching');
+            
+            setTimeout(() => {
+              if (dark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeToggle.textContent = '☀️';
+                themeToggle.title = 'เปลี่ยนเป็นโหมดสว่าง';
+              } else {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeToggle.textContent = '🌙';
+                themeToggle.title = 'เปลี่ยนเป็นโหมดมืด';
+              }
+            }, 300);
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+              themeToggle.classList.remove('switching');
+            }, 600);
           }
           // Initial theme
           const userTheme = localStorage.getItem('theme');
@@ -578,8 +824,32 @@
       <h2 data-aos="fade-up" data-aos-duration="800">🏆 อันดับผู้เก็บขวดยอดเยี่ยม</h2>
       <div class="leaderboard-container" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
         <div class="leaderboard-loading" id="leaderboard-loading">
-          <div class="loading-spinner"></div>
-          <p>กำลังโหลดข้อมูล...</p>
+          <div class="skeleton-container">
+            <div class="skeleton-podium">
+              <div class="skeleton skeleton-podium-item">
+                <div class="skeleton skeleton-avatar"></div>
+                <div class="skeleton skeleton-text short" style="margin: 16px auto 8px;"></div>
+                <div class="skeleton skeleton-text medium" style="margin: 8px auto;"></div>
+              </div>
+              <div class="skeleton skeleton-podium-item">
+                <div class="skeleton skeleton-avatar"></div>
+                <div class="skeleton skeleton-text short" style="margin: 16px auto 8px;"></div>
+                <div class="skeleton skeleton-text medium" style="margin: 8px auto;"></div>
+              </div>
+              <div class="skeleton skeleton-podium-item">
+                <div class="skeleton skeleton-avatar"></div>
+                <div class="skeleton skeleton-text short" style="margin: 16px auto 8px;"></div>
+                <div class="skeleton skeleton-text medium" style="margin: 8px auto;"></div>
+              </div>
+            </div>
+            <div class="skeleton-list">
+              <div class="skeleton skeleton-list-item"></div>
+              <div class="skeleton skeleton-list-item"></div>
+              <div class="skeleton skeleton-list-item"></div>
+              <div class="skeleton skeleton-list-item"></div>
+              <div class="skeleton skeleton-list-item"></div>
+            </div>
+          </div>
         </div>
         <div class="leaderboard-content" id="leaderboard-content" style="display: none;">
           <div class="leaderboard-podium">
@@ -646,7 +916,7 @@
   <footer data-aos="fade-up" data-aos-duration="600">
     <div class="container foot">
       <p>© 2025 P2P (Plastic to Point). สงวนลิขสิทธิ์</p>
-      <div>ทำด้วย ❤ และ Vanilla CSS</div>
+      
     </div>
   </footer>
 
@@ -658,6 +928,7 @@
     // Import Firebase modules
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+    import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
     // Firebase configuration
     const firebaseConfig = {
@@ -674,6 +945,16 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
+    const db = getFirestore(app);
+
+    // Team color mapping
+    const teamColors = {
+      'red': { name: 'ทีมแดง', color: '#ef4444' },
+      'yellow': { name: 'ทีมเหลือง', color: '#f59e0b' },
+      'purple': { name: 'ทีมม่วง', color: '#8b5cf6' },
+      'blue': { name: 'ทีมฟ้า', color: '#3b82f6' },
+      'green': { name: 'ทีมเขียว', color: '#10b981' }
+    };
 
     // Leaderboard functions
     window.loadLeaderboard = async function() {
@@ -687,43 +968,68 @@
       errorEl.style.display = 'none';
       
       try {
-        // Get all users' bottle data
-        const bottlesRef = ref(database, 'bottles');
-        onValue(bottlesRef, (snapshot) => {
-          const data = snapshot.val();
-          if (data) {
-            const leaderboardData = [];
-            
-            // Process user data
-            Object.keys(data).forEach(userId => {
-              const userData = data[userId];
-              if (userData && userData.total > 0) {
-                leaderboardData.push({
-                  userId: userId,
-                  name: userData.displayName || userData.email || 'ผู้ใช้ไม่ระบุชื่อ',
-                  bottles: userData.total || 0,
-                  hours: Math.floor((userData.total || 0) / 30)
-                });
-              }
-            });
-            
-            // Sort by bottles count (descending)
-            leaderboardData.sort((a, b) => b.bottles - a.bottles);
-            
-            // Display leaderboard
-            displayLeaderboard(leaderboardData);
-            
-            // Hide loading, show content
-            loadingEl.style.display = 'none';
-            contentEl.style.display = 'block';
-          } else {
-            throw new Error('ไม่พบข้อมูล');
-          }
-        }, (error) => {
-          console.error('Error loading leaderboard:', error);
-          loadingEl.style.display = 'none';
-          errorEl.style.display = 'block';
+        // Get all users' data from Firestore and bottles data from Realtime Database
+        const [usersSnapshot, bottlesSnapshot] = await Promise.all([
+          getDocs(collection(db, 'users')),
+          new Promise((resolve, reject) => {
+            const bottlesRef = ref(database, 'bottles');
+            onValue(bottlesRef, resolve, reject, { onlyOnce: true });
+          })
+        ]);
+        
+        const usersData = {};
+        usersSnapshot.forEach(doc => {
+          usersData[doc.id] = doc.data();
         });
+        
+        const bottlesData = bottlesSnapshot.val();
+        
+        if (bottlesData) {
+          const leaderboardData = [];
+          const teamStats = {
+            'red': { name: 'ทีมแดง', bottles: 0, members: 0 },
+            'yellow': { name: 'ทีมเหลือง', bottles: 0, members: 0 },
+            'purple': { name: 'ทีมม่วง', bottles: 0, members: 0 },
+            'blue': { name: 'ทีมฟ้า', bottles: 0, members: 0 },
+            'green': { name: 'ทีมเขียว', bottles: 0, members: 0 }
+          };
+          
+          // Process user data
+          Object.keys(bottlesData).forEach(userId => {
+            const bottleData = bottlesData[userId];
+            const userData = usersData[userId];
+            
+            if (bottleData && bottleData.total > 0) {
+              const teamColor = userData?.teamColor || 'unknown';
+              
+              leaderboardData.push({
+                userId: userId,
+                name: userData?.displayName || bottleData.displayName || bottleData.email || 'ผู้ใช้ไม่ระบุชื่อ',
+                bottles: bottleData.total || 0,
+                hours: Math.floor((bottleData.total || 0) / 30),
+                teamColor: teamColor
+              });
+              
+              // Update team stats
+              if (teamStats[teamColor]) {
+                teamStats[teamColor].bottles += bottleData.total || 0;
+                teamStats[teamColor].members += 1;
+              }
+            }
+          });
+          
+          // Sort by bottles count (descending)
+          leaderboardData.sort((a, b) => b.bottles - a.bottles);
+          
+          // Display leaderboard
+          displayLeaderboard(leaderboardData, teamStats);
+          
+          // Hide loading, show content
+          loadingEl.style.display = 'none';
+          contentEl.style.display = 'block';
+        } else {
+          throw new Error('ไม่พบข้อมูล');
+        }
       } catch (error) {
         console.error('Error loading leaderboard:', error);
         loadingEl.style.display = 'none';
@@ -732,6 +1038,39 @@
     };
 
     function displayLeaderboard(data) {
+      // Check if we need to add tabs
+      if (!document.querySelector('.leaderboard-tabs')) {
+        const leaderboardSection = document.querySelector('.leaderboard');
+        const leaderboardTitle = leaderboardSection.querySelector('h2');
+        const tabsContainer = document.createElement('div');
+        tabsContainer.className = 'leaderboard-tabs';
+        tabsContainer.innerHTML = `
+          <button class="tab-btn active" onclick="showLeaderboard('individual')">อันดับบุคคล</button>
+          <button class="tab-btn" onclick="showLeaderboard('team')">อันดับทีม</button>
+        `;
+        leaderboardTitle.insertAdjacentElement('afterend', tabsContainer);
+      }
+      
+      // Store data globally for tab switching
+      window.leaderboardData = data;
+      
+      // Display individual leaderboard by default
+      displayIndividualLeaderboard(data.users);
+    }
+
+    function showLeaderboard(type) {
+      const tabs = document.querySelectorAll('.tab-btn');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (type === 'individual') {
+        displayIndividualLeaderboard(window.leaderboardData.users);
+      } else {
+        displayTeamLeaderboard(window.leaderboardData.teams);
+      }
+    }
+
+    function displayIndividualLeaderboard(users) {
       const podiumEl = document.querySelector('.leaderboard-podium');
       const listEl = document.querySelector('.leaderboard-list');
       
@@ -740,18 +1079,19 @@
       listEl.innerHTML = '';
       
       // Display top 3 in podium
-      const top3 = data.slice(0, 3);
+      const top3 = users.slice(0, 3);
       top3.forEach((user, index) => {
         const rank = index + 1;
         const rankClass = rank === 1 ? 'first' : rank === 2 ? 'second' : 'third';
-        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
+        const teamColor = teamColors[user.teamColor] || { name: 'ไม่ระบุ', color: '#gray' };
         
         const podiumItem = document.createElement('div');
         podiumItem.className = `podium-item ${rankClass}`;
         podiumItem.innerHTML = `
           <div class="podium-rank ${rankClass}">${rank}</div>
-          <div class="podium-avatar">${user.name.charAt(0).toUpperCase()}</div>
+          <div class="podium-avatar" style="border: 3px solid ${teamColor.color};">${user.name.charAt(0).toUpperCase()}</div>
           <div class="podium-name">${user.name}</div>
+          <div class="podium-team" style="color: ${teamColor.color};">ทีม${teamColor.name}</div>
           <div class="podium-bottles ${rankClass}">${user.bottles} ขวด</div>
           <div class="podium-hours">${user.hours} ชั่วโมงจิตอาสา</div>
         `;
@@ -759,18 +1099,19 @@
       });
       
       // Display remaining users in list
-      const remaining = data.slice(3);
+      const remaining = users.slice(3);
       remaining.forEach((user, index) => {
         const rank = index + 4;
+        const teamColor = teamColors[user.teamColor] || { name: 'ไม่ระบุ', color: '#gray' };
         
         const listItem = document.createElement('div');
         listItem.className = 'leaderboard-item';
         listItem.innerHTML = `
           <div class="leaderboard-rank">${rank}</div>
-          <div class="leaderboard-avatar">${user.name.charAt(0).toUpperCase()}</div>
+          <div class="leaderboard-avatar" style="border: 2px solid ${teamColor.color};">${user.name.charAt(0).toUpperCase()}</div>
           <div class="leaderboard-info">
             <div class="leaderboard-name">${user.name}</div>
-            <div class="leaderboard-details">${user.hours} ชั่วโมงจิตอาสา</div>
+            <div class="leaderboard-details">ทีม${teamColor.name} • ${user.hours} ชั่วโมงจิตอาสา</div>
           </div>
           <div>
             <span class="leaderboard-bottles">${user.bottles}</span>
@@ -783,10 +1124,70 @@
       // If no data to show in list
       if (remaining.length === 0 && top3.length > 0) {
         listEl.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">🎉 ยินดีด้วย! คุณอยู่ใน Top 3</div>';
-      } else if (data.length === 0) {
+      } else if (users.length === 0) {
         podiumEl.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted); grid-column: 1 / -1;">📊 ยังไม่มีข้อมูลการเก็บขวด<br><small>เริ่มเก็บขวดเพื่อขึ้นอันดับกันเถอะ!</small></div>';
       }
     }
+
+    function displayTeamLeaderboard(teams) {
+      const podiumEl = document.querySelector('.leaderboard-podium');
+      const listEl = document.querySelector('.leaderboard-list');
+      
+      // Clear existing content
+      podiumEl.innerHTML = '';
+      listEl.innerHTML = '';
+      
+      // Display top 3 teams in podium
+      const top3 = teams.slice(0, 3);
+      top3.forEach((team, index) => {
+        const rank = index + 1;
+        const rankClass = rank === 1 ? 'first' : rank === 2 ? 'second' : 'third';
+        const teamColor = teamColors[team.color] || { name: 'ไม่ระบุ', color: '#gray' };
+        
+        const podiumItem = document.createElement('div');
+        podiumItem.className = `podium-item ${rankClass}`;
+        podiumItem.innerHTML = `
+          <div class="podium-rank ${rankClass}">${rank}</div>
+          <div class="podium-avatar" style="background-color: ${teamColor.color}; color: white;">ทีม</div>
+          <div class="podium-name">ทีม${teamColor.name}</div>
+          <div class="podium-team">${team.members} สมาชิก</div>
+          <div class="podium-bottles ${rankClass}">${team.bottles} ขวด</div>
+          <div class="podium-hours">รวม ${team.hours} ชั่วโมงจิตอาสา</div>
+        `;
+        podiumEl.appendChild(podiumItem);
+      });
+      
+      // Display remaining teams in list
+      const remaining = teams.slice(3);
+      remaining.forEach((team, index) => {
+        const rank = index + 4;
+        const teamColor = teamColors[team.color] || { name: 'ไม่ระบุ', color: '#gray' };
+        
+        const listItem = document.createElement('div');
+        listItem.className = 'leaderboard-item';
+        listItem.innerHTML = `
+          <div class="leaderboard-rank">${rank}</div>
+          <div class="leaderboard-avatar" style="background-color: ${teamColor.color}; color: white;">ทีม</div>
+          <div class="leaderboard-info">
+            <div class="leaderboard-name">ทีม${teamColor.name}</div>
+            <div class="leaderboard-details">${team.members} สมาชิก • รวม ${team.hours} ชั่วโมงจิตอาสา</div>
+          </div>
+          <div>
+            <span class="leaderboard-bottles">${team.bottles}</span>
+            <span class="leaderboard-hours">ขวด</span>
+          </div>
+        `;
+        listEl.appendChild(listItem);
+      });
+      
+      // If no data to show in list
+       if (remaining.length === 0 && top3.length > 0) {
+         listEl.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">🎉 ยินดีด้วย! ทีมคุณอยู่ใน Top 3</div>';
+       } else if (teams.length === 0) {
+         podiumEl.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted); grid-column: 1 / -1;">📊 ยังไม่มีข้อมูลทีม<br><small>เริ่มสร้างทีมและเก็บขวดกันเถอะ!</small></div>';
+       }
+     }
+      
 
     // Load leaderboard when page loads
     document.addEventListener('DOMContentLoaded', () => {

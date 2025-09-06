@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Firebase Domain Checker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+        
+        .info-box {
+            background: #f7fafc;
+            border-left: 4px solid #4299e1;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .success {
+            background: #f0fff4;
+            border-left-color: #48bb78;
+            color: #2d3748;
+        }
+        
+        .warning {
+            background: #fffaf0;
+            border-left-color: #ed8936;
+            color: #2d3748;
+        }
+        
+        .error {
+            background: #fed7d7;
+            border-left-color: #f56565;
+            color: #2d3748;
+        }
+        
+        .btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #48bb78;
+        }
+        
+        .btn-success:hover {
+            background: #38a169;
+        }
+        
+        .btn-warning {
+            background: #ed8936;
+        }
+        
+        .btn-warning:hover {
+            background: #dd6b20;
+        }
+        
+        .domain-list {
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .domain-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #4299e1;
+        }
+        
+        .code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        .step {
+            background: #edf2f7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .step h3 {
+            margin-top: 0;
+            color: #2d3748;
+        }
+        
+        #results {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Firebase Domain Checker</h1>
+        <p style="text-align: center; color: #666;">ตรวจสอบและแก้ไขปัญหา Firebase Authentication บน Netlify</p>
+        
+        <div class="info-box">
+            <strong>🌐 Current Domain:</strong> <span id="currentDomain">กำลังตรวจสอบ...</span>
+        </div>
+        
+        <div class="info-box">
+            <strong>🔧 Firebase Project:</strong> takultoujink
+        </div>
+        
+        <button class="btn" onclick="checkCurrentDomain()">🔍 ตรวจสอบ Domain ปัจจุบัน</button>
+        <button class="btn btn-success" onclick="testFirebaseAuth()">🧪 ทดสอบ Firebase Auth</button>
+        <button class="btn btn-warning" onclick="showInstructions()">📋 แสดงวิธีแก้ไข</button>
+        
+        <div id="results"></div>
+        
+        <div class="step">
+            <h3>📋 Domains ที่ต้องเพิ่มใน Firebase Console</h3>
+            <div class="domain-list">
+                <div class="domain-item">localhost (สำหรับการพัฒนา)</div>
+                <div class="domain-item">127.0.0.1 (สำหรับการพัฒนา)</div>
+                <div class="domain-item" id="netlifyDomain">your-app.netlify.app (Netlify domain ของคุณ)</div>
+                <div class="domain-item">takultoujink.firebaseapp.com (Firebase default)</div>
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>🔗 ลิงก์ที่จำเป็น</h3>
+            <p>
+                <a href="https://console.firebase.google.com/project/takultoujink/authentication/settings" target="_blank" class="btn">🔥 Firebase Console - Authentication Settings</a>
+            </p>
+            <p>
+                <a href="https://app.netlify.com/" target="_blank" class="btn">🚀 Netlify Dashboard</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmw1lDRZIxYKDblO8nhS3SR5aTVCVPJbg",
+            authDomain: "takultoujink.firebaseapp.com",
+            projectId: "takultoujink",
+            storageBucket: "takultoujink.firebasestorage.app",
+            messagingSenderId: "865462073491",
+            appId: "1:865462073491:web:5985dfd8a0e91b71fa3566",
+            measurementId: "G-ZVXD02VSWF"
+        };
+
+        function checkCurrentDomain() {
+            const currentDomain = window.location.hostname;
+            const currentPort = window.location.port;
+            const currentProtocol = window.location.protocol;
+            const fullDomain = currentPort ? `${currentDomain}:${currentPort}` : currentDomain;
+            
+            document.getElementById('currentDomain').innerHTML = `
+                <strong>${fullDomain}</strong><br>
+                <small>Protocol: ${currentProtocol} | Full URL: ${window.location.origin}</small>
+            `;
+            
+            // Update Netlify domain suggestion
+            if (currentDomain.includes('netlify.app')) {
+                document.getElementById('netlifyDomain').innerHTML = `${currentDomain} (✅ ใช้ domain นี้)`;
+                document.getElementById('netlifyDomain').style.borderLeftColor = '#48bb78';
+            }
+            
+            showDomainAnalysis(fullDomain);
+        }
+        
+        function showDomainAnalysis(domain) {
+            const results = document.getElementById('results');
+            let analysis = '';
+            
+            if (domain.includes('localhost') || domain.includes('127.0.0.1')) {
+                analysis = `
+                    <div class="info-box success">
+                        <strong>✅ Development Environment</strong><br>
+                        คุณกำลังใช้งานในสภาพแวดล้อมการพัฒนา Firebase ควรรองรับ localhost โดยอัตโนมัติ
+                    </div>
+                `;
+            } else if (domain.includes('netlify.app')) {
+                analysis = `
+                    <div class="info-box warning">
+                        <strong>⚠️ Netlify Deployment</strong><br>
+                        คุณกำลังใช้งานบน Netlify ต้องเพิ่ม domain นี้ใน Firebase Console<br>
+                        <strong>Domain ที่ต้องเพิ่ม:</strong> ${domain}
+                    </div>
+                `;
+            } else if (domain.includes('firebaseapp.com')) {
+                analysis = `
+                    <div class="info-box success">
+                        <strong>✅ Firebase Hosting</strong><br>
+                        คุณกำลังใช้งานบน Firebase Hosting ซึ่งควรทำงานได้โดยอัตโนมัติ
+                    </div>
+                `;
+            } else {
+                analysis = `
+                    <div class="info-box warning">
+                        <strong>⚠️ Custom Domain</strong><br>
+                        คุณกำลังใช้งาน custom domain ต้องเพิ่ม domain นี้ใน Firebase Console<br>
+                        <strong>Domain ที่ต้องเพิ่ม:</strong> ${domain}
+                    </div>
+                `;
+            }
+            
+            results.innerHTML = analysis;
+        }
+        
+        async function testFirebaseAuth() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="info-box">🧪 กำลังทดสอบ Firebase Authentication...</div>';
+            
+            try {
+                // Import Firebase modules
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+                const { getAuth, signInAnonymously } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                
+                // Initialize Firebase
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                
+                // Test anonymous sign in
+                await signInAnonymously(auth);
+                
+                results.innerHTML = `
+                    <div class="info-box success">
+                        <strong>✅ Firebase Authentication ทำงานได้!</strong><br>
+                        Domain นี้ได้รับอนุญาตใน Firebase แล้ว
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Firebase Auth Error:', error);
+                
+                let errorMessage = '';
+                if (error.code === 'auth/unauthorized-domain') {
+                    errorMessage = `
+                        <div class="info-box error">
+                            <strong>❌ Unauthorized Domain Error</strong><br>
+                            Domain นี้ยังไม่ได้รับอนุญาตใน Firebase<br>
+                            <strong>วิธีแก้ไข:</strong> เพิ่ม <code>${window.location.hostname}</code> ใน Firebase Console
+                        </div>
+                    `;
+                } else {
+                    errorMessage = `
+                        <div class="info-box error">
+                            <strong>❌ Firebase Error</strong><br>
+                            Error Code: ${error.code}<br>
+                            Message: ${error.message}
+                        </div>
+                    `;
+                }
+                
+                results.innerHTML = errorMessage;
+            }
+        }
+        
+        function showInstructions() {
+            const results = document.getElementById('results');
+            const currentDomain = window.location.hostname;
+            
+            results.innerHTML = `
+                <div class="step">
+                    <h3>🔧 วิธีแก้ไขปัญหา Firebase Authentication</h3>
+                    
+                    <h4>ขั้นตอนที่ 1: เข้าไปที่ Firebase Console</h4>
+                    <ol>
+                        <li>เปิด <a href="https://console.firebase.google.com/project/takultoujink/authentication/settings" target="_blank">Firebase Console - Authentication Settings</a></li>
+                        <li>เลือกโปรเจค <strong>takultoujink</strong></li>
+                        <li>ไปที่ <strong>Authentication</strong> → <strong>Settings</strong></li>
+                        <li>เลื่อนลงไปหา <strong>Authorized domains</strong></li>
+                    </ol>
+                    
+                    <h4>ขั้นตอนที่ 2: เพิ่ม Domain</h4>
+                    <div class="code">
+${currentDomain}
+                    </div>
+                    <p>คลิก <strong>Add domain</strong> และใส่ domain ข้างบน</p>
+                    
+                    <h4>ขั้นตอนที่ 3: รอและทดสอบ</h4>
+                    <ol>
+                        <li>รอ 5-10 นาที ให้การตั้งค่าอัปเดต</li>
+                        <li>รีเฟรชหน้าเว็บ</li>
+                        <li>ลองเข้าสู่ระบบด้วย Google อีกครั้ง</li>
+                    </ol>
+                </div>
+            `;
+        }
+        
+        // Auto-check domain on page load
+        window.addEventListener('load', function() {
+            checkCurrentDomain();
+        });
+    </script>
+</body>
+</html>

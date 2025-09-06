@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ทดสอบระบบเลือกสีทีม</title>
+    <style>
+        /* Bai Jamjuree Font Faces */
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Medium.ttf') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-SemiBold.ttf') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Light.ttf') format('truetype');
+            font-weight: 300;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-ExtraLight.ttf') format('truetype');
+            font-weight: 200;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Bai Jamjuree', Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .team-display {
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .team-color-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            border: 2px solid #ccc;
+        }
+        .team-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .team-option {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background: white;
+        }
+        .team-option:hover {
+            background: #f0f0f0;
+        }
+        .team-option.selected {
+            border-color: #007bff;
+            background: #e7f3ff;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ทดสอบระบบเลือกสีทีม P2P</h1>
+        
+        <div class="team-display" id="currentTeamDisplay">
+            <h3>สีทีมปัจจุบัน</h3>
+            <div id="teamColorIndicator" class="team-color-circle"></div>
+            <span id="teamColorName">กำลังโหลด...</span>
+        </div>
+        
+        <div class="team-selector">
+            <div class="team-option" data-team="red" onclick="selectTeam('red')">
+                <div class="team-color-circle" style="background-color: #ef4444;"></div>
+                ทีมแดง
+            </div>
+            <div class="team-option" data-team="yellow" onclick="selectTeam('yellow')">
+                <div class="team-color-circle" style="background-color: #f59e0b;"></div>
+                ทีมเหลือง
+            </div>
+            <div class="team-option" data-team="purple" onclick="selectTeam('purple')">
+                <div class="team-color-circle" style="background-color: #8b5cf6;"></div>
+                ทีมม่วง
+            </div>
+            <div class="team-option" data-team="blue" onclick="selectTeam('blue')">
+                <div class="team-color-circle" style="background-color: #3b82f6;"></div>
+                ทีมฟ้า
+            </div>
+            <div class="team-option" data-team="green" onclick="selectTeam('green')">
+                <div class="team-color-circle" style="background-color: #10b981;"></div>
+                ทีมเขียว
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button class="btn" onclick="saveTeamColor()">บันทึกสีทีม</button>
+            <button class="btn" onclick="loadTeamColor()">โหลดสีทีม</button>
+            <button class="btn" onclick="clearLogs()">ล้าง Logs</button>
+        </div>
+        
+        <div id="statusMessage"></div>
+        
+        <div style="margin-top: 20px;">
+            <h3>Debug Logs</h3>
+            <div id="debugLogs" style="background: #f8f9fa; padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmw1lDRZIxYKDblO8nhS3SR5aTVCVPJbg",
+            authDomain: "takultoujink.firebaseapp.com",
+            projectId: "takultoujink",
+            storageBucket: "takultoujink.firebasestorage.app",
+            messagingSenderId: "865462073491",
+            appId: "1:865462073491:web:5985dfd8a0e91b71fa3566",
+            measurementId: "G-ZVXD02VSWF",
+            databaseURL: "https://takultoujink-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let selectedTeamColor = null;
+
+        // Team colors mapping
+        const teamColors = {
+            'red': { name: 'ทีมแดง', color: '#ef4444' },
+            'yellow': { name: 'ทีมเหลือง', color: '#f59e0b' },
+            'purple': { name: 'ทีมม่วง', color: '#8b5cf6' },
+            'blue': { name: 'ทีมฟ้า', color: '#3b82f6' },
+            'green': { name: 'ทีมเขียว', color: '#10b981' }
+        };
+
+        // Debug logging function
+        function debugLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('debugLogs');
+            const logEntry = document.createElement('div');
+            logEntry.style.marginBottom = '5px';
+            logEntry.style.color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#6c757d';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        // Show status message
+        function showStatus(message, type = 'info') {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.className = `status ${type}`;
+            statusElement.textContent = message;
+            setTimeout(() => {
+                statusElement.textContent = '';
+                statusElement.className = '';
+            }, 5000);
+        }
+
+        // Update team display
+        function updateTeamDisplay(teamColor) {
+            debugLog(`updateTeamDisplay called with: ${teamColor}`);
+            const indicator = document.getElementById('teamColorIndicator');
+            const nameElement = document.getElementById('teamColorName');
+            
+            if (teamColor && teamColors[teamColor]) {
+                const team = teamColors[teamColor];
+                debugLog(`Setting team display to: ${team.name} (${team.color})`, 'success');
+                indicator.style.backgroundColor = team.color;
+                indicator.style.borderColor = team.color;
+                nameElement.textContent = team.name;
+            } else {
+                debugLog('No team color or invalid team color, showing default state', 'error');
+                indicator.style.backgroundColor = 'transparent';
+                indicator.style.borderColor = '#ccc';
+                nameElement.textContent = 'ไม่ได้เลือกทีม';
+            }
+        }
+
+        // Select team function
+        window.selectTeam = function(teamColor) {
+            debugLog(`selectTeam called with: ${teamColor}`);
+            
+            // Remove previous selection
+            document.querySelectorAll('.team-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selection to clicked option
+            const selectedOption = document.querySelector(`[data-team="${teamColor}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+                selectedTeamColor = teamColor;
+                debugLog(`Selected team color: ${selectedTeamColor}`, 'success');
+                updateTeamDisplay(teamColor);
+            }
+        };
+
+        // Save team color function
+        window.saveTeamColor = async function() {
+            debugLog('saveTeamColor called');
+            
+            if (!selectedTeamColor) {
+                showStatus('กรุณาเลือกทีมก่อนบันทึก', 'error');
+                debugLog('No team color selected', 'error');
+                return;
+            }
+            
+            if (!currentUser) {
+                showStatus('กรุณาเข้าสู่ระบบก่อนบันทึก', 'error');
+                debugLog('No user logged in', 'error');
+                return;
+            }
+            
+            try {
+                debugLog(`Saving team color: ${selectedTeamColor} for user: ${currentUser.uid}`);
+                
+                const userDocRef = doc(db, 'users', currentUser.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (!userDoc.exists()) {
+                    debugLog('User document does not exist, creating new one...');
+                    await setDoc(userDocRef, {
+                        uid: currentUser.uid,
+                        teamColor: selectedTeamColor,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+                        testUser: true
+                    });
+                } else {
+                    debugLog('User document exists, updating team color...');
+                    await updateDoc(userDocRef, {
+                        teamColor: selectedTeamColor,
+                        updatedAt: new Date().toISOString()
+                    });
+                }
+                
+                debugLog('Team color saved successfully!', 'success');
+                showStatus(`บันทึก${teamColors[selectedTeamColor].name}เรียบร้อยแล้ว!`, 'success');
+                
+            } catch (error) {
+                debugLog(`Error saving team color: ${error.message}`, 'error');
+                debugLog(`Error code: ${error.code}`, 'error');
+                
+                let errorMessage = 'เกิดข้อผิดพลาดในการบันทึก';
+                
+                if (error.code === 'permission-denied') {
+                    errorMessage = 'ไม่มีสิทธิ์ในการบันทึกข้อมูล กรุณาตรวจสอบการตั้งค่า Firebase Security Rules';
+                } else if (error.code === 'unavailable') {
+                    errorMessage = 'ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต';
+                } else if (error.code === 'unauthenticated') {
+                    errorMessage = 'กรุณาเข้าสู่ระบบใหม่อีกครั้ง';
+                } else {
+                    errorMessage += ': ' + error.message;
+                }
+                
+                showStatus(errorMessage, 'error');
+            }
+        };
+
+        // Load team color function
+        window.loadTeamColor = async function() {
+            debugLog('loadTeamColor called');
+            
+            if (!currentUser) {
+                showStatus('กรุณาเข้าสู่ระบบก่อนโหลดข้อมูล', 'error');
+                debugLog('No user logged in', 'error');
+                return;
+            }
+            
+            try {
+                debugLog(`Loading team color for user: ${currentUser.uid}`);
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const teamColor = userData.teamColor;
+                    debugLog(`User data loaded: ${JSON.stringify(userData)}`);
+                    debugLog(`Team color found: ${teamColor}`, 'success');
+                    
+                    if (teamColor) {
+                        selectedTeamColor = teamColor;
+                        updateTeamDisplay(teamColor);
+                        
+                        // Update UI selection
+                        document.querySelectorAll('.team-option').forEach(option => {
+                            option.classList.remove('selected');
+                        });
+                        const selectedOption = document.querySelector(`[data-team="${teamColor}"]`);
+                        if (selectedOption) {
+                            selectedOption.classList.add('selected');
+                        }
+                        
+                        showStatus(`โหลดข้อมูล${teamColors[teamColor].name}เรียบร้อยแล้ว!`, 'success');
+                    } else {
+                        debugLog('No team color found in user data');
+                        updateTeamDisplay(null);
+                        showStatus('ไม่พบข้อมูลสีทีม', 'info');
+                    }
+                } else {
+                    debugLog('User document does not exist', 'error');
+                    updateTeamDisplay(null);
+                    showStatus('ไม่พบข้อมูลผู้ใช้', 'error');
+                }
+            } catch (error) {
+                debugLog(`Error loading team color: ${error.message}`, 'error');
+                debugLog(`Error code: ${error.code}`, 'error');
+                
+                let errorMessage = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
+                
+                if (error.code === 'permission-denied') {
+                    errorMessage = 'ไม่มีสิทธิ์ในการอ่านข้อมูล กรุณาตรวจสอบการตั้งค่า Firebase Security Rules';
+                } else if (error.code === 'unavailable') {
+                    errorMessage = 'ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต';
+                } else if (error.code === 'unauthenticated') {
+                    errorMessage = 'กรุณาเข้าสู่ระบบใหม่อีกครั้ง';
+                } else {
+                    errorMessage += ': ' + error.message;
+                }
+                
+                showStatus(errorMessage, 'error');
+            }
+        };
+
+        // Clear logs function
+        window.clearLogs = function() {
+            document.getElementById('debugLogs').innerHTML = '';
+            debugLog('Logs cleared');
+        };
+
+        // Initialize authentication
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                debugLog(`User authenticated: ${user.uid}`, 'success');
+                showStatus('เข้าสู่ระบบเรียบร้อยแล้ว', 'success');
+                // Auto load team color
+                setTimeout(() => {
+                    loadTeamColor();
+                }, 1000);
+            } else {
+                debugLog('No user authenticated, signing in anonymously...');
+                signInAnonymously(auth).then(() => {
+                    debugLog('Anonymous sign-in successful', 'success');
+                }).catch((error) => {
+                    debugLog(`Anonymous sign-in failed: ${error.message}`, 'error');
+                });
+            }
+        });
+
+        // Initialize
+        debugLog('Test page initialized');
+    </script>
+</body>
+</html>

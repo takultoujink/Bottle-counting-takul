@@ -7,7 +7,48 @@
     
     <!-- AOS Animation Library -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+    
+    <!-- Firebase to Sheets Integration -->
+    <script src="./firebase-to-sheets.js"></script>
     <style>
+        /* Bai Jamjuree Font Faces */
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Medium.ttf') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-SemiBold.ttf') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Light.ttf') format('truetype');
+            font-weight: 300;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-ExtraLight.ttf') format('truetype');
+            font-weight: 200;
+            font-style: normal;
+        }
+
         :root{
             --bg: #fdfbff;
             --bg-secondary: #f8f4ff;
@@ -32,7 +73,7 @@
         }
         
         body {
-            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans Thai", "Noto Sans", "Liberation Sans", sans-serif;
+            font-family: 'Bai Jamjuree', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans Thai", "Noto Sans", "Liberation Sans", sans-serif;
             background: linear-gradient(135deg, var(--bg) 0%, var(--bg-secondary) 100%);
             min-height: 100vh;
             display: flex;
@@ -81,6 +122,12 @@
             border: 1px solid rgba(167, 139, 250, 0.1);
             position: relative;
             overflow: hidden;
+            animation: float-gentle 6s ease-in-out infinite;
+        }
+        
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
         
         .login-container::before {
@@ -109,23 +156,36 @@
             display: block;
             transition: all 0.3s ease;
             background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            animation: bounce-gentle 3s ease-in-out infinite;
         }
         
         .logo-img-main:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) rotate(5deg);
             border-color: var(--brand);
             box-shadow: var(--shadow);
+        }
+        
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
         }
 
         .login-header h1 {
             color: var(--text);
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 900;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--text), var(--brand));
+            background: linear-gradient(135deg, var(--brand), var(--brand-2), var(--accent));
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: rainbow-text 3s ease-in-out infinite;
+        }
+        
+        @keyframes rainbow-text {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .login-header p {
@@ -191,7 +251,7 @@
         .login-btn {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 50%, var(--accent) 100%);
             color: white;
             border: none;
             border-radius: var(--radius);
@@ -202,6 +262,19 @@
             box-shadow: var(--shadow-soft);
             position: relative;
             overflow: hidden;
+            background-size: 200% 200%;
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { 
+                background-position: 0% 50%;
+                box-shadow: var(--shadow-soft);
+            }
+            50% { 
+                background-position: 100% 50%;
+                box-shadow: 0 0 20px rgba(167, 139, 250, 0.4);
+            }
         }
         
         .login-btn::before {
@@ -277,8 +350,15 @@
 
         .social-btn:hover {
             border-color: #4285f4;
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: var(--shadow-soft);
+            animation: wiggle 0.5s ease-in-out;
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: translateY(-2px) scale(1.02) rotate(0deg); }
+            25% { transform: translateY(-2px) scale(1.02) rotate(1deg); }
+            75% { transform: translateY(-2px) scale(1.02) rotate(-1deg); }
         }
 
         .social-btn:active {
@@ -410,7 +490,11 @@
 <body>
     <div class="login-container" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="200">
         <div class="login-header" data-aos="fade-down" data-aos-duration="600" data-aos-delay="400">
-            <div class="logo-img-main" data-aos="bounce-in" data-aos-duration="800" data-aos-delay="600"></div>
+            <div class="logo-img-main" data-aos="bounce-in" data-aos-duration="800" data-aos-delay="600">
+                <a href="index.html" style="display: block; width: 100%; height: 100%; text-decoration: none;">
+                    <img src="p2p.jpg" alt="P2P Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: inherit; cursor: pointer;">
+                </a>
+            </div>
             <h1>เข้าสู่ระบบ</h1>
             <p>ยินดีต้อนรับเข้าสู่ P2P</p>
             <!-- Theme Toggle Button -->
@@ -515,6 +599,9 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Import Firebase to Sheets functions
+        // Firebase to Sheets functions are available via window.sendUserLoginToSheets
 
         // Firebase configuration
         const firebaseConfig = {
@@ -608,6 +695,30 @@
             
             // Save/update user profile
             await saveUserProfile(user);
+            
+            // ส่งข้อมูลการเข้าสู่ระบบไป Google Sheets
+            try {
+                console.log('Sending login data to Google Sheets...');
+                const loginData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || user.email,
+                    provider: user.providerData[0]?.providerId || 'email',
+                    loginTime: new Date().toISOString(),
+                    userAgent: navigator.userAgent
+                };
+                
+                const sheetsResult = await sendUserLoginToSheets(loginData, '1qemalIVHWjZ_7uTrlyTZ6I1B9MqoD6gyyv9_E5fiOmQ'); // Google Sheet ID ของคุณ
+                
+                if (sheetsResult.success) {
+                    console.log('Login data sent to Google Sheets successfully');
+                } else {
+                    console.warn('Failed to send login data to Google Sheets:', sheetsResult.error);
+                }
+            } catch (sheetsError) {
+                console.error('Error sending login data to Google Sheets:', sheetsError);
+                // ไม่ให้ error นี้หยุดการทำงานของระบบ
+            }
             
             showMessage(`เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับ ${user.displayName || user.email}`, 'success');
             

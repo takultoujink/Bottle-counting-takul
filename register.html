@@ -7,7 +7,48 @@
     
     <!-- AOS Animation Library -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+    
+    <!-- Firebase to Sheets Integration -->
+    <script src="./firebase-to-sheets.js"></script>
     <style>
+        /* Bai Jamjuree Font Faces */
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Medium.ttf') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-SemiBold.ttf') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Light.ttf') format('truetype');
+            font-weight: 300;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-ExtraLight.ttf') format('truetype');
+            font-weight: 200;
+            font-style: normal;
+        }
+
         :root{
             --bg: #fdfbff;
             --bg-secondary: #f8f4ff;
@@ -32,7 +73,7 @@
         }
         
         body {
-            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans Thai", "Noto Sans", "Liberation Sans", sans-serif;
+            font-family: 'Bai Jamjuree', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans Thai", "Noto Sans", "Liberation Sans", sans-serif;
             background: linear-gradient(135deg, var(--bg) 0%, var(--bg-secondary) 100%);
             min-height: 100vh;
             display: flex;
@@ -81,6 +122,12 @@
             border: 1px solid rgba(167, 139, 250, 0.1);
             position: relative;
             overflow: hidden;
+            animation: float-gentle 6s ease-in-out infinite;
+        }
+        
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
         }
         
         .register-container::before {
@@ -108,23 +155,36 @@
             margin: 0 auto 1.5rem;
             display: block;
             transition: all 0.3s ease;
+            animation: bounce-gentle 3s ease-in-out infinite;
         }
         
         .logo-img-main:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) rotate(-5deg);
             border-color: var(--accent);
             box-shadow: var(--shadow);
+        }
+        
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
         }
 
         .register-header h1 {
             color: var(--text);
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 900;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--text), var(--accent));
+            background: linear-gradient(135deg, var(--accent), var(--accent-2), var(--brand));
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: rainbow-text 3s ease-in-out infinite;
+        }
+        
+        @keyframes rainbow-text {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .register-header p {
@@ -174,13 +234,91 @@
             color: var(--muted);
         }
 
-        /* ID Card specific styling */
-        .id-card-input {
-            font-family: 'Courier New', monospace !important;
-            letter-spacing: 2px !important;
-            font-size: 1.1rem !important;
-            text-align: center !important;
+        /* ID Card specific styling - New Digit Input */
+        section {
+            display: grid;
+            gap: 4rem;
+            align-items: center;
+            justify-content: center;
         }
+        
+        .code {
+            font-size: 2rem;
+            display: flex;
+            flex-wrap: nowrap;
+            color: hsl(0 0% 100%);
+            border-radius: 1rem;
+            background: hsl(0 0% 6%);
+            justify-content: center;
+            box-shadow: 0 1px hsl(0 0% 100% / 0.25) inset;
+        }
+        
+        .code:hover {
+            cursor: grab;
+        }
+        
+        .digit {
+            display: flex;
+            height: 100%;
+            padding: 3rem 0.8rem;
+        }
+        
+        .digit:focus-visible {
+            outline-color: hsl(0 0% 50% / 0.25);
+            outline-offset: 1rem;
+        }
+        
+        .digit span {
+            scale: calc(var(--active, 0) + 0.5);
+            filter: blur(calc((1 - var(--active, 0)) * 1rem));
+            transition: scale calc(((1 - var(--active, 0)) + 0.2) * 1s), filter calc(((1 - var(--active, 0)) + 0.2) * 1s);
+        }
+        
+        .digit:first-of-type {
+            padding-left: 3rem;
+        }
+        .digit:last-of-type {
+            padding-right: 3rem;
+        }
+        
+        :root {
+            --lerp-0: 1; /* === sin(90deg) */
+            --lerp-1: calc(sin(50deg));
+            --lerp-2: calc(sin(45deg));
+            --lerp-3: calc(sin(35deg));
+            --lerp-4: calc(sin(25deg));
+            --lerp-5: calc(sin(15deg));
+        }
+        
+        .digit:is(:hover, :focus-visible) {
+            --active: var(--lerp-0);
+        }
+        .digit:is(:hover, :focus-visible) + .digit,
+        .digit:has(+ .digit:is(:hover, :focus-visible)) {
+            --active: var(--lerp-1);
+        }
+        .digit:is(:hover, :focus-visible) + .digit + .digit,
+        .digit:has(+ .digit + .digit:is(:hover, :focus-visible)) {
+            --active: var(--lerp-2);
+        }
+        .digit:is(:hover, :focus-visible) + .digit + .digit + .digit,
+        .digit:has(+ .digit + .digit + .digit:is(:hover, :focus-visible)) {
+            --active: var(--lerp-3);
+        }
+        .digit:is(:hover, :focus-visible) + .digit + .digit + .digit + .digit,
+        .digit:has(+ .digit + .digit + .digit + .digit:is(:hover, :focus-visible)) {
+            --active: var(--lerp-4);
+        }
+        .digit:is(:hover, :focus-visible) + .digit + .digit + .digit + .digit + .digit,
+         .digit:has(+ .digit + .digit + .digit + .digit + .digit:is(:hover, :focus-visible)) {
+             --active: var(--lerp-5);
+         }
+         
+         .digit.focused {
+             --active: var(--lerp-0);
+             background: rgba(167, 139, 250, 0.1);
+             border-radius: 0.5rem;
+         }
 
         .validation-message {
             margin-top: 8px;
@@ -258,9 +396,16 @@
         }
 
         .google-signin-btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: var(--shadow);
             border-color: #4285f4;
+            animation: wiggle 0.5s ease-in-out;
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: translateY(-2px) scale(1.02) rotate(0deg); }
+            25% { transform: translateY(-2px) scale(1.02) rotate(1deg); }
+            75% { transform: translateY(-2px) scale(1.02) rotate(-1deg); }
         }
 
         .google-icon {
@@ -290,9 +435,22 @@
         }
 
         .register-btn {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 50%, var(--brand) 100%);
             color: white;
             margin-top: 1.5rem;
+            background-size: 200% 200%;
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { 
+                background-position: 0% 50%;
+                box-shadow: var(--shadow-soft);
+            }
+            50% { 
+                background-position: 100% 50%;
+                box-shadow: 0 0 20px rgba(251, 113, 133, 0.4);
+            }
         }
         
         .btn::before {
@@ -426,8 +584,14 @@
         }
         
         .color-option:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: var(--shadow-soft);
+            animation: wiggle-gentle 0.3s ease-in-out;
+        }
+        
+        @keyframes wiggle-gentle {
+            0%, 100% { transform: translateY(-2px) scale(1.02) rotate(0deg); }
+            50% { transform: translateY(-2px) scale(1.02) rotate(0.5deg); }
         }
         
         .color-circle {
@@ -548,7 +712,9 @@
 <body>
     <div class="register-container" data-aos="zoom-in" data-aos-duration="900" data-aos-delay="100">
         <div class="register-header" data-aos="fade-down" data-aos-duration="700" data-aos-delay="300">
-            <img src="back ground.jpg" alt="EcoBottle Logo" class="logo-img-main" data-aos="bounce-in" data-aos-duration="900" data-aos-delay="500">
+            <a href="index.html" style="display: inline-block; text-decoration: none;">
+                <img src="p2p.jpg" alt="P2P Logo" class="logo-img-main" data-aos="bounce-in" data-aos-duration="900" data-aos-delay="500" style="cursor: pointer;">
+            </a>
             <h1>สมัครสมาชิก</h1>
             <p>ร่วมเป็นส่วนหนึ่งของ EcoBottle!</p>
             
@@ -584,8 +750,25 @@
 
             <div class="form-group" data-aos="fade-left" data-aos-duration="600" data-aos-delay="1000">
                 <label for="studentIdCard" class="required">เลขประจำตัวนักเรียน</label>
-                <input type="text" id="studentIdCard" name="studentIdCard" class="id-card-input" 
-                       placeholder="XXXXX" maxlength="5" required>
+                <section>
+                    <div class="code" id="studentIdCard">
+                        <div class="digit" tabindex="0">
+                            <span>0</span>
+                        </div>
+                        <div class="digit" tabindex="0">
+                            <span>0</span>
+                        </div>
+                        <div class="digit" tabindex="0">
+                            <span>0</span>
+                        </div>
+                        <div class="digit" tabindex="0">
+                            <span>0</span>
+                        </div>
+                        <div class="digit" tabindex="0">
+                            <span>0</span>
+                        </div>
+                    </div>
+                </section>
                 <div id="idCardValidation" class="validation-message"></div>
             </div>
 
@@ -675,6 +858,8 @@
             where, 
             getDocs 
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Firebase to Sheets functions are available via window.sendUserRegistrationToSheets
 
         // Firebase configuration
         const firebaseConfig = {
@@ -1032,6 +1217,30 @@
                 });
 
                 console.log('User data saved successfully!');
+                
+                // ส่งข้อมูลไป Google Sheets
+                try {
+                    console.log('Sending data to Google Sheets...');
+                    const sheetsResult = await sendUserRegistrationToSheets({
+                        uid: user.uid,
+                        displayName: userData.displayName,
+                        email: userData.email,
+                        studentId: userData.studentIdCard,
+                        teamColor: userData.teamColor,
+                        provider: 'email',
+                        createdAt: new Date().toISOString()
+                    }, '1qemalIVHWjZ_7uTrlyTZ6I1B9MqoD6gyyv9_E5fiOmQ'); // Google Sheet ID ของคุณ
+                    
+                    if (sheetsResult.success) {
+                        console.log('Data sent to Google Sheets successfully');
+                    } else {
+                        console.warn('Failed to send data to Google Sheets:', sheetsResult.error);
+                    }
+                } catch (sheetsError) {
+                    console.error('Error sending data to Google Sheets:', sheetsError);
+                    // ไม่ให้ error นี้หยุดการทำงานของระบบ
+                }
+                
                 showSuccess(`สมัครสมาชิกสำเร็จ! ยินดีต้อนรับ ${userData.displayName}`);
                 
                 // Redirect to dashboard after short delay
@@ -1086,10 +1295,27 @@
                             displayName: user.displayName || '',
                             email: user.email,
                             studentId: '',
+                            teamColor: '',
                             createdAt: new Date().toISOString(),
                             role: 'student',
-                            isActive: true
+                            isActive: true,
+                            provider: 'google'
                         });
+                        
+                        // ส่งข้อมูลไป Google Sheets สำหรับผู้ใช้ Google Sign-In ใหม่
+                        try {
+                            await sendUserRegistrationToSheets({
+                                uid: user.uid,
+                                displayName: user.displayName || '',
+                                email: user.email,
+                                studentId: '',
+                                teamColor: '',
+                                provider: 'google',
+                                createdAt: new Date().toISOString()
+                            }, '1qemalIVHWjZ_7uTrlyTZ6I1B9MqoD6gyyv9_E5fiOmQ'); // Google Sheet ID ของคุณ
+                        } catch (sheetsError) {
+                            console.error('Error sending Google Sign-In data to Sheets:', sheetsError);
+                        }
                     }
                     showSuccess('เข้าสู่ระบบด้วย Google สำเร็จ!');
                     setTimeout(() => window.location.href = 'dashboard.html', 1500);
@@ -1103,39 +1329,89 @@
             
 
             
-            // Student ID validation on input
-            const studentIdInput = document.getElementById('studentIdCard');
-            const validationDiv = document.getElementById('idCardValidation');
+            // Digit Input Functionality
+            const digitElements = document.querySelectorAll('.digit');
+            let currentDigitIndex = 0;
+            let studentIdValue = ['0', '0', '0', '0', '0'];
             
-            if (!studentIdInput || !validationDiv) {
-                console.error('Required elements not found!');
-                return;
+            // Initialize digit input
+            digitElements.forEach((digit, index) => {
+                digit.addEventListener('click', () => {
+                    currentDigitIndex = index;
+                    focusDigit(index);
+                });
+                
+                digit.addEventListener('keydown', (e) => {
+                    handleDigitKeydown(e, index);
+                });
+            });
+            
+            function focusDigit(index) {
+                digitElements.forEach(d => d.classList.remove('focused'));
+                digitElements[index].classList.add('focused');
+                digitElements[index].focus();
             }
-
-            studentIdInput.addEventListener('input', function() {
-                console.log('Student ID input event triggered:', this.value);
-                
-                let value = this.value.replace(/\D/g, ''); // Remove non-numeric
-                if (value.length > 5) value = value.substring(0, 5); // Limit to 5 digits
-                this.value = value;
-                
-                if (value.length === 0) {
-                    validationDiv.textContent = '';
-                    validationDiv.className = 'validation-message';
-                    return;
+            
+            function updateDigit(index, value) {
+                if (value >= 0 && value <= 9) {
+                    studentIdValue[index] = value.toString();
+                    digitElements[index].querySelector('span').textContent = value;
+                    validateStudentId();
                 }
+            }
+            
+            function handleDigitKeydown(e, index) {
+                e.preventDefault();
                 
-                if (value.length < 5) {
-                    validationDiv.innerHTML = '⏳ กรุณากรอกเลขประจำตัวให้ครบ 5 หลัก';
+                if (e.key >= '0' && e.key <= '9') {
+                    updateDigit(index, parseInt(e.key));
+                    // Move to next digit
+                    if (index < 4) {
+                        currentDigitIndex = index + 1;
+                        focusDigit(currentDigitIndex);
+                    }
+                } else if (e.key === 'ArrowLeft' && index > 0) {
+                    currentDigitIndex = index - 1;
+                    focusDigit(currentDigitIndex);
+                } else if (e.key === 'ArrowRight' && index < 4) {
+                    currentDigitIndex = index + 1;
+                    focusDigit(currentDigitIndex);
+                } else if (e.key === 'Backspace') {
+                    updateDigit(index, 0);
+                    if (index > 0) {
+                        currentDigitIndex = index - 1;
+                        focusDigit(currentDigitIndex);
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    const currentValue = parseInt(studentIdValue[index]);
+                    updateDigit(index, currentValue < 9 ? currentValue + 1 : 0);
+                } else if (e.key === 'ArrowDown') {
+                    const currentValue = parseInt(studentIdValue[index]);
+                    updateDigit(index, currentValue > 0 ? currentValue - 1 : 9);
+                }
+            }
+            
+            function validateStudentId() {
+                const studentId = studentIdValue.join('');
+                const validationDiv = document.getElementById('idCardValidation');
+                
+                if (studentId === '00000') {
+                    validationDiv.innerHTML = '<span style="color: #fb7185;">⚠️ กรุณากรอกเลขประจำตัวนักเรียน</span>';
                     validationDiv.className = 'validation-message validation-invalid';
-                } else if (validateStudentID(value)) {
-                    validationDiv.innerHTML = '✅ เลขประจำตัวนักเรียนถูกต้อง';
+                } else if (studentId.length === 5 && studentId !== '00000') {
+                    validationDiv.innerHTML = '<span style="color: #4ade80;">✓ เลขประจำตัวนักเรียนถูกต้อง</span>';
                     validationDiv.className = 'validation-message validation-valid';
                 } else {
-                    validationDiv.innerHTML = '❌ เลขประจำตัวนักเรียนไม่ถูกต้อง';
-                    validationDiv.className = 'validation-message validation-invalid';
+                    validationDiv.innerHTML = '';
+                    validationDiv.className = 'validation-message';
                 }
-            });
+            }
+            
+            // Focus first digit on load
+            focusDigit(0);
+            
+            // Initialize validation
+            validateStudentId();
 
             // Password strength check on input
             document.getElementById('password').addEventListener('input', function() {
@@ -1147,7 +1423,7 @@
                 e.preventDefault();
                 
                 const displayName = document.getElementById('displayName').value.trim();
-                const studentIdCard = document.getElementById('studentIdCard').value.replace(/\D/g, '');
+                const studentIdCard = studentIdValue.join('');
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;

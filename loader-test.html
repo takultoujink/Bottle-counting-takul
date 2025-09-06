@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loader Animation Test</title>
+    <style>
+        /* Bai Jamjuree Font Faces */
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Medium.ttf') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-SemiBold.ttf') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-Light.ttf') format('truetype');
+            font-weight: 300;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Bai Jamjuree';
+            src: url('./fonts/BaiJamjuree-ExtraLight.ttf') format('truetype');
+            font-weight: 200;
+            font-style: normal;
+        }
+
+        :root {
+            --brand: #a78bfa;
+            --light-color: #e5e7eb;
+            --block-size: 120px;
+            --dot-size: 8px;
+            --dot-size-half: 4px;
+            --dot-size-half-neg: -4px;
+            --loader-size-half: calc(var(--block-size) / 6);
+        }
+        
+        body {
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Bai Jamjuree', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2rem;
+        }
+        
+        .test-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .loader-demo {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .loader-demo h3 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+        }
+        
+        /* Loader Animation */
+        .loader--3 {
+            --loader-size: calc(var(--block-size) / 3);
+            --anim-duration: 1.2s;
+            width: var(--loader-size);
+            height: var(--loader-size);
+            aspect-ratio: 1 / 1;
+            border: 1px solid var(--light-color);
+            border-radius: 50%;
+            position: relative;
+            animation: loader-3 calc(var(--anim-duration) * 3) linear infinite;
+            margin: 0 auto;
+        }
+        
+        .loader--3::before,
+        .loader--3::after {
+            content: '';
+            position: absolute;
+            width: var(--dot-size);
+            height: var(--dot-size);
+            aspect-ratio: 1 / 1;
+            background: currentColor;
+            border-radius: 50%;
+            top: var(--dot-size-half-neg);
+            left: calc(50% - var(--dot-size-half));
+            animation: loader-3 var(--anim-duration) cubic-bezier(0.27, 0.08, 0.26, 0.7) infinite;
+            transform-origin: center calc(var(--loader-size-half) + var(--dot-size-half) - 1px);
+        }
+        
+        .loader--3::after {
+            animation-delay: calc(var(--anim-duration) / 3 * -1);
+        }
+        
+        @keyframes loader-3 {
+            100% {
+                transform: rotate(1turn);
+            }
+        }
+        
+        /* Loader container for centering */
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: var(--brand);
+        }
+        
+        /* Different color variations */
+        .loader-white {
+            color: white;
+        }
+        
+        .loader-purple {
+            color: var(--brand);
+        }
+        
+        .loader-green {
+            color: #10b981;
+        }
+        
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← กลับหน้าหลัก</a>
+    
+    <h1>🔄 Loader Animation Test</h1>
+    
+    <div class="test-container">
+        <div class="loader-demo">
+            <h3>สีขาว</h3>
+            <div class="loader-container">
+                <div class="loader--3 loader-white"></div>
+            </div>
+        </div>
+        
+        <div class="loader-demo">
+            <h3>สีม่วง (Brand)</h3>
+            <div class="loader-container">
+                <div class="loader--3 loader-purple"></div>
+            </div>
+        </div>
+        
+        <div class="loader-demo">
+            <h3>สีเขียว</h3>
+            <div class="loader-container">
+                <div class="loader--3 loader-green"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 40px; text-align: center; color: white; opacity: 0.8;">
+        <p>Loader animation พร้อมใช้งานในทุกหน้าของเว็บไซต์แล้ว!</p>
+        <p>สามารถใช้คลาส <code style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px;">.loader--3</code> เพื่อแสดง loading animation</p>
+    </div>
+</body>
+</html>

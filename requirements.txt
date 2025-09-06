@@ -1,0 +1,24 @@
+# YOLO Arduino Firebase Bridge Requirements
+# ติดตั้งด้วยคำสั่ง: pip install -r requirements.txt
+
+# Computer Vision
+opencv-python==4.8.1.78
+numpy==1.24.3
+
+# Arduino Communication
+pyserial==3.5
+
+# Firebase/HTTP Communication
+requests==2.31.0
+
+# Utilities
+pathlib2==2.3.7
+datetime
+
+# Optional: For better performance
+# tensorflow==2.13.0  # หากต้องการใช้ TensorFlow backend
+# torch==2.0.1        # หากต้องการใช้ PyTorch backend
+
+# Development Tools (Optional)
+# matplotlib==3.7.2   # สำหรับ visualization
+# pillow==10.0.0      # สำหรับ image processing

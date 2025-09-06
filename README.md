@@ -1,27 +1,61 @@
-# 🍼 Bottle to Bonus - Real-time Bottle Counter System
+# YOLO Arduino Firebase Bridge v2.0
 
-ระบบนับขวดแบบ Real-time ด้วย Arduino R4, YOLO Detection, และ Firebase
+🎯 **P2P (Plastic to Point) Detection System** - ระบบตรวจจับขวดพลาสติกด้วย YOLO และส่งข้อมูลผ่าน Arduino R4 ไปยัง Firebase
+
+## 📋 ภาพรวมระบบ
+
+```
+[กล้อง] → [YOLO Detection] → [Python Script] → [Arduino R4] → [Firebase]
+                                     ↓
+                              [LED/Buzzer Feedback]
+```
+
+## 🎯 วัตถุประสงค์หลัก
+- ส่งเสริมการแยกขยะและรีไซเคิลขวดในโรงเรียน
+- ติดตามจำนวนขวดที่เก็บได้แบบ Real-time
+- สร้างแรงจูงใจผ่านระบบคะแนนสะสม
+- เก็บข้อมูลสถิติเพื่อการวิเคราะห์และการแข่งขันระหว่างทีม
+- นำเทคโนโลยี AI และ IoT มาใช้แก้ปัญหาสิ่งแวดล้อม
 
 ## 📋 ส่วนประกอบของระบบ
 
-### 🌐 **Web Application**
-- `ลอง.html` - หน้าแรก (Landing Page)
+### 🌐 **Web Application (Frontend)**
+- `index.html` - หน้าแรก (Landing Page)
 - `login.html` - หน้าเข้าสู่ระบบ
 - `register.html` - หน้าสมัครสมาชิก
 - `reset-password.html` - หน้ารีเซ็ตรหัสผ่าน
 - `dashboard.html` - หน้า Dashboard แสดงผล Real-time
+- `form.html` - ฟอร์มเพิ่มเติม
 
-### 🤖 **Hardware & AI**
+### 🤖 **AI Detection System**
+- `yolo_bottle_detection.py` - ระบบตรวจจับขวดด้วย YOLO AI
+- OpenCV และ YOLO v3 model
+- ตรวจจับขวดจากกล้อง USB/IP Camera
+- ส่งสัญญาณไป Arduino เมื่อพบขวด
+
+### 🔧 **Hardware (IoT)**
 - `arduino_firebase.ino` - โค้ด Arduino R4 WiFi
-- `yolo_bottle_detection.py` - Python YOLO detection
 - Arduino R4 WiFi
 - กล้อง USB/IP Camera
-- (Optional) Buzzer และ LED
+- LED และ Buzzer แจ้งเตือน
+- Serial Communication
 
-### 📊 **Database**
-- Firebase Authentication
-- Firebase Realtime Databaseไ
-- Firebase Firestore
+### 📊 **Database & Backend**
+- Firebase Authentication - จัดการผู้ใช้
+- Firebase Realtime Database - เก็บข้อมูล Real-time
+- Firebase Firestore - เก็บข้อมูลผู้ใช้และสถิติ
+
+### 📈 **Google Sheets Integration**
+- `firebase-to-sheets.js` - ระบบส่งข้อมูลไป Google Sheets
+- `google-apps-script.gs` - Google Apps Script สำหรับรับข้อมูล
+
+### 🚀 **Deployment & Troubleshooting**
+- `check_firebase_domains.html` - เครื่องมือตรวจสอบ Firebase domains
+- `fix_netlify_firebase.bat` - Script แก้ไขปัญหา Netlify deployment
+- `NETLIFY_FIREBASE_SETUP.md` - คู่มือแก้ไขปัญหา Firebase บน Netlify
+- `TROUBLESHOOTING_FIREBASE.md` - คู่มือแก้ไขปัญหา Firebase ทั่วไป
+- `GOOGLE_SHEETS_SETUP.md` - คู่มือการตั้งค่า
+- บันทึกข้อมูลการลงทะเบียน, การเข้าสู่ระบบ, และการเก็บขวด
 
 ---
 
@@ -46,7 +80,21 @@
    - เลื่อนลงหา "Your apps" > Web App
    - คัดลอก `firebaseConfig`
 
-### **ขั้นตอนที่ 2: ตั้งค่า Web Application**
+### **ขั้นตอนที่ 2: ตั้งค่า Google Sheets Integration**
+
+1. **ตั้งค่า Google Sheets:**
+   - ดูคู่มือใน `GOOGLE_SHEETS_SETUP.md`
+   - สร้าง Google Apps Script
+   - สร้าง Google Sheets สำหรับเก็บข้อมูล
+   - Deploy Web App และได้ URL
+
+2. **อัปเดตไฟล์ firebase-to-sheets.js:**
+   ```javascript
+   const GOOGLE_APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+   const DEFAULT_GOOGLE_SHEET_ID = 'YOUR_GOOGLE_SHEET_ID';
+   ```
+
+### **ขั้นตอนที่ 3: ตั้งค่า Web Application**
 
 1. **อัพเดท Firebase Config** ในไฟล์เหล่านี้:
    ```javascript
@@ -68,7 +116,7 @@
    - Upload ไฟล์ทั้งหมดไปยัง Web Server
    - หรือใช้ Firebase Hosting
 
-### **ขั้นตอนที่ 3: ตั้งค่า Python YOLO Detection**
+### **ขั้นตอนที่ 4: ตั้งค่า Python YOLO Detection**
 
 1. **ติดตั้ง Dependencies:**
    ```bash
@@ -89,7 +137,7 @@
    USER_ID = "takultoujink"  # จาก Firebase Authentication
    ```
 
-### **ขั้นตอนที่ 4: ตั้งค่า Arduino R4**
+### **ขั้นตอนที่ 5: ตั้งค่า Arduino R4**
 
 1. **ติดตั้ง Libraries:**
    ```
@@ -110,7 +158,7 @@
    - เชื่อมต่อ Arduino R4 กับ USB
    - อัพโหลดโค้ด `arduino_firebase.ino`
 
-### **ขั้นตอนที่ 5: การเชื่อมต่อ Hardware**
+### **ขั้นตอนที่ 6: การเชื่อมต่อ Hardware**
 
 1. **Pin Connections:**
    ```
@@ -129,12 +177,29 @@
 
 ## 🔄 การทำงานของระบบ
 
+## 🏗️ สถาปัตยกรรมระบบ
+
 ### **Data Flow:**
 ```
 1. กล้อง → YOLO Detection → ตรวจจับขวด
-2. Python → Serial → ส่งสัญญาณไป Arduino
-3. Arduino → WiFi → ส่งข้อมูลไป Firebase
+2. Python → Serial Communication → ส่งสัญญาณไป Arduino
+3. Arduino R4 → WiFi → ส่งข้อมูลไป Firebase
 4. Web Dashboard → Firebase → แสดงผล Real-time
+5. Firebase → Google Sheets → บันทึกข้อมูลสำหรับวิเคราะห์
+```
+
+### **System Architecture:**
+```
+┌─────────────┐    ┌──────────────┐    ┌─────────────┐
+│   Camera    │───▶│ YOLO AI      │───▶│  Arduino R4 │
+│             │    │ Detection    │    │    WiFi     │
+└─────────────┘    └──────────────┘    └─────────────┘
+                                              │
+                                              ▼
+┌─────────────┐    ┌──────────────┐    ┌─────────────┐
+│ Google      │◀───│   Firebase   │◀───│  Web App    │
+│ Sheets      │    │   Database   │    │ Dashboard   │
+└─────────────┘    └──────────────┘    └─────────────┘
 ```
 
 ### **Database Structure:**
@@ -198,14 +263,80 @@ Firebase Realtime Database:
 
 ---
 
-## 🎯 Features
+## 🛠️ เทคโนโลยีที่ใช้
 
-- ✅ **Real-time Detection** - YOLO AI ตรวจจับขวดแม่นยำ
+### **Frontend:**
+- HTML5, CSS3, JavaScript
+- Firebase SDK
+- AOS Animation Library
+- Responsive Design
+
+### **AI & Computer Vision:**
+- Python
+- OpenCV
+- YOLO v3 (You Only Look Once)
+- NumPy
+
+### **Hardware:**
+- Arduino R4 WiFi
+- USB/IP Camera
+- LED, Buzzer
+- Serial Communication
+
+### **Backend & Database:**
+- Firebase Authentication
+- Firebase Realtime Database
+- Firebase Firestore
+- Google Apps Script
+- Google Sheets API
+
+---
+
+## 🎯 Features หลัก
+
+- ✅ **Real-time Detection** - ตรวจจับขวดด้วย AI แม่นยำ
 - ✅ **Live Dashboard** - ดูข้อมูลแบบ Real-time
-- ✅ **Multi-platform** - ใช้ได้ทั้ง Web และ Mobile
 - ✅ **User Management** - ระบบจัดการผู้ใช้
+- ✅ **Points System** - ระบบคะแนนสะสม
+- ✅ **Team Competition** - แข่งขันระหว่างทีม (สีต่างๆ)
 - ✅ **Data Analytics** - สถิติและกราฟ
+- ✅ **Google Sheets Integration** - บันทึกข้อมูลอัตโนมัติ
+- ✅ **Multi-platform** - ใช้ได้ทั้ง Web และ Mobile
 - ✅ **Offline Support** - ทำงานได้แม้ไม่มี Internet (บางส่วน)
+
+---
+
+## 🎯 กลุ่มเป้าหมาย
+- นักเรียน นักศึกษา
+- โรงเรียน สถาบันการศึกษา
+- องค์กรที่ต้องการส่งเสริมการรีไซเคิล
+- ชุมชนที่ต้องการแก้ปัญหาขยะพลาสติก
+
+---
+
+## 📊 Google Sheets Integration
+
+### **Sheets ที่ถูกสร้างอัตโนมัติ:**
+
+1. **UserRegistrations Sheet:**
+   - UID, Display Name, Email, Student ID
+   - Team Color, Provider, Created At
+
+2. **UserLogins Sheet:**
+   - UID, Email, Display Name, Provider
+   - Login Time, User Agent
+
+3. **BottleCollection Sheet:**
+   - Timestamp, Action, User ID, Display Name
+   - Bottles Added, Total Bottles, Points
+   - Location, Device Type
+
+### **ฟังก์ชันที่พร้อมใช้งาน:**
+- `sendUserRegistrationToSheets()` - ส่งข้อมูลการลงทะเบียน
+- `sendUserLoginToSheets()` - ส่งข้อมูลการเข้าสู่ระบบ
+- `sendBottleDataToSheets()` - ส่งข้อมูลการเก็บขวด
+- `configureGoogleSheets()` - ตั้งค่า Google Sheets URL และ ID
+- `syncFirebaseToSheets()` - ซิงค์ข้อมูลจาก Firebase ทั้งหมด
 
 ---
 
@@ -217,10 +348,73 @@ Firebase Realtime Database:
 
 ---
 
+## 🚀 การแก้ไขปัญหา Netlify Deployment
+
+### ❌ ปัญหา: Firebase Authentication Error บน Netlify
+```
+Firebase: Error (auth/unauthorized-domain)
+```
+
+### ✅ วิธีแก้ไข:
+
+#### 🔧 วิธีที่ 1: ใช้เครื่องมือตรวจสอบอัตโนมัติ
+```bash
+# เปิด Firebase Domain Checker
+fix_netlify_firebase.bat
+```
+
+#### 🔧 วิธีที่ 2: แก้ไขด้วยตนเอง
+1. **เปิด Firebase Console:**
+   - ไปที่ [Firebase Console](https://console.firebase.google.com/project/takultoujink/authentication/settings)
+   - เลือกโปรเจค `takultoujink`
+   - ไปที่ **Authentication** → **Settings**
+
+2. **เพิ่ม Authorized Domains:**
+   ```
+   your-app.netlify.app
+   localhost
+   127.0.0.1
+   takultoujink.firebaseapp.com
+   ```
+
+3. **รอและทดสอบ:**
+   - รอ 5-10 นาที ให้การตั้งค่าอัปเดต
+   - รีเฟรชหน้าเว็บ
+   - ลองเข้าสู่ระบบใหม่
+
+#### 📚 เอกสารเพิ่มเติม:
+- `NETLIFY_FIREBASE_SETUP.md` - คู่มือแก้ไขปัญหาละเอียด
+- `TROUBLESHOOTING_FIREBASE.md` - คู่มือแก้ไขปัญหา Firebase ทั่วไป
+- `check_firebase_domains.html` - เครื่องมือตรวจสอบ domains
+
+---
+
 ## 📄 License
 
 MIT License - ใช้และแก้ไขได้อย่างอิสระ
 
 ---
 
+## 🌱 ผลกระทบเชิงบวก
+- ส่งเสริมจิตสำนึกด้านสิ่งแวดล้อม
+- ลดขยะพลาสติกในโรงเรียน
+- สร้างนิสัยการแยกขยะ
+- เพิ่มแรงจูงใจผ่านระบบคะแนน
+- สร้างการแข่งขันเชิงบวกระหว่างทีม
+- นำเทคโนโลยีมาใช้แก้ปัญหาสิ่งแวดล้อม
+
+---
+
+## 🚀 การพัฒนาต่อยอด
+- เพิ่มการตรวจจับขยะประเภทอื่นๆ
+- ระบบแลกของรางวัล
+- Mobile Application
+- Dashboard สำหรับผู้ดูแลระบบ
+- การวิเคราะห์ข้อมูลขั้นสูง
+- Integration กับระบบโรงเรียน
+
+---
+
 **🌱 ร่วมกันรักษาสิ่งแวดล้อม หนึ่งขวดที่แยกวันนี้ คือ โลกที่สดใสในวันหน้า 🌍**
+
+**P2P - Plastic to Points: เปลี่ยนขยะเป็นคะแนน เปลี่ยนโลกให้สวยงาม** ♻️

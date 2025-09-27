@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Transitions Demo - P2P</title>
+    <link rel="stylesheet" href="animations.css">
+    <style>
+        /* Page Transition Showcase */
+        
+        body {
+            font-family: 'Bai Jamjuree', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .page-container {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .navigation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .nav-item:hover {
+            background: #3b82f6;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100vh;
+            padding: 6rem 2rem 2rem;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+
+        .page.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .page.prev {
+            transform: translateX(-100%);
+        }
+
+        .page-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .transition-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .demo-card {
+            background: #f9fafb;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-card h3 {
+            margin: 0 0 1rem 0;
+            color: #1f2937;
+            font-size: 1.2rem;
+        }
+
+        .demo-card p {
+            color: #6b7280;
+            margin: 0;
+        }
+
+        /* ===== TRANSITION TYPES ===== */
+
+        /* Slide Transitions */
+        .slide-left {
+            transform: translateX(-100%);
+        }
+
+        .slide-right {
+            transform: translateX(100%);
+        }
+
+        .slide-up {
+            transform: translateY(-100%);
+        }
+
+        .slide-down {
+            transform: translateY(100%);
+        }
+
+        /* Fade Transitions */
+        .fade-transition {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .fade-transition.active {
+            opacity: 1;
+        }
+
+        /* Scale Transitions */
+        .scale-transition {
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .scale-transition.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Flip Transitions */
+        .flip-transition {
+            transform: rotateY(90deg);
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        .flip-transition.active {
+            transform: rotateY(0deg);
+            opacity: 1;
+        }
+
+        /* Cube Transitions */
+        .cube-container {
+            perspective: 1000px;
+            overflow: hidden;
+        }
+
+        .cube-transition {
+            transform: rotateY(-90deg);
+            transform-origin: right center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cube-transition.active {
+            transform: rotateY(0deg);
+        }
+
+        /* Elastic Transitions */
+        .elastic-transition {
+            transform: scale(0) rotate(180deg);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .elastic-transition.active {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+        }
+
+        /* Morphing Transitions */
+        .morph-transition {
+            clip-path: circle(0% at 50% 50%);
+            transition: clip-path 0.8s ease;
+        }
+
+        .morph-transition.active {
+            clip-path: circle(100% at 50% 50%);
+        }
+
+        /* Parallax Transitions */
+        .parallax-transition {
+            transform: translateZ(-100px) scale(1.1);
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+
+        .parallax-transition.active {
+            transform: translateZ(0) scale(1);
+            opacity: 1;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Route Indicator */
+        .route-indicator {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .route-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #d1d5db;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .route-dot.active {
+            background: #3b82f6;
+            transform: scale(1.5);
+        }
+
+        /* Progress Bar */
+        .transition-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: #3b82f6;
+            z-index: 1001;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .transition-progress.active {
+            transform: scaleX(1);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .page-content {
+                padding: 1.5rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .transition-demo {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Special Effects */
+        .particle-effect {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #3b82f6;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 3s ease-out forwards;
+        }
+
+        @keyframes particle-float {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0);
+            }
+        }
+
+        /* Page-specific styles */
+        .home-page {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .about-page {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .services-page {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .contact-page {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .demo-page {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <!-- Navigation -->
+        <nav class="navigation">
+            <ul class="nav-menu">
+                <li class="nav-item active" data-page="home">หน้าแรก</li>
+                <li class="nav-item" data-page="about">เกี่ยวกับ</li>
+                <li class="nav-item" data-page="services">บริการ</li>
+                <li class="nav-item" data-page="contact">ติดต่อ</li>
+                <li class="nav-item" data-page="demo">Demo</li>
+            </ul>
+        </nav>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay">
+            <div class="loading-spinner"></div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="transition-progress"></div>
+
+        <!-- Pages -->
+        <div class="page home-page active" id="home">
+            <div class="page-content">
+                <h1 class="page-title bounce-in">หน้าแรก</h1>
+                <div class="transition-demo">
+                    <div class="demo-card" onclick="demonstrateTransition('slide')">
+                        <h3>Slide Transitions</h3>
+                        <p>การเปลี่ยนหน้าแบบเลื่อน เหมือน iOS และ Android</p>
+                    </div>
+                    <div class="demo-card" onclick="demonstrateTransition('fade')">
+                        <h3>Fade Transitions</h3>
+                        <p>การเปลี่ยนหน้าแบบค่อยๆ ปรากฏ เหมือน Apple</p>
+                    </div>
+                    <div class="demo-card" onclick="demonstrateTransition('scale')">
+                        <h3>Scale Transitions</h3>
+                        <p>การเปลี่ยนหน้าแบบขยาย/หด เหมือน Material Design</p>
+                    </div>
+                    <div class="demo-card" onclick="demonstrateTransition('flip')">
+                        <h3>Flip Transitions</h3>
+                        <p>การเปลี่ยนหน้าแบบพลิก เหมือน Windows Phone</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page about-page" id="about">
+            <div class="page-content">
+                <h1 class="page-title">เกี่ยวกับเรา</h1>
+                <div class="transition-demo">
+                    <div class="demo-card">
+                        <h3>Nike-Style Animations</h3>
+                        <p>แอนิเมชันที่เน้นความเร็วและพลังงาน</p>
+                    </div>
+                    <div class="demo-card">
+                        <h3>Apple-Style Transitions</h3>
+                        <p>การเปลี่ยนแปลงที่นุ่มนวลและสง่างาม</p>
+                    </div>
+                    <div class="demo-card">
+                        <h3>Google Material</h3>
+                        <p>แอนิเมชันที่เน้นความเป็นธรรมชาติ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page services-page" id="services">
+            <div class="page-content">
+                <h1 class="page-title">บริการของเรา</h1>
+                <div class="transition-demo">
+                    <div class="demo-card">
+                        <h3>Web Development</h3>
+                        <p>พัฒนาเว็บไซต์ที่ทันสมัยและใช้งานง่าย</p>
+                    </div>
+                    <div class="demo-card">
+                        <h3>UI/UX Design</h3>
+                        <p>ออกแบบประสบการณ์ผู้ใช้ที่ยอดเยี่ยม</p>
+                    </div>
+                    <div class="demo-card">
+                        <h3>Animation Design</h3>
+                        <p>สร้างแอนิเมชันที่สวยงามและมีประสิทธิภาพ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page contact-page" id="contact">
+            <div class="page-content">
+                <h1 class="page-title">ติดต่อเรา</h1>
+                <div class="transition-demo">
+                    <div class="demo-card">
+                        <h3>อีเมล</h3>
+                        <p>contact@p2p-dashboard.com</p>
+                    </div>
+                    <div class="demo-card">
+                        <h3>โทรศัพท์</h3>
+                        <p>+66 2 123 4567</p>
+                    </div>
+                    <div class="demo-card">
+                        <h3>ที่อยู่</h3>
+                        <p>กรุงเทพมหานคร ประเทศไทย</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page demo-page" id="demo">
+            <div class="page-content">
+                <h1 class="page-title">Demo Transitions</h1>
+                <div class="transition-demo">
+                    <div class="demo-card" onclick="demonstrateTransition('cube')">
+                        <h3>Cube Transition</h3>
+                        <p>การเปลี่ยนหน้าแบบลูกบาศก์ 3D</p>
+                    </div>
+                    <div class="demo-card" onclick="demonstrateTransition('elastic')">
+                        <h3>Elastic Transition</h3>
+                        <p>การเปลี่ยนหน้าแบบยืดหยุ่น</p>
+                    </div>
+                    <div class="demo-card" onclick="demonstrateTransition('morph')">
+                        <h3>Morph Transition</h3>
+                        <p>การเปลี่ยนหน้าแบบเปลี่ยนรูปร่าง</p>
+                    </div>
+                    <div class="demo-card" onclick="demonstrateTransition('parallax')">
+                        <h3>Parallax Transition</h3>
+                        <p>การเปลี่ยนหน้าแบบ Parallax</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Route Indicator -->
+        <div class="route-indicator">
+            <div class="route-dot active" data-page="home"></div>
+            <div class="route-dot" data-page="about"></div>
+            <div class="route-dot" data-page="services"></div>
+            <div class="route-dot" data-page="contact"></div>
+            <div class="route-dot" data-page="demo"></div>
+        </div>
+    </div>
+
+    <script src="animations.js"></script>
+    <script>
+        // Page Transition System
+        class PageTransitionManager {
+            constructor() {
+                this.currentPage = 'home';
+                this.isTransitioning = false;
+                this.transitionType = 'slide';
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.preloadPages();
+            }
+
+            bindEvents() {
+                // Navigation clicks
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const targetPage = e.target.dataset.page;
+                        if (targetPage !== this.currentPage && !this.isTransitioning) {
+                            this.navigateToPage(targetPage);
+                        }
+                    });
+                });
+
+                // Route indicator clicks
+                document.querySelectorAll('.route-dot').forEach(dot => {
+                    dot.addEventListener('click', (e) => {
+                        const targetPage = e.target.dataset.page;
+                        if (targetPage !== this.currentPage && !this.isTransitioning) {
+                            this.navigateToPage(targetPage);
+                        }
+                    });
+                });
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (this.isTransitioning) return;
+                    
+                    const pages = ['home', 'about', 'services', 'contact', 'demo'];
+                    const currentIndex = pages.indexOf(this.currentPage);
+                    
+                    if (e.key === 'ArrowRight' && currentIndex < pages.length - 1) {
+                        this.navigateToPage(pages[currentIndex + 1]);
+                    } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                        this.navigateToPage(pages[currentIndex - 1]);
+                    }
+                });
+
+                // Touch/swipe support
+                this.initTouchSupport();
+            }
+
+            initTouchSupport() {
+                let startX = 0;
+                let startY = 0;
+
+                document.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                });
+
+                document.addEventListener('touchend', (e) => {
+                    if (this.isTransitioning) return;
+
+                    const endX = e.changedTouches[0].clientX;
+                    const endY = e.changedTouches[0].clientY;
+                    const diffX = startX - endX;
+                    const diffY = startY - endY;
+
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                        const pages = ['home', 'about', 'services', 'contact', 'demo'];
+                        const currentIndex = pages.indexOf(this.currentPage);
+
+                        if (diffX > 0 && currentIndex < pages.length - 1) {
+                            // Swipe left - next page
+                            this.navigateToPage(pages[currentIndex + 1]);
+                        } else if (diffX < 0 && currentIndex > 0) {
+                            // Swipe right - previous page
+                            this.navigateToPage(pages[currentIndex - 1]);
+                        }
+                    }
+                });
+            }
+
+            async navigateToPage(targetPage, transitionType = this.transitionType) {
+                if (this.isTransitioning || targetPage === this.currentPage) return;
+
+                this.isTransitioning = true;
+                this.showLoadingOverlay();
+                this.showProgressBar();
+
+                // Create particles effect
+                this.createParticleEffect();
+
+                // Update navigation
+                this.updateNavigation(targetPage);
+
+                // Perform transition
+                await this.performTransition(this.currentPage, targetPage, transitionType);
+
+                this.currentPage = targetPage;
+                this.isTransitioning = false;
+                this.hideLoadingOverlay();
+                this.hideProgressBar();
+            }
+
+            async performTransition(fromPage, toPage, type) {
+                const fromElement = document.getElementById(fromPage);
+                const toElement = document.getElementById(toPage);
+
+                // Apply transition based on type
+                switch (type) {
+                    case 'slide':
+                        await this.slideTransition(fromElement, toElement);
+                        break;
+                    case 'fade':
+                        await this.fadeTransition(fromElement, toElement);
+                        break;
+                    case 'scale':
+                        await this.scaleTransition(fromElement, toElement);
+                        break;
+                    case 'flip':
+                        await this.flipTransition(fromElement, toElement);
+                        break;
+                    case 'cube':
+                        await this.cubeTransition(fromElement, toElement);
+                        break;
+                    case 'elastic':
+                        await this.elasticTransition(fromElement, toElement);
+                        break;
+                    case 'morph':
+                        await this.morphTransition(fromElement, toElement);
+                        break;
+                    case 'parallax':
+                        await this.parallaxTransition(fromElement, toElement);
+                        break;
+                    default:
+                        await this.slideTransition(fromElement, toElement);
+                }
+            }
+
+            async slideTransition(fromElement, toElement) {
+                toElement.style.transform = 'translateX(100%)';
+                toElement.style.opacity = '1';
+                toElement.classList.add('active');
+
+                await this.delay(50);
+
+                fromElement.style.transform = 'translateX(-100%)';
+                toElement.style.transform = 'translateX(0)';
+
+                await this.delay(600);
+
+                fromElement.classList.remove('active');
+                fromElement.style.transform = 'translateX(100%)';
+            }
+
+            async fadeTransition(fromElement, toElement) {
+                toElement.style.opacity = '0';
+                toElement.style.transform = 'translateX(0)';
+                toElement.classList.add('active');
+
+                fromElement.style.opacity = '0';
+
+                await this.delay(300);
+
+                toElement.style.opacity = '1';
+
+                await this.delay(300);
+
+                fromElement.classList.remove('active');
+                fromElement.style.opacity = '1';
+            }
+
+            async scaleTransition(fromElement, toElement) {
+                toElement.style.transform = 'scale(0.8) translateX(0)';
+                toElement.style.opacity = '0';
+                toElement.classList.add('active');
+
+                fromElement.style.transform = 'scale(1.2)';
+                fromElement.style.opacity = '0';
+
+                await this.delay(300);
+
+                toElement.style.transform = 'scale(1) translateX(0)';
+                toElement.style.opacity = '1';
+
+                await this.delay(300);
+
+                fromElement.classList.remove('active');
+                fromElement.style.transform = 'scale(1) translateX(100%)';
+                fromElement.style.opacity = '1';
+            }
+
+            async flipTransition(fromElement, toElement) {
+                fromElement.style.transform = 'rotateY(-90deg)';
+
+                await this.delay(300);
+
+                fromElement.classList.remove('active');
+                toElement.classList.add('active');
+                toElement.style.transform = 'rotateY(90deg) translateX(0)';
+                toElement.style.opacity = '1';
+
+                await this.delay(50);
+
+                toElement.style.transform = 'rotateY(0deg) translateX(0)';
+
+                await this.delay(300);
+
+                fromElement.style.transform = 'translateX(100%)';
+            }
+
+            async cubeTransition(fromElement, toElement) {
+                const container = fromElement.parentElement;
+                container.style.perspective = '1000px';
+
+                fromElement.style.transformOrigin = 'left center';
+                fromElement.style.transform = 'rotateY(-90deg)';
+
+                await this.delay(400);
+
+                fromElement.classList.remove('active');
+                toElement.classList.add('active');
+                toElement.style.transformOrigin = 'right center';
+                toElement.style.transform = 'rotateY(90deg) translateX(0)';
+                toElement.style.opacity = '1';
+
+                await this.delay(50);
+
+                toElement.style.transform = 'rotateY(0deg) translateX(0)';
+
+                await this.delay(400);
+
+                fromElement.style.transform = 'translateX(100%)';
+                container.style.perspective = 'none';
+            }
+
+            async elasticTransition(fromElement, toElement) {
+                fromElement.style.transform = 'scale(0) rotate(180deg)';
+                fromElement.style.opacity = '0';
+
+                await this.delay(400);
+
+                fromElement.classList.remove('active');
+                toElement.classList.add('active');
+                toElement.style.transform = 'scale(0) rotate(-180deg) translateX(0)';
+                toElement.style.opacity = '0';
+
+                await this.delay(50);
+
+                toElement.style.transform = 'scale(1) rotate(0deg) translateX(0)';
+                toElement.style.opacity = '1';
+
+                await this.delay(800);
+
+                fromElement.style.transform = 'translateX(100%)';
+                fromElement.style.opacity = '1';
+            }
+
+            async morphTransition(fromElement, toElement) {
+                fromElement.style.clipPath = 'circle(0% at 50% 50%)';
+
+                await this.delay(400);
+
+                fromElement.classList.remove('active');
+                toElement.classList.add('active');
+                toElement.style.clipPath = 'circle(0% at 50% 50%)';
+                toElement.style.transform = 'translateX(0)';
+                toElement.style.opacity = '1';
+
+                await this.delay(50);
+
+                toElement.style.clipPath = 'circle(100% at 50% 50%)';
+
+                await this.delay(800);
+
+                fromElement.style.clipPath = 'circle(100% at 50% 50%)';
+                fromElement.style.transform = 'translateX(100%)';
+            }
+
+            async parallaxTransition(fromElement, toElement) {
+                fromElement.style.transform = 'translateZ(-100px) scale(1.1)';
+                fromElement.style.opacity = '0';
+
+                await this.delay(400);
+
+                fromElement.classList.remove('active');
+                toElement.classList.add('active');
+                toElement.style.transform = 'translateZ(-100px) scale(1.1) translateX(0)';
+                toElement.style.opacity = '0';
+
+                await this.delay(50);
+
+                toElement.style.transform = 'translateZ(0) scale(1) translateX(0)';
+                toElement.style.opacity = '1';
+
+                await this.delay(800);
+
+                fromElement.style.transform = 'translateX(100%)';
+                fromElement.style.opacity = '1';
+            }
+
+            updateNavigation(targetPage) {
+                // Update nav items
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.page === targetPage) {
+                        item.classList.add('active');
+                    }
+                });
+
+                // Update route dots
+                document.querySelectorAll('.route-dot').forEach(dot => {
+                    dot.classList.remove('active');
+                    if (dot.dataset.page === targetPage) {
+                        dot.classList.add('active');
+                    }
+                });
+            }
+
+            showLoadingOverlay() {
+                document.querySelector('.loading-overlay').classList.add('active');
+            }
+
+            hideLoadingOverlay() {
+                setTimeout(() => {
+                    document.querySelector('.loading-overlay').classList.remove('active');
+                }, 200);
+            }
+
+            showProgressBar() {
+                const progressBar = document.querySelector('.transition-progress');
+                progressBar.style.width = '0%';
+                progressBar.classList.add('active');
+                
+                setTimeout(() => {
+                    progressBar.style.width = '100%';
+                }, 100);
+            }
+
+            hideProgressBar() {
+                setTimeout(() => {
+                    const progressBar = document.querySelector('.transition-progress');
+                    progressBar.classList.remove('active');
+                }, 300);
+            }
+
+            createParticleEffect() {
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'particle-effect';
+                        particle.style.left = Math.random() * window.innerWidth + 'px';
+                        particle.style.top = Math.random() * window.innerHeight + 'px';
+                        document.body.appendChild(particle);
+
+                        setTimeout(() => {
+                            particle.remove();
+                        }, 3000);
+                    }, i * 100);
+                }
+            }
+
+            preloadPages() {
+                // Preload page content for smoother transitions
+                const pages = document.querySelectorAll('.page');
+                pages.forEach(page => {
+                    page.style.willChange = 'transform, opacity';
+                });
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Demonstration functions
+        function demonstrateTransition(type) {
+            if (window.pageTransitionManager) {
+                window.pageTransitionManager.transitionType = type;
+                
+                // Show notification
+                if (window.MicroInteractions) {
+                    window.MicroInteractions.showInfo(`เปลี่ยนเป็น ${type} transition แล้ว!`);
+                }
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.pageTransitionManager = new PageTransitionManager();
+            
+            // Add staggered animation to demo cards
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.demo-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.5s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }, 500);
+        });
+    </script>
+</body>
+</html>

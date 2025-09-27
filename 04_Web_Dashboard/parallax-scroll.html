@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallax Effects & Scroll Animations - Premium Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+
+        /* Hero Section - Apple Style */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 2;
+            transform: translateY(50px);
+            opacity: 0;
+            animation: heroFadeIn 1.5s ease forwards;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1)"/><stop offset="100%" style="stop-color:rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23grad)"/><circle cx="800" cy="300" r="150" fill="url(%23grad)"/><circle cx="400" cy="700" r="120" fill="url(%23grad)"/></svg>') no-repeat center;
+            background-size: cover;
+            will-change: transform;
+        }
+
+        /* Parallax Sections */
+        .parallax-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .parallax-bg {
+            position: absolute;
+            top: -20%;
+            left: 0;
+            width: 100%;
+            height: 120%;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            will-change: transform;
+        }
+
+        .parallax-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            width: 100%;
+        }
+
+        /* Netflix Style Section */
+        .netflix-section {
+            background: #000;
+            color: white;
+            padding: 5rem 0;
+        }
+
+        .netflix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .netflix-card {
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        .netflix-card.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .netflix-card:hover {
+            transform: scale(1.05);
+        }
+
+        .netflix-card-image {
+            height: 200px;
+            background: linear-gradient(45deg, #e50914, #b20710);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .netflix-card-content {
+            padding: 1.5rem;
+        }
+
+        /* Nike Style Section */
+        .nike-section {
+            background: #f7f7f7;
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        .nike-hero {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            gap: 4rem;
+        }
+
+        .nike-text {
+            flex: 1;
+            transform: translateX(-100px);
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+
+        .nike-text.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .nike-text h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .nike-image {
+            flex: 1;
+            height: 400px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            border-radius: 20px;
+            transform: translateX(100px);
+            opacity: 0;
+            transition: all 0.8s ease 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .nike-image.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(2) {
+            animation-delay: -2s;
+            top: 20%;
+            right: 10%;
+        }
+
+        .floating-element:nth-child(3) {
+            animation-delay: -4s;
+            top: 60%;
+            left: 5%;
+        }
+
+        /* Scroll Indicators */
+        .scroll-indicator {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+        }
+
+        .scroll-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.3);
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-dot.active {
+            background: #3b82f6;
+            transform: scale(1.2);
+        }
+
+        /* Text Reveal Animation */
+        .text-reveal {
+            overflow: hidden;
+        }
+
+        .text-reveal span {
+            display: inline-block;
+            transform: translateY(100%);
+            transition: transform 0.6s ease;
+        }
+
+        .text-reveal.visible span {
+            transform: translateY(0);
+        }
+
+        /* Stagger Animation */
+        .stagger-container .stagger-item {
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        .stagger-container.visible .stagger-item {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .stagger-container.visible .stagger-item:nth-child(1) { transition-delay: 0.1s; }
+        .stagger-container.visible .stagger-item:nth-child(2) { transition-delay: 0.2s; }
+        .stagger-container.visible .stagger-item:nth-child(3) { transition-delay: 0.3s; }
+        .stagger-container.visible .stagger-item:nth-child(4) { transition-delay: 0.4s; }
+
+        /* Keyframes */
+        @keyframes heroFadeIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nike-hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nike-text h2 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Scroll Progress -->
+    <div class="scroll-progress"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-content">
+            <div class="logo">Premium Dashboard</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Scroll Indicators -->
+    <div class="scroll-indicator">
+        <div class="scroll-dot active" data-section="0"></div>
+        <div class="scroll-dot" data-section="1"></div>
+        <div class="scroll-dot" data-section="2"></div>
+        <div class="scroll-dot" data-section="3"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="hero-content">
+            <h1 class="text-reveal">
+                <span>Premium</span> <span>Dashboard</span>
+            </h1>
+            <p class="text-reveal">
+                <span>Experience</span> <span>the</span> <span>future</span> <span>of</span> <span>web</span> <span>animations</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- Netflix Style Section -->
+    <section class="netflix-section parallax-section" id="features">
+        <div class="parallax-bg" style="background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);"></div>
+        <div class="parallax-content">
+            <h2 style="text-align: center; margin-bottom: 3rem; font-size: 3rem;">
+                <span class="text-reveal">
+                    <span>Netflix</span> <span>Style</span> <span>Cards</span>
+                </span>
+            </h2>
+            <div class="netflix-grid stagger-container">
+                <div class="netflix-card stagger-item">
+                    <div class="netflix-card-image">📊</div>
+                    <div class="netflix-card-content">
+                        <h3>Analytics Dashboard</h3>
+                        <p>Real-time data visualization with smooth animations</p>
+                    </div>
+                </div>
+                <div class="netflix-card stagger-item">
+                    <div class="netflix-card-image">🚀</div>
+                    <div class="netflix-card-content">
+                        <h3>Performance Metrics</h3>
+                        <p>Track your KPIs with beautiful animated charts</p>
+                    </div>
+                </div>
+                <div class="netflix-card stagger-item">
+                    <div class="netflix-card-image">💡</div>
+                    <div class="netflix-card-content">
+                        <h3>Smart Insights</h3>
+                        <p>AI-powered recommendations with engaging UI</p>
+                    </div>
+                </div>
+                <div class="netflix-card stagger-item">
+                    <div class="netflix-card-image">🎯</div>
+                    <div class="netflix-card-content">
+                        <h3>Goal Tracking</h3>
+                        <p>Monitor progress with interactive animations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nike Style Section -->
+    <section class="nike-section parallax-section" id="about">
+        <div class="parallax-bg" style="background: linear-gradient(45deg, #f7f7f7 0%, #e8e8e8 100%);"></div>
+        <div class="parallax-content">
+            <div class="nike-hero">
+                <div class="nike-text">
+                    <h2 class="text-reveal">
+                        <span>Just</span> <span>Do</span> <span>It</span>
+                    </h2>
+                    <p>Nike-inspired bold design with powerful parallax effects. Experience smooth scrolling and engaging animations that bring your content to life.</p>
+                    <button style="background: #000; color: white; border: none; padding: 1rem 2rem; border-radius: 25px; font-size: 1.1rem; margin-top: 1rem; cursor: pointer;">
+                        Get Started
+                    </button>
+                </div>
+                <div class="nike-image">
+                    ✨
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="parallax-section" id="contact" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <div class="parallax-content" style="text-align: center;">
+            <h2 style="font-size: 3rem; margin-bottom: 2rem;" class="text-reveal">
+                <span>Ready</span> <span>to</span> <span>Start?</span>
+            </h2>
+            <p style="font-size: 1.5rem; margin-bottom: 3rem;" class="text-reveal">
+                <span>Contact</span> <span>us</span> <span>today</span>
+            </p>
+            <div class="stagger-container" style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                <button class="stagger-item" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 1rem 2rem; border-radius: 25px; font-size: 1.1rem; cursor: pointer; backdrop-filter: blur(10px);">
+                    Email Us
+                </button>
+                <button class="stagger-item" style="background: white; color: #667eea; border: none; padding: 1rem 2rem; border-radius: 25px; font-size: 1.1rem; cursor: pointer;">
+                    Call Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        class ParallaxScrollManager {
+            constructor() {
+                this.sections = document.querySelectorAll('.parallax-section');
+                this.scrollProgress = document.querySelector('.scroll-progress');
+                this.nav = document.querySelector('.nav');
+                this.scrollDots = document.querySelectorAll('.scroll-dot');
+                this.currentSection = 0;
+                
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.initTextReveal();
+                this.initIntersectionObserver();
+                this.updateScrollProgress();
+            }
+
+            bindEvents() {
+                window.addEventListener('scroll', this.throttle(this.handleScroll.bind(this), 16));
+                window.addEventListener('resize', this.handleResize.bind(this));
+                
+                // Scroll dot navigation
+                this.scrollDots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        this.scrollToSection(index);
+                    });
+                });
+
+                // Smooth scroll for nav links
+                document.querySelectorAll('a[href^="#"]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = document.querySelector(link.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+                });
+            }
+
+            handleScroll() {
+                this.updateScrollProgress();
+                this.updateNavbar();
+                this.updateParallax();
+                this.updateScrollIndicators();
+            }
+
+            updateScrollProgress() {
+                const scrollTop = window.pageYOffset;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollPercent = (scrollTop / docHeight) * 100;
+                this.scrollProgress.style.width = scrollPercent + '%';
+            }
+
+            updateNavbar() {
+                const scrollTop = window.pageYOffset;
+                if (scrollTop > 100) {
+                    this.nav.classList.add('scrolled');
+                } else {
+                    this.nav.classList.remove('scrolled');
+                }
+            }
+
+            updateParallax() {
+                const scrollTop = window.pageYOffset;
+                
+                // Hero background parallax
+                const heroBg = document.querySelector('.hero-bg');
+                if (heroBg) {
+                    const speed = scrollTop * 0.5;
+                    heroBg.style.transform = `translateY(${speed}px)`;
+                }
+
+                // Floating elements
+                const floatingElements = document.querySelectorAll('.floating-element');
+                floatingElements.forEach((element, index) => {
+                    const speed = (scrollTop * (0.2 + index * 0.1));
+                    element.style.transform = `translateY(${speed}px) rotate(${speed * 0.5}deg)`;
+                });
+
+                // Parallax backgrounds
+                const parallaxBgs = document.querySelectorAll('.parallax-bg');
+                parallaxBgs.forEach(bg => {
+                    const rect = bg.getBoundingClientRect();
+                    const speed = (window.innerHeight - rect.top) * 0.1;
+                    bg.style.transform = `translateY(${speed}px)`;
+                });
+            }
+
+            updateScrollIndicators() {
+                const scrollTop = window.pageYOffset;
+                const windowHeight = window.innerHeight;
+                
+                this.sections.forEach((section, index) => {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top <= windowHeight / 2 && rect.bottom >= windowHeight / 2) {
+                        if (this.currentSection !== index) {
+                            this.currentSection = index;
+                            this.updateActiveDot(index);
+                        }
+                    }
+                });
+            }
+
+            updateActiveDot(index) {
+                this.scrollDots.forEach(dot => dot.classList.remove('active'));
+                if (this.scrollDots[index]) {
+                    this.scrollDots[index].classList.add('active');
+                }
+            }
+
+            scrollToSection(index) {
+                if (this.sections[index]) {
+                    this.sections[index].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            initTextReveal() {
+                const textReveals = document.querySelectorAll('.text-reveal');
+                textReveals.forEach(element => {
+                    const text = element.textContent;
+                    const words = text.split(' ');
+                    element.innerHTML = words.map(word => `<span>${word}</span>`).join(' ');
+                });
+            }
+
+            initIntersectionObserver() {
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            
+                            // Special handling for stagger animations
+                            if (entry.target.classList.contains('stagger-container')) {
+                                this.animateStagger(entry.target);
+                            }
+                        }
+                    });
+                }, observerOptions);
+
+                // Observe elements
+                const elementsToObserve = [
+                    ...document.querySelectorAll('.text-reveal'),
+                    ...document.querySelectorAll('.netflix-card'),
+                    ...document.querySelectorAll('.nike-text'),
+                    ...document.querySelectorAll('.nike-image'),
+                    ...document.querySelectorAll('.stagger-container')
+                ];
+
+                elementsToObserve.forEach(el => observer.observe(el));
+            }
+
+            animateStagger(container) {
+                const items = container.querySelectorAll('.stagger-item');
+                items.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.transform = 'translateY(0)';
+                        item.style.opacity = '1';
+                    }, index * 100);
+                });
+            }
+
+            handleResize() {
+                // Recalculate positions on resize
+                this.updateScrollProgress();
+            }
+
+            throttle(func, limit) {
+                let inThrottle;
+                return function() {
+                    const args = arguments;
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                }
+            }
+
+            // Advanced parallax effects
+            addMouseParallax() {
+                document.addEventListener('mousemove', (e) => {
+                    const mouseX = e.clientX / window.innerWidth;
+                    const mouseY = e.clientY / window.innerHeight;
+                    
+                    const floatingElements = document.querySelectorAll('.floating-element');
+                    floatingElements.forEach((element, index) => {
+                        const speed = (index + 1) * 0.02;
+                        const x = (mouseX - 0.5) * speed * 100;
+                        const y = (mouseY - 0.5) * speed * 100;
+                        element.style.transform += ` translate(${x}px, ${y}px)`;
+                    });
+                });
+            }
+
+            // Scroll-triggered animations
+            addScrollTriggers() {
+                const triggers = [
+                    {
+                        element: '.hero-content',
+                        animation: 'fadeInUp',
+                        delay: 0
+                    },
+                    {
+                        element: '.netflix-grid',
+                        animation: 'staggerFadeIn',
+                        delay: 200
+                    }
+                ];
+
+                triggers.forEach(trigger => {
+                    const element = document.querySelector(trigger.element);
+                    if (element) {
+                        setTimeout(() => {
+                            element.classList.add(trigger.animation);
+                        }, trigger.delay);
+                    }
+                });
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const parallaxManager = new ParallaxScrollManager();
+            
+            // Add mouse parallax effect
+            parallaxManager.addMouseParallax();
+            
+            // Add scroll triggers
+            parallaxManager.addScrollTriggers();
+            
+            // Make it globally available
+            window.parallaxManager = parallaxManager;
+        });
+
+        // Performance optimization
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => {
+                // Initialize non-critical animations
+                console.log('Parallax effects initialized');
+            });
+        }
+    </script>
+</body>
+</html>

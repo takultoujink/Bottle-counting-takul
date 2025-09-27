@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micro-Interactions Demo - P2P</title>
+    <link rel="stylesheet" href="animations.css">
+    <style>
+        /* Micro-Interactions Showcase */
+        
+        body {
+            font-family: 'Bai Jamjuree', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .demo-item {
+            background: #f9fafb;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .demo-item h3 {
+            margin: 0 0 1rem 0;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        /* ===== BUTTON MICRO-INTERACTIONS ===== */
+        
+        /* Nike-Style Button */
+        .btn-nike-demo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateY(0);
+        }
+
+        .btn-nike-demo:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-nike-demo:active {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Apple-Style Button */
+        .btn-apple {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-apple::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-apple:hover::before {
+            left: 100%;
+        }
+
+        .btn-apple:hover {
+            background: #0056cc;
+            transform: scale(1.02);
+        }
+
+        /* Google Material Button */
+        .btn-material {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .btn-material:hover {
+            box-shadow: 0 4px 8px rgba(66, 133, 244, 0.3);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #ff4081;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 64, 129, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.4);
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #4caf50;
+        }
+
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active::before {
+            transform: translateX(30px);
+        }
+
+        /* ===== FORM MICRO-INTERACTIONS ===== */
+        
+        /* Floating Label Input */
+        .input-group {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-floating {
+            width: 100%;
+            padding: 1rem 0.75rem 0.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .input-floating:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .label-floating {
+            position: absolute;
+            left: 0.75rem;
+            top: 1rem;
+            color: #6b7280;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: white;
+            padding: 0 0.25rem;
+        }
+
+        .input-floating:focus + .label-floating,
+        .input-floating:not(:placeholder-shown) + .label-floating {
+            top: -0.5rem;
+            left: 0.5rem;
+            font-size: 0.75rem;
+            color: #3b82f6;
+        }
+
+        /* Animated Checkbox */
+        .checkbox-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-custom {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .checkmark {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-custom:checked + .checkmark {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            transform: scale(1.1);
+        }
+
+        .checkmark::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg) scale(0);
+            transition: transform 0.2s ease;
+        }
+
+        .checkbox-custom:checked + .checkmark::after {
+            transform: rotate(45deg) scale(1);
+        }
+
+        /* Radio Button Animation */
+        .radio-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        .radio-custom {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .radio-mark {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid #d1d5db;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .radio-custom:checked + .radio-mark {
+            border-color: #3b82f6;
+            background: #3b82f6;
+            transform: scale(1.1);
+        }
+
+        .radio-mark::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.2s ease;
+        }
+
+        .radio-custom:checked + .radio-mark::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Progress Bar Animation */
+        .progress-animated {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill-animated {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill-animated::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progress-shine 2s infinite;
+        }
+
+        @keyframes progress-shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Star Rating */
+        .star-rating {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #fbbf24;
+            transform: scale(1.2);
+        }
+
+        .star:hover ~ .star {
+            color: #d1d5db;
+            transform: scale(1);
+        }
+
+        /* Like Button */
+        .like-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .like-button.liked {
+            color: #ef4444;
+            animation: heart-beat 0.6s ease;
+        }
+
+        .like-button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: relative;
+            display: inline-block;
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: badge-pulse 2s infinite;
+        }
+
+        @keyframes badge-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 120px;
+            background: #1f2937;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .tooltip-text::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(-5px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="bounce-in">Micro-Interactions Demo</h1>
+        
+        <!-- Button Interactions -->
+        <div class="section">
+            <h2 class="section-title">Button Interactions</h2>
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <h3>Nike-Style Button</h3>
+                    <button class="btn-nike-demo btn-nike">Hover & Click Me</button>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Apple-Style Button</h3>
+                    <button class="btn-apple">Shimmer Effect</button>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Material Design</h3>
+                    <button class="btn-material ripple-effect">Ripple Effect</button>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Floating Action Button</h3>
+                    <button class="fab">+</button>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Toggle Switch</h3>
+                    <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Like Button</h3>
+                    <button class="like-button" onclick="toggleLike(this)">♥</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Interactions -->
+        <div class="section">
+            <h2 class="section-title">Form Interactions</h2>
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <h3>Floating Label Input</h3>
+                    <div class="input-group">
+                        <input type="text" class="input-floating input-animated" placeholder=" ">
+                        <label class="label-floating">Enter your name</label>
+                    </div>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Animated Checkbox</h3>
+                    <label class="checkbox-container">
+                        <input type="checkbox" class="checkbox-custom">
+                        <span class="checkmark"></span>
+                        <span style="margin-left: 0.5rem;">Check me</span>
+                    </label>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Radio Buttons</h3>
+                    <label class="radio-container">
+                        <input type="radio" name="demo" class="radio-custom">
+                        <span class="radio-mark"></span>
+                        <span style="margin-left: 0.5rem;">Option 1</span>
+                    </label>
+                    <label class="radio-container">
+                        <input type="radio" name="demo" class="radio-custom">
+                        <span class="radio-mark"></span>
+                        <span style="margin-left: 0.5rem;">Option 2</span>
+                    </label>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Progress Bar</h3>
+                    <div class="progress-animated">
+                        <div class="progress-fill-animated" id="progressDemo" style="width: 0%;"></div>
+                    </div>
+                    <button onclick="animateProgress()" style="margin-top: 1rem; padding: 0.5rem 1rem; border: none; background: #3b82f6; color: white; border-radius: 4px; cursor: pointer;">Start Progress</button>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Star Rating</h3>
+                    <div class="star-rating">
+                        <span class="star" onclick="setRating(1)">★</span>
+                        <span class="star" onclick="setRating(2)">★</span>
+                        <span class="star" onclick="setRating(3)">★</span>
+                        <span class="star" onclick="setRating(4)">★</span>
+                        <span class="star" onclick="setRating(5)">★</span>
+                    </div>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Notification Badge</h3>
+                    <div class="notification-badge">
+                        <span style="font-size: 1.5rem;">🔔</span>
+                        <span class="badge">3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Elements -->
+        <div class="section">
+            <h2 class="section-title">Interactive Elements</h2>
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <h3>Tooltip</h3>
+                    <div class="tooltip">
+                        <span style="padding: 0.5rem 1rem; background: #3b82f6; color: white; border-radius: 4px;">Hover me</span>
+                        <span class="tooltip-text">This is a tooltip!</span>
+                    </div>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Hover Effects</h3>
+                    <div class="card-hover" style="padding: 1rem; background: #f3f4f6; border-radius: 8px; cursor: pointer;">
+                        Hover for lift effect
+                    </div>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Scale on Hover</h3>
+                    <div class="hover-scale" style="padding: 1rem; background: #fef3c7; border-radius: 8px; cursor: pointer; text-align: center;">
+                        Scale Effect
+                    </div>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Rotate on Hover</h3>
+                    <div class="hover-rotate" style="padding: 1rem; background: #ddd6fe; border-radius: 8px; cursor: pointer; text-align: center;">
+                        Rotate Effect
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="animations.js"></script>
+    <script>
+        // Toggle Switch
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+
+        // Like Button
+        function toggleLike(element) {
+            element.classList.toggle('liked');
+        }
+
+        // Progress Animation
+        function animateProgress() {
+            const progressBar = document.getElementById('progressDemo');
+            let width = 0;
+            const interval = setInterval(() => {
+                width += 2;
+                progressBar.style.width = width + '%';
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        progressBar.style.width = '0%';
+                    }, 1000);
+                }
+            }, 50);
+        }
+
+        // Star Rating
+        function setRating(rating) {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Initialize animations on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add staggered animation to demo items
+            const demoItems = document.querySelectorAll('.demo-item');
+            demoItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    item.style.transition = 'all 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Auto-start progress demo
+            setTimeout(() => {
+                animateProgress();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

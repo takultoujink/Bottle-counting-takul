@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Dashboard Charts - Premium Style</title>
+    <link rel="stylesheet" href="animations.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-subtitle {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .chart-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .chart-change {
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .chart-change.positive {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .chart-change.negative {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        /* Line Chart */
+        .line-chart {
+            height: 200px;
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .line-chart svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line {
+            fill: none;
+            stroke: #3b82f6;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s ease-in-out forwards;
+        }
+
+        .chart-area {
+            fill: url(#lineGradient);
+            opacity: 0;
+            animation: fadeInArea 2s ease-in-out 1s forwards;
+        }
+
+        .chart-dot {
+            fill: #3b82f6;
+            r: 4;
+            opacity: 0;
+            animation: popIn 0.5s ease-in-out forwards;
+        }
+
+        .chart-dot:nth-child(1) { animation-delay: 2s; }
+        .chart-dot:nth-child(2) { animation-delay: 2.1s; }
+        .chart-dot:nth-child(3) { animation-delay: 2.2s; }
+        .chart-dot:nth-child(4) { animation-delay: 2.3s; }
+        .chart-dot:nth-child(5) { animation-delay: 2.4s; }
+
+        /* Bar Chart */
+        .bar-chart {
+            height: 200px;
+            display: flex;
+            align-items: end;
+            gap: 0.5rem;
+            padding: 1rem 0;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            animation: growBar 1s ease-out forwards;
+        }
+
+        .bar:nth-child(1) { animation-delay: 0.1s; }
+        .bar:nth-child(2) { animation-delay: 0.2s; }
+        .bar:nth-child(3) { animation-delay: 0.3s; }
+        .bar:nth-child(4) { animation-delay: 0.4s; }
+        .bar:nth-child(5) { animation-delay: 0.5s; }
+        .bar:nth-child(6) { animation-delay: 0.6s; }
+        .bar:nth-child(7) { animation-delay: 0.7s; }
+
+        .bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #374151;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out 1s forwards;
+        }
+
+        /* Donut Chart */
+        .donut-chart {
+            width: 200px;
+            height: 200px;
+            margin: 1rem auto;
+            position: relative;
+        }
+
+        .donut-chart svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .donut-segment {
+            fill: none;
+            stroke-width: 20;
+            stroke-linecap: round;
+            stroke-dasharray: 0 628;
+            animation: drawDonut 2s ease-in-out forwards;
+        }
+
+        .donut-segment.segment-1 {
+            stroke: #3b82f6;
+            animation-delay: 0.2s;
+        }
+
+        .donut-segment.segment-2 {
+            stroke: #8b5cf6;
+            animation-delay: 0.4s;
+        }
+
+        .donut-segment.segment-3 {
+            stroke: #ec4899;
+            animation-delay: 0.6s;
+        }
+
+        .donut-segment.segment-4 {
+            stroke: #f59e0b;
+            animation-delay: 0.8s;
+        }
+
+        .donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .donut-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .donut-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        /* Progress Rings */
+        .progress-rings {
+            display: flex;
+            justify-content: space-around;
+            margin: 2rem 0;
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .progress-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 8;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 251;
+            stroke-dashoffset: 251;
+            animation: fillRing 2s ease-in-out forwards;
+        }
+
+        .progress-ring-fill.ring-1 {
+            stroke: #3b82f6;
+            animation-delay: 0.2s;
+        }
+
+        .progress-ring-fill.ring-2 {
+            stroke: #10b981;
+            animation-delay: 0.4s;
+        }
+
+        .progress-ring-fill.ring-3 {
+            stroke: #f59e0b;
+            animation-delay: 0.6s;
+        }
+
+        .progress-ring-fill.ring-4 {
+            stroke: #ef4444;
+            animation-delay: 0.8s;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* Metrics Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-color, #3b82f6);
+        }
+
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            background: var(--accent-color, #3b82f6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            animation: countUp 2s ease-out;
+        }
+
+        .metric-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        /* Real-time Data Animation */
+        .realtime-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #10b981;
+            margin-top: 0.5rem;
+        }
+
+        .realtime-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* Animations */
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes fadeInArea {
+            to { opacity: 0.3; }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes growBar {
+            to { transform: scaleY(1); }
+        }
+
+        @keyframes drawDonut {
+            to { stroke-dasharray: var(--segment-length) 628; }
+        }
+
+        @keyframes fillRing {
+            to { stroke-dashoffset: var(--ring-offset); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes countUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .dashboard-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Premium Analytics Dashboard</h1>
+            <p class="dashboard-subtitle">Real-time data visualization with stunning animations</p>
+        </div>
+
+        <div class="charts-grid">
+            <!-- Revenue Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Revenue Growth</h3>
+                    <div>
+                        <div class="chart-value">$124.5K</div>
+                        <span class="chart-change positive">+12.5%</span>
+                    </div>
+                </div>
+                <div class="line-chart">
+                    <svg viewBox="0 0 400 200">
+                        <defs>
+                            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.3"/>
+                                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0"/>
+                            </linearGradient>
+                        </defs>
+                        <path class="chart-area" d="M0,200 L0,150 Q100,120 200,100 Q300,80 400,60 L400,200 Z"/>
+                        <path class="chart-line" d="M0,150 Q100,120 200,100 Q300,80 400,60"/>
+                        <circle class="chart-dot" cx="0" cy="150"/>
+                        <circle class="chart-dot" cx="100" cy="120"/>
+                        <circle class="chart-dot" cx="200" cy="100"/>
+                        <circle class="chart-dot" cx="300" cy="80"/>
+                        <circle class="chart-dot" cx="400" cy="60"/>
+                    </svg>
+                </div>
+                <div class="realtime-indicator">
+                    <div class="realtime-dot"></div>
+                    Live data
+                </div>
+            </div>
+
+            <!-- Sales by Month -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Monthly Sales</h3>
+                    <div>
+                        <div class="chart-value">2,847</div>
+                        <span class="chart-change positive">+8.2%</span>
+                    </div>
+                </div>
+                <div class="bar-chart">
+                    <div class="bar" style="height: 60%" data-value="45"></div>
+                    <div class="bar" style="height: 80%" data-value="62"></div>
+                    <div class="bar" style="height: 45%" data-value="38"></div>
+                    <div class="bar" style="height: 90%" data-value="71"></div>
+                    <div class="bar" style="height: 75%" data-value="58"></div>
+                    <div class="bar" style="height: 95%" data-value="84"></div>
+                    <div class="bar" style="height: 85%" data-value="67"></div>
+                </div>
+            </div>
+
+            <!-- Market Share -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Market Share</h3>
+                </div>
+                <div class="donut-chart">
+                    <svg viewBox="0 0 200 200">
+                        <circle class="donut-segment segment-1" cx="100" cy="100" r="80" style="--segment-length: 157"/>
+                        <circle class="donut-segment segment-2" cx="100" cy="100" r="80" style="--segment-length: 125"/>
+                        <circle class="donut-segment segment-3" cx="100" cy="100" r="80" style="--segment-length: 94"/>
+                        <circle class="donut-segment segment-4" cx="100" cy="100" r="80" style="--segment-length: 63"/>
+                    </svg>
+                    <div class="donut-center">
+                        <div class="donut-value">78%</div>
+                        <div class="donut-label">Total</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Performance Metrics</h3>
+                </div>
+                <div class="progress-rings">
+                    <div class="progress-ring">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="progress-ring-bg" cx="50" cy="50" r="40"/>
+                            <circle class="progress-ring-fill ring-1" cx="50" cy="50" r="40" style="--ring-offset: 63"/>
+                        </svg>
+                        <div class="progress-text">75%</div>
+                    </div>
+                    <div class="progress-ring">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="progress-ring-bg" cx="50" cy="50" r="40"/>
+                            <circle class="progress-ring-fill ring-2" cx="50" cy="50" r="40" style="--ring-offset: 50"/>
+                        </svg>
+                        <div class="progress-text">80%</div>
+                    </div>
+                    <div class="progress-ring">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="progress-ring-bg" cx="50" cy="50" r="40"/>
+                            <circle class="progress-ring-fill ring-3" cx="50" cy="50" r="40" style="--ring-offset: 88"/>
+                        </svg>
+                        <div class="progress-text">65%</div>
+                    </div>
+                    <div class="progress-ring">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="progress-ring-bg" cx="50" cy="50" r="40"/>
+                            <circle class="progress-ring-fill ring-4" cx="50" cy="50" r="40" style="--ring-offset: 75"/>
+                        </svg>
+                        <div class="progress-text">70%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card" style="--accent-color: #3b82f6">
+                <div class="metric-icon">📊</div>
+                <div class="metric-value" data-target="1247">0</div>
+                <div class="metric-label">Total Users</div>
+            </div>
+            <div class="metric-card" style="--accent-color: #10b981">
+                <div class="metric-icon">💰</div>
+                <div class="metric-value" data-target="89.5">0</div>
+                <div class="metric-label">Conversion Rate</div>
+            </div>
+            <div class="metric-card" style="--accent-color: #f59e0b">
+                <div class="metric-icon">⚡</div>
+                <div class="metric-value" data-target="2.4">0</div>
+                <div class="metric-label">Avg. Session</div>
+            </div>
+            <div class="metric-card" style="--accent-color: #ef4444">
+                <div class="metric-icon">🎯</div>
+                <div class="metric-value" data-target="94.2">0</div>
+                <div class="metric-label">Success Rate</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="animations.js"></script>
+    <script>
+        // Animate counter values
+        function animateCounter(element, target, duration = 2000) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                
+                if (target % 1 !== 0) {
+                    element.textContent = current.toFixed(1);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+
+        // Initialize counter animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const metricValues = document.querySelectorAll('.metric-value[data-target]');
+            
+            setTimeout(() => {
+                metricValues.forEach(element => {
+                    const target = parseFloat(element.dataset.target);
+                    animateCounter(element, target);
+                });
+            }, 500);
+        });
+
+        // Real-time data simulation
+        function simulateRealTimeData() {
+            const realtimeElements = document.querySelectorAll('.chart-value');
+            
+            setInterval(() => {
+                realtimeElements.forEach(element => {
+                    const currentValue = parseFloat(element.textContent.replace(/[^0-9.]/g, ''));
+                    const variation = (Math.random() - 0.5) * 0.1;
+                    const newValue = currentValue * (1 + variation);
+                    
+                    if (element.textContent.includes('K')) {
+                        element.textContent = `$${newValue.toFixed(1)}K`;
+                    } else {
+                        element.textContent = Math.floor(newValue).toLocaleString();
+                    }
+                });
+            }, 5000);
+        }
+
+        // Start real-time simulation
+        setTimeout(simulateRealTimeData, 3000);
+
+        // Interactive chart hover effects
+        document.querySelectorAll('.chart-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Chart data refresh animation
+        function refreshChartData() {
+            const charts = document.querySelectorAll('.chart-card');
+            
+            charts.forEach((chart, index) => {
+                setTimeout(() => {
+                    chart.style.opacity = '0.7';
+                    chart.style.transform = 'scale(0.98)';
+                    
+                    setTimeout(() => {
+                        chart.style.opacity = '1';
+                        chart.style.transform = 'scale(1)';
+                    }, 200);
+                }, index * 100);
+            });
+        }
+
+        // Refresh data every 30 seconds
+        setInterval(refreshChartData, 30000);
+    </script>
+</body>
+</html>
